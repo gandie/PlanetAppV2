@@ -5,6 +5,7 @@ from kivy.properties import *
 from mainscreen import MainScreen
 from menuscreen import MenuScreen
 
+from logic import Logic
 
 class PlanetApp(App):
 
@@ -12,8 +13,11 @@ class PlanetApp(App):
     mainscreen = ObjectProperty(None)
     menuscreen = ObjectProperty(None)
 
+    logic = ObjectProperty(None)
+
     def build(self):
 
+        self.logic = Logic()
         self.screenmanager = ScreenManager()
         self.mainscreen = MainScreen(name='main')
         self.menuscreen = MenuScreen(name='menu')

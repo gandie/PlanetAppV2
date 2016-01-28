@@ -1,33 +1,30 @@
 from kivy.uix.floatlayout import FloatLayout
 #from kivy.uix.textinput import TextInput
-#from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import *
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
-#from kivy.uix.gridlayout import GridLayout
-#from kivy.clock import Clock
-#from kivy.uix.label import Label
-#from kivy.network.urlrequest import UrlRequest
-#import json
 from kivy.uix.screenmanager import Screen
 from kivy.animation import Animation
-from logic import Logic
 from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
-import time
 from kivy.uix.behaviors import ToggleButtonBehavior
+from kivy.app import App
+
+from cplanetcore import CPlanetcore
+from logic import Logic
 
 class MenuToggleButton(ToggleButtonBehavior, Button):
     def __init__(self, **kwargs):
         super(MenuToggleButton, self).__init__(**kwargs)
 
     def on_state(self, widget, value):
+        # i hate this code, togglebuttons are strange
         if self.parent != None:
             if value == 'down':
-                if widget.text == 'option1':
+                if widget.text == 'add_planet_mode':
                     self.parent.option1 = True
                     self.parent.option2 = False
-                elif widget.text == 'option2':
+                elif widget.text == 'zoom_mode':
                     self.parent.option1 = False
                     self.parent.option2 = True
 
@@ -45,15 +42,22 @@ class MenuPanel(FloatLayout):
 
     options = ReferenceListProperty(option1, option2)
 
+    logic = ObjectProperty(None)
+
     def __init__(self,**kwargs):
        super(MenuPanel, self).__init__(**kwargs)
+       self.logic = App.get_running_app().logic
        self.build_interface()
+       # set default mode in logic...please somebody rewrite this menu...
+       self.logic.add_planet_mode = True
+       self.logic.zoom_mode = False
 
     def on_options(self, instance, value):
-        self.parent.option1 = self.option1
-        self.parent.option2 = self.option2
+        self.logic.add_planet_mode = self.option1
+        self.logic.zoom_mode = self.option2
 
     def build_interface(self):
+
         self.fadebutton = Button(text = 'Down',
                                  pos_hint = {'x':0,'y':0.5},
                                  size_hint = (0.25,0.5),
@@ -62,7 +66,7 @@ class MenuPanel(FloatLayout):
 
 
         self.testbutton1 = MenuToggleButton(
-            text = 'option1', 
+            text = 'add_planet_mode', 
             pos_hint = {'x':0.2,'y':0},
             size_hint = (0.4,0.5),
             group='menu',
@@ -70,7 +74,7 @@ class MenuPanel(FloatLayout):
             allow_no_selection=False
         )
         self.testbutton2 = MenuToggleButton(
-            text = 'option2', 
+            text = 'zoom_mode', 
             pos_hint = {'x':0.6,'y':0},
             size_hint = (0.4,0.5),
             group='menu',
@@ -90,7 +94,6 @@ class MenuPanel(FloatLayout):
 
     def goto_menu(self, instance):
         self.parent.manager.current = 'menu'
-
 
     def btn_fade(self, instance):
         offset = self.size[1] / 2

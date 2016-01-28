@@ -11,13 +11,16 @@ from kivy.uix.togglebutton import ToggleButton
 #import json
 from kivy.uix.screenmanager import Screen
 from kivy.animation import Animation
-from logic import Logic
+#from logic import Logic
 from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
+from kivy.app import App
 import time
 from kivy.uix.behaviors import ToggleButtonBehavior
 from menupanel import MenuPanel
 from gamezone import Gamezone
+
+from kivy.clock import Clock
 
 class MainScreen(Screen):
     '''
@@ -31,17 +34,24 @@ class MainScreen(Screen):
     # add widgets to interface for touch-handling
     interface = ReferenceListProperty(menupanel, gamezone)
 
-    # GUI DATA
-    option1 = BooleanProperty(None)
-    option2 = BooleanProperty(None)
-
     # LOGIC
     logic = ObjectProperty(None)
 
     def __init__(self, **kwargs):
        super(MainScreen, self).__init__(**kwargs)
-       self.logic = Logic(self)
        self.build_interface()
+       self.logic = App.get_running_app().logic
+       #Clock.schedule_once(self.allign_gamezone, -1)
+       #Clock.schedule_once(self.allign_gamezone, 0)
+
+    def on_enter(self):
+        print 'jau'
+        self.allign_gamezone(1)
+
+
+    def allign_gamezone(self, dt):
+        self.gamezone.center_x = self.center_x
+        self.gamezone.center_y = self.center_y
 
     # hand down touch events, hand to gamezone if nothing else matches
     def on_touch_down(self, touch):
@@ -53,19 +63,34 @@ class MainScreen(Screen):
                 return
         self.gamezone.on_touch_down(touch)
 
+    def on_touch_move(self, touch):
+        for thingy in self.interface:
+            if thingy == self.gamezone:
+                continue
+            if thingy.collide_point(touch.x,touch.y):
+                thingy.on_touch_move(touch)
+                return
+        self.gamezone.on_touch_move(touch)
+
     def on_touch_up(self, touch):
         for thingy in self.interface:
             if thingy == self.gamezone:
                 continue
             if thingy.collide_point(touch.x,touch.y):
                 thingy.on_touch_up(touch)
+                return
+        self.gamezone.on_touch_up(touch)
 
     def build_interface(self):
-
         self.gamezone = Gamezone(
             do_rotation=False,
-            do_translation_y=False,
-            do_translation_x=False
+            #do_translation_y=False,
+            #do_translation_x=False,
+            auto_bring_to_front = False,
+            scale_min = 0.1,
+            scale_max = 1,
+            size_hint = (10000,10000)
+            #pos_hint = {'x':-0.5,'y':-0.5}
         )
         self.add_widget(self.gamezone)
 
