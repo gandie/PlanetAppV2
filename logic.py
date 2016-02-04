@@ -4,6 +4,9 @@ from planet import Planet
 from kivy.clock import Clock
 
 from cplanetcore import CPlanetcore
+
+# put that into c code!
+from math import sqrt
 '''
 planet_dictionary = {
     'position_x' : 0,
@@ -58,20 +61,23 @@ class Logic(Screen):
         self.gamezone = gamezone
 
     def add_planet(self, pos, vel):
+        index = self.currindex
         newplanet = Planet()
-        newplanet.center = pos
-        print pos,vel
-        self.planets[self.currindex] = {
+
+        self.planets[index] = {
             'position_x' : pos[0],
             'position_y' : pos[1],
             'velocity_x' : vel[0],
             'velocity_y' : vel[1],
             'density' : 1,
-            'mass' : 1,
+            'mass' : 100,
             'fixed' : False,
             'hillbodies' : [],
             'widget' : newplanet
         }
+        # calculate size here!
+        self.calc_planetsize(index)
+        newplanet.center = pos
         self.gamezone.add_widget(newplanet)
         self.currindex += 1
 
@@ -81,6 +87,8 @@ class Logic(Screen):
     def move_planets(self, dt):
         D = self.planets
         for index in D:
+            if D[index]['fixed']:
+                continue
             D[index]['position_x'] += D[index]['velocity_x']
             D[index]['position_y'] += D[index]['velocity_y']
             D[index]['widget'].center_x = D[index]['position_x']
@@ -93,7 +101,7 @@ class Logic(Screen):
             for index2 in D:
                 if index1 == index2:
                     continue
-                # collision
+                # collision, maybe write own collision-thingy?
                 if not D[index1]['widget'].collide_widget(D[index2]['widget']):
                     continue
                 # bigger body eats smaller one
@@ -114,7 +122,11 @@ class Logic(Screen):
                 D[index1]['velocity_x'] = impulse_x / D[index1]['mass']
                 D[index1]['velocity_y'] = impulse_y / D[index1]['mass']
 
-                merged_planets.append(index2)
+                # calculate new size
+                self.calc_planetsize(index1)
+
+                if not index2 in merged_planets:
+                    merged_planets.append(index2)
 
         # remove merged planets afterwards
         for planetindex in merged_planets:
@@ -153,8 +165,11 @@ class Logic(Screen):
     def calc_hillbodies(self):
         pass
 
-    def calc_planetsize(self):
-        pass
+    def calc_planetsize(self, index):
+        D = self.planets
+        # C Code!
+        diameter = 2 * sqrt(D[index]['density'] * D[index]['mass'] / 3.14)
+        D[index]['widget'].size = (diameter, diameter)
 
     # build separate module for canvas-shizzle?
     def draw_trajectory(self):

@@ -9,8 +9,6 @@ class Gamezone(Scatter):
 
     logic = ObjectProperty(None)
 
-    touchcount = NumericProperty(0)
-
     '''
     children of this dude will be planets!?
     '''
@@ -20,11 +18,7 @@ class Gamezone(Scatter):
        self.logic = App.get_running_app().logic
        self.logic.register(self)
 
-    def on_touchcount(self, instance, value):
-        print value
-
     def on_touch_down(self, touch):
-        self.touchcount += 1
         if self.logic.zoom_mode:
             super(Gamezone, self).on_touch_down(touch)
         else:
@@ -70,4 +64,3 @@ class Gamezone(Scatter):
             self.canvas.remove_group(ud['group'])
             touch.ungrab(self)
             touch.pop()
-        self.touchcount -= 1
