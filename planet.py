@@ -1,4 +1,6 @@
 from kivy.uix.widget import Widget
 
 class Planet(Widget):
-    pass
+
+    def set_texture(self, texture):
+        self.canvas.children[1].texture = texture

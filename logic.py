@@ -1,42 +1,17 @@
+#from kivy.core.image import Image
+from kivy.uix.image import Image
 from kivy.properties import *
 from kivy.uix.screenmanager import Screen
-from planet import Planet
 from kivy.clock import Clock
 
+from planet import Planet
 from cplanetcore import CPlanetcore
 
+from random import choice, randint
 # put that into c code!
 from math import sqrt
-'''
-planet_dictionary = {
-    'position_x' : 0,
-    'position_y' : 0,
-    'velocity_x' : 0,
-    'velocity_y' : 0,
-    'density' : 1,
-    'mass' : 1,
-    'fixed' : False,
-    'hillbodies' : [],
-    'widget' : None
-}
+from os import listdir
 
-planets_dictionary = {
-    1 : planet_dictionary
-}
-
-# testcode for c integration
-bodies = [
-(0 , -5, 0.1),
-(0 ,-10, 0.2),
-(10, 0, 0.1),
-]
-A = CPlanetcore(0, 0, 0, 0, 1)
-for body in bodies:
-A.calc_body(body[0], body[1], body[2])
-testlabel = str(A.get_vel_x()) + ' , ' + str(A.get_vel_y())
-#
-
-'''
 
 # logic needs to be a kivy object to make properties work? 
 class Logic(Screen):
@@ -53,36 +28,73 @@ class Logic(Screen):
 
     def __init__(self):
         self.planets = {}
+        self.load_planet_textures()
+        self.load_sun_textures()
+
+    def start_game(self):
         Clock.schedule_interval(self.move_planets, 1.0 / 30.0)
         Clock.schedule_interval(self.calc_gravity, 1.0 / 30.0)
         Clock.schedule_interval(self.merge_planets, 1.0 / 60.0)
 
+    def stop_game(self):
+        Clock.unschedule(self.move_planets)
+        Clock.unschedule(self.calc_gravity)
+        Clock.unschedule(self.merge_planets)
+
     def register(self, gamezone):
         self.gamezone = gamezone
 
-    def add_planet(self, pos, vel):
+    # my own tiny planet-factory
+    def add_body(self, **args):
         index = self.currindex
         newplanet = Planet()
+        body = args.get('body', 'planet')
+        pos = args.get('pos', (0, 0))
 
-        self.planets[index] = {
+        if body == 'planet':
+            texture_index = args.get('texture_index',
+                                     randint(0, len(self.planet_textures) - 1))
+            newplanet_texture = self.planet_textures[texture_index]
+        elif body == 'sun':
+            texture_index = args.get('texture_index', 
+                                     randint(0, len(self.sun_textures) - 1))
+            newplanet_texture = self.sun_textures[texture_index]
+
+        newplanet.set_texture(newplanet_texture)
+
+        # build planet dictionary
+        planet_d = {
             'position_x' : pos[0],
             'position_y' : pos[1],
-            'velocity_x' : vel[0],
-            'velocity_y' : vel[1],
-            'density' : 1,
-            'mass' : 100,
-            'fixed' : False,
+            'velocity_x' : args.get('vel', (0, 0))[0],
+            'velocity_y' : args.get('vel', (0, 0))[1],
+            'density' : args.get('density', 1),
+            'mass' : args.get('mass', 100),
+            'fixed' : args.get('fixed', False),
             'hillbodies' : [],
-            'widget' : newplanet
+            'widget' : newplanet,
+            'texture_index' : texture_index,
+            'body' : body
         }
-        # calculate size here!
+
+        # write dict into planets-dict
+        self.planets[index] = planet_d
+
         self.calc_planetsize(index)
         newplanet.center = pos
         self.gamezone.add_widget(newplanet)
         self.currindex += 1
 
-    def reset_planets(self):
-        pass
+    def reset_planets(self, instance):
+        print 'planets have been removed'
+        D = self.planets
+        L = []
+        for index in D:
+            self.gamezone.remove_widget(D[index]['widget'])
+            L.append(index)
+
+        for deleteindex in L:
+            D.pop(deleteindex)
 
     def move_planets(self, dt):
         D = self.planets
@@ -178,5 +190,32 @@ class Logic(Screen):
     def draw_hillbodies(self):
         pass
 
-    def load_textures(self):
-        pass
+    def load_planet_textures(self):
+        self.planet_textures = []
+        L = []
+        path = ('./media/textures/')
+        for filename in listdir(path):
+            if not filename.endswith('.png'):
+                continue
+            if not 'planet' in filename:
+                continue
+            L.append(path + filename)
+        for string in L:
+            newimage = Image(source=string)
+            newtexture = newimage.texture
+            self.planet_textures.append(newtexture)
+
+    def load_sun_textures(self):
+        self.sun_textures = []
+        L = []
+        path = ('./media/textures/')
+        for filename in listdir(path):
+            if not filename.endswith('.png'):
+                continue
+            if not 'sun' in filename:
+                continue
+            L.append(path + filename)
+        for string in L:
+            newimage = Image(source=string)
+            newtexture = newimage.texture
+            self.sun_textures.append(newtexture)

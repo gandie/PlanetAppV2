@@ -19,6 +19,15 @@ class Gamezone(Scatter):
        self.logic.register(self)
 
     def on_touch_down(self, touch):
+        if touch.is_double_tap:
+            touch.push()
+            touch.apply_transform_2d(self.to_local)
+            #self.logic.add_sun(touch.pos)
+            # fixed = True
+            self.logic.add_body(pos = touch.pos, body = 'sun', mass = 10000, fixed = True)
+            touch.pop()
+            return
+
         if self.logic.zoom_mode:
             super(Gamezone, self).on_touch_down(touch)
         else:
@@ -60,7 +69,8 @@ class Gamezone(Scatter):
             touchdownv = Vector(ud['firstpos'])
             touchupv = Vector(touch.pos)
             velocity = (touchupv - touchdownv) / 50
-            self.logic.add_planet(ud['firstpos'], (velocity.x, velocity.y))
+            #self.logic.add_planet(ud['firstpos'], (velocity.x, velocity.y))
+            self.logic.add_body(pos = ud['firstpos'], vel = (velocity.x, velocity.y))
             self.canvas.remove_group(ud['group'])
             touch.ungrab(self)
             touch.pop()

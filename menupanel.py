@@ -36,6 +36,7 @@ class MenuPanel(FloatLayout):
     testbutton1 = ObjectProperty(None)
 
     menubutton = ObjectProperty(None)
+    resetbutton = ObjectProperty(None)
 
     option1 = BooleanProperty(True)
     option2 = BooleanProperty(False)
@@ -67,16 +68,16 @@ class MenuPanel(FloatLayout):
 
         self.testbutton1 = MenuToggleButton(
             text = 'add_planet_mode', 
-            pos_hint = {'x':0.2,'y':0},
-            size_hint = (0.4,0.5),
+            pos_hint = {'x':0.5,'y':0},
+            size_hint = (0.25,0.5),
             group='menu',
             state='down',
             allow_no_selection=False
         )
         self.testbutton2 = MenuToggleButton(
             text = 'zoom_mode', 
-            pos_hint = {'x':0.6,'y':0},
-            size_hint = (0.4,0.5),
+            pos_hint = {'x':0.75,'y':0},
+            size_hint = (0.25,0.5),
             group='menu',
             allow_no_selection=False
         )
@@ -84,13 +85,21 @@ class MenuPanel(FloatLayout):
         self.menubutton = Button(
             text = 'Menu', 
             pos_hint = {'x':0,'y':0},
-            size_hint = (0.2,0.5),
+            size_hint = (0.25,0.5),
             on_press = self.goto_menu
+        )
+
+        self.resetbutton = Button(
+            text = 'Reset', 
+            pos_hint = {'x':0.25,'y':0},
+            size_hint = (0.25, 0.5),
+            on_press = self.logic.reset_planets
         )
 
         self.add_widget(self.testbutton1)
         self.add_widget(self.testbutton2)
         self.add_widget(self.menubutton)
+        self.add_widget(self.resetbutton)
 
     def goto_menu(self, instance):
         self.parent.manager.current = 'menu'

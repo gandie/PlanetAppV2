@@ -45,11 +45,13 @@ class MainScreen(Screen):
        #Clock.schedule_once(self.allign_gamezone, 0)
 
     def on_enter(self):
-        print 'jau'
-        self.allign_gamezone(1)
+        self.allign_gamezone()
+        self.logic.start_game()
 
+    def on_leave(self):
+        self.logic.stop_game()
 
-    def allign_gamezone(self, dt):
+    def allign_gamezone(self):
         self.gamezone.center_x = self.center_x
         self.gamezone.center_y = self.center_y
 
