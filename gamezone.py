@@ -5,6 +5,8 @@ from kivy.app import App
 
 from kivy.vector import Vector
 
+import time
+
 class Gamezone(Scatter):
 
     logic = ObjectProperty(None)
@@ -24,7 +26,13 @@ class Gamezone(Scatter):
             touch.apply_transform_2d(self.to_local)
             #self.logic.add_sun(touch.pos)
             # fixed = True
-            self.logic.add_body(pos = touch.pos, body = 'sun', mass = 10000, fixed = True)
+            self.logic.add_body(
+                pos = touch.pos,
+                body = 'sun',
+                mass = 100000,
+                fixed = True,
+                density = 0.5
+            )
             touch.pop()
             return
 
@@ -35,6 +43,7 @@ class Gamezone(Scatter):
             touch.apply_transform_2d(self.to_local)
             ud = touch.ud
             ud['id'] = 'gametouch'
+            ud['touchtime'] = time.time()
             ud['firstpos'] = touch.pos
             ud['group'] = g = str(touch.uid)
             with self.canvas:
@@ -68,9 +77,13 @@ class Gamezone(Scatter):
             ud = touch.ud
             touchdownv = Vector(ud['firstpos'])
             touchupv = Vector(touch.pos)
-            velocity = (touchupv - touchdownv) / 50
-            #self.logic.add_planet(ud['firstpos'], (velocity.x, velocity.y))
-            self.logic.add_body(pos = ud['firstpos'], vel = (velocity.x, velocity.y))
+            velocity = (touchupv - touchdownv) / 25
+            newmass = ((time.time() - ud['touchtime']) / 0.1) * 25
+            self.logic.add_body(
+                pos = ud['firstpos'], 
+                vel = (velocity.x, velocity.y),
+                mass = newmass
+            )
             self.canvas.remove_group(ud['group'])
             touch.ungrab(self)
             touch.pop()

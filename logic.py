@@ -91,10 +91,8 @@ class Logic(Screen):
         L = []
         for index in D:
             self.gamezone.remove_widget(D[index]['widget'])
-            L.append(index)
 
-        for deleteindex in L:
-            D.pop(deleteindex)
+        D.clear()
 
     def move_planets(self, dt):
         D = self.planets

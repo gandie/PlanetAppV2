@@ -18,6 +18,7 @@ class MenuScreen(Screen):
     startbutton = ObjectProperty(None)
     quitbutton = ObjectProperty(None)
     settingsbutton = ObjectProperty(None)
+    savegamebutton = ObjectProperty(None)
 
     buttonlayout = ObjectProperty(None)
     mainlayout = ObjectProperty(None)
@@ -37,6 +38,10 @@ class MenuScreen(Screen):
         self.manager.transition = FadeTransition()
         self.manager.current = 'settings'
 
+    def switchto_savegames(self, instance):
+        self.manager.transition = FadeTransition()
+        self.manager.current = 'savegames'
+
     def build_interface(self):
         self.mainlayout = FloatLayout()
         self.buttonlayout = GridLayout(cols=1,
@@ -46,8 +51,11 @@ class MenuScreen(Screen):
                                   on_press = self.switchto_main)
         self.settingsbutton = Button(text = "Settings",
                                   on_press = self.switchto_settings)
+        self.savegamebutton = Button(text = "Savegames",
+                                     on_press = self.switchto_savegames)
 
         self.buttonlayout.add_widget(self.startbutton)
         self.buttonlayout.add_widget(self.settingsbutton)
+        self.buttonlayout.add_widget(self.savegamebutton)
         self.mainlayout.add_widget(self.buttonlayout)
         self.add_widget(self.mainlayout)
