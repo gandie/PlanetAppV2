@@ -123,11 +123,13 @@ class Logic(Screen):
     def reset_planets(self, instance):
         print 'planets have been removed'
         D = self.planets
+        S = self.suns
         L = []
         for index in D:
             self.gamezone.remove_widget(D[index]['widget'])
 
         D.clear()
+        S.clear()
 
     def move_planets(self, dt):
         D = self.planets
@@ -147,25 +149,36 @@ class Logic(Screen):
                 if index1 == index2:
                     continue
                 # collision, maybe write own collision-thingy?
+                '''
                 if not D[index1]['widget'].collide_widget(D[index2]['widget']):
+                    continue
+                '''
+                if not self.check_collision(index1, index2):
                     continue
                 # bigger body eats smaller one
                 if D[index1]['mass'] < D[index2]['mass']:
                     continue
 
-                # build c extension for collision calculation!!
-                # calculate impulse
-                impulse_x = (D[index1]['velocity_x'] * D[index1]['mass'] +
-                             D[index2]['velocity_x'] * D[index2]['mass'])
-                impulse_y = (D[index1]['velocity_y'] * D[index1]['mass'] +
-                             D[index2]['velocity_y'] * D[index2]['mass'])
+                # ask the mighty planetcore for help doing calculations
+                planetcore = CPlanetcore(D[index1]['position_x'],
+                                         D[index1]['position_y'],
+                                         D[index1]['velocity_x'],
+                                         D[index1]['velocity_y'],
+                                         D[index1]['mass'])
 
-                # add mass to first planet
-                D[index1]['mass'] += D[index2]['mass']
+                # planetcore knows how to calculate collision stuff
+                newmass = planetcore.calc_impulse(D[index2]['velocity_x'],
+                                                  D[index2]['velocity_y'],
+                                                  D[index2]['mass'])
 
-                # update first body's velocity
-                D[index1]['velocity_x'] = impulse_x / D[index1]['mass']
-                D[index1]['velocity_y'] = impulse_y / D[index1]['mass']
+                # ask mighty planetcore for new velocity
+                D[index1]['velocity_x'] = planetcore.get_vel_x()
+                D[index1]['velocity_y'] = planetcore.get_vel_y()
+
+                D[index1]['mass'] = newmass
+
+                # kill planetcore due to memory-sanity
+                del planetcore
 
                 # calculate new size
                 self.calc_planetsize(index1)
@@ -197,6 +210,7 @@ class Logic(Screen):
                 force = planetcore.calc_body(D[index2]['position_x'],
                                              D[index2]['position_y'],
                                              D[index2]['mass'])
+
             # ask mighty planetcore for results
             D[index1]['velocity_x'] = planetcore.get_vel_x()
             D[index1]['velocity_y'] = planetcore.get_vel_y()
@@ -215,6 +229,7 @@ class Logic(Screen):
         # C Code!
         diameter = 2 * sqrt(D[index]['density'] * D[index]['mass'] / 3.14)
         D[index]['widget'].size = (diameter, diameter)
+        print D[index]['widget'].size
 
     # build separate module for canvas-shizzle?
     def draw_trajectory(self):
@@ -224,41 +239,11 @@ class Logic(Screen):
         pass
 
     def load_planet_textures(self):
-        '''
-        self.planet_textures = []
-        L = []
-        path = ('./media/textures/')
-        for filename in listdir(path):
-            if not filename.endswith('.png'):
-                continue
-            if not 'planet' in filename:
-                continue
-            L.append(path + filename)
-        for string in L:
-            newimage = Image(source=string)
-            newtexture = newimage.texture
-            self.planet_textures.append(newtexture)
-        '''
         self.planet_textures_hot = self.load_textures('./media/textures/hot/')
         self.planet_textures_cold = self.load_textures('./media/textures/cold/')
-        self.planet_textures_livable = self.load_textures(
-            './media/textures/livable/'
-        )
+        self.planet_textures_livable = self.load_textures('./media/textures/livable/')
 
     def load_sun_textures(self):
-        '''
-        self.sun_textures = []
-        L = []
-        path = ('./media/textures/suns/')
-        for filename in listdir(path):
-            if not filename.endswith('.png'):
-                continue
-            L.append(path + filename)
-        for string in L:
-            newimage = Image(source=string)
-            newtexture = newimage.texture
-            self.sun_textures.append(newtexture)
-        '''
         self.sun_textures = self.load_textures('./media/textures/suns/')
 
     def load_textures(self, path):
@@ -279,7 +264,6 @@ class Logic(Screen):
         texture_list = self.texture_mapping[proximity]
         new_texureindex = P[pindex]['texture_indexes'][proximity]
         new_texture = texture_list[new_texureindex]
-        #P[pindex]['texture_index'] = new_texureindex
         P[pindex]['proximity'] = proximity
         P[pindex]['widget'].set_texture(new_texture)
 
@@ -291,10 +275,16 @@ class Logic(Screen):
                 continue
             distances = []
             for index2 in S:
-                # code-code fpr distance calculation!
-                dist_x = S[index2]['position_x'] - P[index]['position_x']
-                dist_y = S[index2]['position_y'] - P[index]['position_y']
-                dist = sqrt(dist_x ** 2 + dist_y ** 2)
+                # ask the mighty planetcore for help doing calculations
+                planetcore = CPlanetcore(P[index]['position_x'],
+                                         P[index]['position_y'],
+                                         P[index]['velocity_x'],
+                                         P[index]['velocity_y'],
+                                         P[index]['mass'])
+                dist = planetcore.calc_dist(S[index2]['position_x'],
+                                            S[index2]['position_y'])
+                # kill planetcore - it's no longer needed...
+                del planetcore
                 distances.append(dist)
             if distances:
                 dist = min(distances)
@@ -306,3 +296,31 @@ class Logic(Screen):
                     proximity = 'cold'
                 if proximity != P[index]['proximity']:
                     self.set_texture(index, proximity)
+
+    def check_collision(self, index1, index2):
+        # write better c-code for this!
+        D = self.planets
+
+        # get coords of second planet
+        p2_x = D[index2]['position_x']
+        p2_y = D[index2]['position_y']
+
+        # get size of each planet / body
+        size1 = D[index1]['widget'].size[0]
+        size2 = D[index2]['widget'].size[0]
+
+        # cook planetcore for dist-calculation
+        planetcore = CPlanetcore(D[index1]['position_x'],
+                                 D[index1]['position_y'],
+                                 D[index1]['velocity_x'],
+                                 D[index1]['velocity_y'],
+                                 D[index1]['mass'])
+
+        dist = planetcore.calc_dist(p2_x, p2_y)
+
+        del planetcore
+
+        if dist < ((size1 + size2)/2):
+            return True
+        else:
+            return False

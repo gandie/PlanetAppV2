@@ -78,6 +78,7 @@ class Gamezone(Scatter):
             touchdownv = Vector(ud['firstpos'])
             touchupv = Vector(touch.pos)
             velocity = (touchupv - touchdownv) / 25
+            # make this a squared function
             newmass = ((time.time() - ud['touchtime']) / 0.1) * 40
             self.logic.add_body(
                 pos = ud['firstpos'], 
