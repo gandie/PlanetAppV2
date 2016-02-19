@@ -26,10 +26,15 @@ class Gamezone(Scatter):
             touch.apply_transform_2d(self.to_local)
             #self.logic.add_sun(touch.pos)
             # fixed = True
+
+            # get last body created and kill it to avoid singularities
+            index = self.logic.currindex - 1
+            self.logic.delete_planet(index)
+
             self.logic.add_body(
                 pos = touch.pos,
                 body = 'sun',
-                mass = 100000,
+                mass = 10000,
                 fixed = True,
                 density = 0.5
             )

@@ -28,7 +28,6 @@ class Logic(Screen):
 
     def __init__(self):
         self.planets = {}
-        self.suns = {}
 
         self.planet_textures_hot = []
         self.planet_textures_cold = []
@@ -112,8 +111,10 @@ class Logic(Screen):
 
         # also write suns to separate place to examine proximity between
         # planets and stars
+        '''
         if body == 'sun':
             self.suns[index] = planet_d
+        '''
 
         self.calc_planetsize(index)
         newplanet.center = pos
@@ -121,18 +122,16 @@ class Logic(Screen):
         self.currindex += 1
 
     def reset_planets(self, instance):
-        print 'planets have been removed'
         D = self.planets
-        S = self.suns
         L = []
         for index in D:
             self.gamezone.remove_widget(D[index]['widget'])
 
         D.clear()
-        S.clear()
 
     def move_planets(self, dt):
         D = self.planets
+        #print D
         for index in D:
             if D[index]['fixed']:
                 continue
@@ -149,12 +148,12 @@ class Logic(Screen):
                 if index1 == index2:
                     continue
                 # collision, maybe write own collision-thingy?
-                '''
-                if not D[index1]['widget'].collide_widget(D[index2]['widget']):
-                    continue
-                '''
+                #if not D[index1]['widget'].collide_widget(D[index2]['widget']):
+                #    continue
+                
                 if not self.check_collision(index1, index2):
                     continue
+                
                 # bigger body eats smaller one
                 if D[index1]['mass'] < D[index2]['mass']:
                     continue
@@ -172,6 +171,11 @@ class Logic(Screen):
                                                   D[index2]['mass'])
 
                 # ask mighty planetcore for new velocity
+                new_vx = planetcore.get_vel_x()
+                new_vy = planetcore.get_vel_y()
+
+                print type(new_vx)
+
                 D[index1]['velocity_x'] = planetcore.get_vel_x()
                 D[index1]['velocity_y'] = planetcore.get_vel_y()
 
@@ -228,8 +232,8 @@ class Logic(Screen):
         D = self.planets
         # C Code!
         diameter = 2 * sqrt(D[index]['density'] * D[index]['mass'] / 3.14)
+        #print diameter
         D[index]['widget'].size = (diameter, diameter)
-        print D[index]['widget'].size
 
     # build separate module for canvas-shizzle?
     def draw_trajectory(self):
@@ -269,20 +273,23 @@ class Logic(Screen):
 
     def check_proximity(self, dt):
         P = self.planets
-        S = self.suns
+        #S = self.suns
         for index in P:
             if P[index]['body'] == 'sun':
                 continue
             distances = []
-            for index2 in S:
+            for index2 in P:
+                if P[index2]['body'] != 'sun':
+                    continue
                 # ask the mighty planetcore for help doing calculations
                 planetcore = CPlanetcore(P[index]['position_x'],
                                          P[index]['position_y'],
                                          P[index]['velocity_x'],
                                          P[index]['velocity_y'],
                                          P[index]['mass'])
-                dist = planetcore.calc_dist(S[index2]['position_x'],
-                                            S[index2]['position_y'])
+                dist = planetcore.calc_dist(P[index2]['position_x'],
+                                            P[index2]['position_y'])
+                #print dist
                 # kill planetcore - it's no longer needed...
                 del planetcore
                 distances.append(dist)
@@ -309,6 +316,8 @@ class Logic(Screen):
         size1 = D[index1]['widget'].size[0]
         size2 = D[index2]['widget'].size[0]
 
+        #print D,size1,size2
+
         # cook planetcore for dist-calculation
         planetcore = CPlanetcore(D[index1]['position_x'],
                                  D[index1]['position_y'],
@@ -324,3 +333,10 @@ class Logic(Screen):
             return True
         else:
             return False
+
+    def delete_planet(self, index):
+        D = self.planets
+        if not index in D:
+            return
+        self.gamezone.remove_widget(D[index]['widget'])
+        D.pop(index)
