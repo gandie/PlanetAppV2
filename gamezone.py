@@ -15,35 +15,25 @@ class Gamezone(Scatter):
     children of this dude will be planets!?
     '''
 
+    # BUILD TOUCH-HANDLER CLASS, SUBCLASS FOR SPECIAL BEHAVIOUR
+
     def __init__(self, **kwargs):
-       super(Gamezone, self).__init__(**kwargs)
-       self.logic = App.get_running_app().logic
-       self.logic.register(self)
+        super(Gamezone, self).__init__(**kwargs)
+        self.logic = App.get_running_app().logic
+        self.logic.register(self)
 
     def on_touch_down(self, touch):
-        if touch.is_double_tap:
-            touch.push()
-            touch.apply_transform_2d(self.to_local)
-            #self.logic.add_sun(touch.pos)
-            # fixed = True
-
-            # get last body created and kill it to avoid singularities
-            index = self.logic.currindex - 1
-            self.logic.delete_planet(index)
-
-            self.logic.add_body(
-                pos = touch.pos,
-                body = 'sun',
-                mass = 10000,
-                fixed = True,
-                density = 0.5
-            )
-            touch.pop()
-            return
-
         if self.logic.zoom_mode:
             super(Gamezone, self).on_touch_down(touch)
-        else:
+        elif self.logic.del_mode:
+            touch.push()
+            touch.apply_transform_2d(self.to_local)
+            for thingy in self.children:
+                if thingy.collide_point(touch.x,touch.y):
+                    self.logic.delete_planet_widget(thingy)
+                    break
+            touch.pop()
+        elif self.logic.add_planet_mode:
             touch.push()
             touch.apply_transform_2d(self.to_local)
             ud = touch.ud
@@ -57,11 +47,20 @@ class Gamezone(Scatter):
                          width = 1, group = g)]
             touch.grab(self)
             touch.pop()
+        elif self.logic.add_sun_mode:
+            touch.push()
+            touch.apply_transform_2d(self.to_local)
+            ud = touch.ud
+            ud['id'] = 'gametouch'
+            ud['touchtime'] = time.time()
+            ud['firstpos'] = touch.pos
+            touch.grab(self)
+            touch.pop()
 
     def on_touch_move(self, touch):
         if self.logic.zoom_mode:
             super(Gamezone, self).on_touch_move(touch)
-        else:
+        elif self.logic.add_planet_mode:
             if touch.grab_current is not self:
                 return
             touch.push()
@@ -74,7 +73,7 @@ class Gamezone(Scatter):
     def on_touch_up(self, touch):
         if self.logic.zoom_mode:
             super(Gamezone, self).on_touch_up(touch)
-        else:
+        elif self.logic.add_planet_mode:
             if touch.grab_current is not self:
                 return
             touch.push()
@@ -84,12 +83,28 @@ class Gamezone(Scatter):
             touchupv = Vector(touch.pos)
             velocity = (touchupv - touchdownv) / 25
             # make this a squared function
-            newmass = ((time.time() - ud['touchtime']) / 0.1) * 40
+            newmass = ((time.time() - ud['touchtime']) ** 2 / 0.3) * 40
             self.logic.add_body(
                 pos = ud['firstpos'], 
                 vel = (velocity.x, velocity.y),
                 mass = newmass
             )
             self.canvas.remove_group(ud['group'])
+            touch.ungrab(self)
+            touch.pop()
+        elif self.logic.add_sun_mode:
+            if touch.grab_current is not self:
+                return
+            touch.push()
+            touch.apply_transform_2d(self.to_local)
+            ud = touch.ud
+            newmass = ((time.time() - ud['touchtime']) ** 2 / 0.1) * 500
+            self.logic.add_body(
+                pos = ud['firstpos'],
+                body = 'sun',
+                mass = newmass,
+                fixed = True,
+                density = 0.5
+            )
             touch.ungrab(self)
             touch.pop()

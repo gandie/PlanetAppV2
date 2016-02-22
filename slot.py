@@ -17,7 +17,7 @@ class Slot(FloatLayout):
 
     label = ObjectProperty(None)
 
-    def __init__(self, number, switchto_main,**kwargs):
+    def __init__(self, number, switchto_main, **kwargs):
        super(Slot, self).__init__(**kwargs)
        self.logic = App.get_running_app().logic
        self.number = number
@@ -47,6 +47,7 @@ class Slot(FloatLayout):
             pos_hint = {'x' : 0.5, 'y' : 0},
             on_press = self.load
         )
+
         self.savebutton = Button(
             text = 'Save',
             size_hint = (0.25, 1),

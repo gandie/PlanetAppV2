@@ -85,7 +85,7 @@ class MainScreen(Screen):
 
     def build_interface(self):
         self.gamezone = Gamezone(
-            do_rotation=False,
+            #do_rotation=False,
             #do_translation_y=False,
             #do_translation_x=False,
             auto_bring_to_front = False,

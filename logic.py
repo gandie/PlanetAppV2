@@ -22,7 +22,12 @@ class Logic(Screen):
 
     # GUI DATA
     add_planet_mode = BooleanProperty(None)
+    add_sun_mode = BooleanProperty(None)
     zoom_mode = BooleanProperty(None)
+    del_mode = BooleanProperty(None)
+
+    modes = ReferenceListProperty(add_planet_mode, add_sun_mode, 
+                                  zoom_mode, del_mode)
 
     currindex = NumericProperty(1)
 
@@ -36,7 +41,7 @@ class Logic(Screen):
         Clock.schedule_interval(self.move_planets, 1.0 / 30.0)
         Clock.schedule_interval(self.calc_gravity, 1.0 / 30.0)
         Clock.schedule_interval(self.merge_planets, 1.0 / 30.0)
-        Clock.schedule_interval(self.check_proximity, 1.0 / 25.0)
+        Clock.schedule_interval(self.check_proximity, 1.0 / 20.0)
 
     def stop_game(self):
         Clock.unschedule(self.move_planets)
@@ -115,6 +120,7 @@ class Logic(Screen):
             for index2 in D:
                 if index1 == index2:
                     continue
+
                 # collision, maybe write own collision-thingy?
                 #if not D[index1]['widget'].collide_widget(D[index2]['widget']):
                 #    continue
@@ -201,9 +207,6 @@ class Logic(Screen):
         D = self.planets
         diameter = 2 * sqrt(D[index]['density'] * D[index]['mass'] / 3.14)
         D[index]['widget'].size = (diameter, diameter)
-        #print D[index]['widget'].size
-        #print D[index]['widget'].base_image.size
-        #print diameter
 
     # build separate module for canvas-shizzle?
     def draw_trajectory(self):
@@ -281,3 +284,10 @@ class Logic(Screen):
             return
         self.gamezone.remove_widget(D[index]['widget'])
         D.pop(index)
+
+    def delete_planet_widget(self, widget):
+        D = self.planets
+        for index in D:
+            if D[index]['widget'] == widget:
+                self.delete_planet(index)
+                break

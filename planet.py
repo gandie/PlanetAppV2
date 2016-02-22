@@ -18,7 +18,7 @@ class Planet(FloatLayout):
             size_hint = (1, 1),
             pos_hint = {'x' : 0, 'y' : 0},
             #allow_stretch = True,
-            source = './media/textures/planets/moon_01.png'
+            source = './media/textures/planets/planet.png'
         )
         self.add_widget(self.base_image)
         #print self.children
