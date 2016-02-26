@@ -3,6 +3,8 @@ from kivy.uix.screenmanager import ScreenManager
 from kivy.properties import *
 
 from mainscreen import MainScreen
+
+
 from menuscreen import MenuScreen
 from settingsscreen import SettingsScreen
 from savegamescreen import SavegameScreen
@@ -33,7 +35,6 @@ class PlanetApp(App):
         self.menuscreen = MenuScreen(name = 'menu')
         self.settingsscreen = SettingsScreen(name = 'settings')
         self.savegamescreen = SavegameScreen(name = 'savegames')
-
         self.screenmanager.add_widget(self.menuscreen)
         self.screenmanager.add_widget(self.mainscreen)
         self.screenmanager.add_widget(self.settingsscreen)
@@ -58,6 +59,7 @@ class PlanetApp(App):
                 vel = (D[index]['velocity_x'], D[index]['velocity_y'])
                 self.logic.add_body(pos = pos, vel = vel, **D[index])
             f.close()
+            #self.logic.calc_gravity(1)
         except:
             print 'nein'
 
@@ -80,7 +82,7 @@ class PlanetApp(App):
                 time_save = time.ctime(time_raw)
                 save_mtimes[i] = str(time_save)
             except Exception as e:
-                save_mtimes[i] = '<Empyt>'
+                save_mtimes[i] = '<Empty>'
 
         return save_mtimes
 

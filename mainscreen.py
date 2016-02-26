@@ -22,6 +22,8 @@ from gamezone import Gamezone
 
 from kivy.clock import Clock
 
+from kivy.core.window import Window
+
 class MainScreen(Screen):
     '''
     see kv file for background path
@@ -46,7 +48,8 @@ class MainScreen(Screen):
 
     def on_enter(self):
         self.allign_gamezone()
-        self.logic.start_game()
+        if not self.menupanel.paused:
+            self.logic.start_game()
 
     def on_leave(self):
         self.logic.stop_game()
@@ -96,9 +99,28 @@ class MainScreen(Screen):
         )
         self.add_widget(self.gamezone)
 
+        self.calc_iconsize()
+
         self.menupanel = MenuPanel(
-            size_hint = (1,0.2)
+            #size_hint = (1,0.1)
+            self.iconsize,
+            self.iconratio,
+            size_hint = (None, None),
+            size = (self.iconsize, Window.height),
+            pos_hint = {'x' : 0, 'y' : 0}
         )
 
         self.add_widget(self.menupanel)
+
+    def calc_iconsize(self):
+        icon_count = 7
+        window_height = Window.height
+        iconsize = window_height / icon_count
+        self.iconratio = float(iconsize) / window_height
+        self.iconsize = iconsize
+        #print iconsize
+        #print self.iconratio
+        #print Window.height
+        #self.settingsbutton.text = '{0} , {1}'.format(Window.width, Window.height)
+
 

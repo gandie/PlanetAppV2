@@ -8,12 +8,19 @@ from kivy.animation import Animation
 from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
 from kivy.uix.behaviors import ToggleButtonBehavior
+from kivy.uix.togglebutton import ToggleButton
 from kivy.app import App
 
 from cplanetcore import CPlanetcore
 from logic import Logic
 
+from kivy.core.window import Window
+
+from realbutton import RealButton
+from realbutton import RealToggleButton
+from realbutton import RealMenuToggleButton
 class MenuToggleButton(ToggleButtonBehavior, Button):
+
     def __init__(self, **kwargs):
         super(MenuToggleButton, self).__init__(**kwargs)
 
@@ -21,55 +28,69 @@ class MenuToggleButton(ToggleButtonBehavior, Button):
         # i hate this code, togglebuttons are strange
         if self.parent != None:
             if value == 'down':
-                if widget.text == 'add_planet_mode':
+                if widget == self.parent.testbutton1:
                     self.parent.option1 = True
                     self.parent.option2 = False
                     self.parent.option3 = False
                     self.parent.option4 = False
-                elif widget.text == 'zoom':
+                elif widget == self.parent.testbutton2:
                     self.parent.option1 = False
                     self.parent.option2 = True
                     self.parent.option3 = False
                     self.parent.option4 = False
-                elif widget.text == 'add_sun_mode':
+                elif widget == self.parent.testbutton3:
                     self.parent.option1 = False
                     self.parent.option2 = False
                     self.parent.option3 = True
                     self.parent.option4 = False
-                elif widget.text == 'del':
+                elif widget == self.parent.testbutton4:
                     self.parent.option1 = False
                     self.parent.option2 = False
                     self.parent.option3 = False
                     self.parent.option4 = True
 
+
 class MenuPanel(FloatLayout):
 
-    fadebutton = ObjectProperty(None)
-    opened = BooleanProperty(True)
-
+    # buttons
     testbutton1 = ObjectProperty(None)
     testbutton2 = ObjectProperty(None)
     testbutton3 = ObjectProperty(None)
     testbutton4 = ObjectProperty(None)
-
     menubutton = ObjectProperty(None)
     resetbutton = ObjectProperty(None)
-
     pausebutton = ObjectProperty(None)
+
+    optionbuttons = ReferenceListProperty(
+        testbutton1,
+        testbutton2,
+        testbutton3,
+        testbutton4
+        #menubutton,
+        #resetbutton,
+        #pausebutton
+    )
+
+    realbutton = ObjectProperty(None)
+
     paused = BooleanProperty(False)
 
     option1 = BooleanProperty(True)
     option2 = BooleanProperty(False)
     option3 = BooleanProperty(False)
     option4 = BooleanProperty(False)
-
     options = ReferenceListProperty(option1, option2, option3, option4)
 
     logic = ObjectProperty(None)
 
-    def __init__(self,**kwargs):
+    def __init__(self, iconsize, iconratio, **kwargs):
        super(MenuPanel, self).__init__(**kwargs)
        self.logic = App.get_running_app().logic
+
+       #self.calc_iconsize()
+       self.iconsize = iconsize
+       self.iconratio = iconratio
+
        self.build_interface()
        self.logic.add_planet_mode = True
        self.logic.zoom_mode = False
@@ -82,66 +103,104 @@ class MenuPanel(FloatLayout):
 
     def build_interface(self):
 
-        self.fadebutton = Button(
-            text = 'Down',
-            pos_hint = {'x':0,'y':0.5},
-            size_hint = (0.2,0.5),
-            on_press = self.btn_fade
-        )
-        self.add_widget(self.fadebutton)
-
-        self.menubutton = Button(
-            text = 'Menu', 
-            pos_hint = {'x':0,'y':0},
-            size_hint = (0.1,0.5),
-            on_press = self.goto_menu
+        self.menubutton = RealButton(
+            #text = 'Menu',
+            './media/icons/menu.png',
+            './media/icons/menu_pressed.png',
+            self.goto_menu,
+            pos_hint = {'x' : 0, 'y' : 0},
+            size_hint = (None, None),
+            size = (self.iconsize, self.iconsize),
+            #on_press = self.goto_menu,
+            source = './media/icons/menu.png',
+            always_release = True
         )
 
-        self.pausebutton = Button(
-            text = 'Pause', 
-            pos_hint = {'x':0.1,'y':0},
-            size_hint = (0.1,0.5),
-            on_press = self.pause_game
+        self.pausebutton = RealToggleButton(
+            './media/icons/pause.png',
+            './media/icons/pause_pressed.png',
+            #self.testfunction,
+            self.pause_game,
+            pos_hint = {'x' : 0, 'y' : self.iconratio},
+            size_hint = (None, None),
+            size = (self.iconsize, self.iconsize),
+            #on_press = self.goto_menu,
+            source = './media/icons/pause.png',
+            always_release = True
         )
 
-        self.resetbutton = Button(
-            text = 'Reset',
-            pos_hint = {'x':0.2,'y':0},
-            size_hint = (0.2, 0.5),
-            on_press = self.logic.reset_planets
+        self.resetbutton = RealButton(
+            #text = 'Menu',
+            './media/icons/reset.png',
+            './media/icons/reset_pressed.png',
+            self.logic.reset_planets,
+            pos_hint = {'x' : 0, 'y' : self.iconratio * 2},
+            size_hint = (None, None),
+            size = (self.iconsize, self.iconsize),
+            #on_press = self.goto_menu,
+            source = './media/icons/reset.png',
+            always_release = True
         )
 
-        self.testbutton1 = MenuToggleButton(
-            text = 'add_planet_mode', 
-            pos_hint = {'x':0.4,'y':0},
-            size_hint = (0.2,0.5),
-            group='menu',
-            state='down',
-            allow_no_selection=False
+        self.testbutton4 = RealMenuToggleButton(
+            #text = 'del', 
+            './media/icons/delete.png',
+            './media/icons/delete_pressed.png',
+            pos_hint = {'x' : 0, 'y' : self.iconratio * 3},
+            size_hint = (None, None),
+            size = (self.iconsize, self.iconsize),
+            #background_normal = './media/icons/delete.png',
+            #background_down = './media/icons/delete_pressed.png',
+            source = './media/icons/delete.png',
+            group = 'menu',
+            allow_no_selection = False
         )
 
-        self.testbutton3 = MenuToggleButton(
-            text = 'add_sun_mode', 
-            pos_hint = {'x':0.6,'y':0},
-            size_hint = (0.2,0.5),
-            group='menu',
-            allow_no_selection=False
+        self.testbutton3 = RealMenuToggleButton(
+            #text = 'sun', 
+            './media/icons/add_sun.png',
+            './media/icons/add_sun_pressed.png',
+            pos_hint = {'x' : 0, 'y' : self.iconratio * 4},
+            size_hint = (None, None),
+            size = (self.iconsize, self.iconsize),
+            #background_normal = './media/icons/add_sun.png',
+            #background_down = './media/icons/add_sun_pressed.png',
+            source = './media/icons/add_sun.png',
+            group = 'menu',
+            allow_no_selection = False
         )
 
-        self.testbutton4 = MenuToggleButton(
-            text = 'del', 
-            pos_hint = {'x':0.8,'y':0},
-            size_hint = (0.1,0.5),
-            group='menu',
-            allow_no_selection=False
+        self.testbutton1 = RealMenuToggleButton(
+            #text = 'add_planet_mode',
+            './media/icons/add_planet.png',
+            './media/icons/add_planet_pressed.png',
+            size_hint = (None, None), 
+            size = (self.iconsize, self.iconsize),
+            pos_hint = {'x' : 0, 'y' : self.iconratio * 5},
+            #size_hint = (0.09,1),
+            #size_hint = (0.07,1),
+
+            group = 'menu',
+            state = 'down',
+            allow_no_selection = False,
+            #background_normal = './media/icons/add_planet.png',
+            #background_down = './media/icons/add_planet_pressed.png'
+            source = './media/icons/add_planet.png'
         )
 
-        self.testbutton2 = MenuToggleButton(
-            text = 'zoom', 
-            pos_hint = {'x':0.9,'y':0},
-            size_hint = (0.1,0.5),
-            group='menu',
-            allow_no_selection=False
+        self.testbutton2 = RealMenuToggleButton(
+            #text = 'zoom',
+            './media/icons/zoom_mode.png',
+            './media/icons/zoom_mode_pressed.png',
+            size_hint = (None, None), 
+            size = (self.iconsize, self.iconsize),
+            pos_hint = {'x' : 0, 'y' : self.iconratio * 6},
+            #size_hint = (0.1,1),
+            group = 'menu',
+            allow_no_selection = False,
+            #background_normal = './media/icons/zoom_mode.png',
+            #background_down = './media/icons/zoom_mode_pressed.png'
+            source = './media/icons/zoom_mode.png'
         )
 
         self.add_widget(self.testbutton1)
@@ -151,30 +210,18 @@ class MenuPanel(FloatLayout):
         self.add_widget(self.menubutton)
         self.add_widget(self.pausebutton)
         self.add_widget(self.resetbutton)
+        #self.add_widget(self.realbutton)
 
     def goto_menu(self, instance):
         self.parent.manager.current = 'menu'
 
     def pause_game(self, instance):
         if not self.paused:
-            self.pausebutton.text = 'Start'
             self.logic.stop_game()
             self.paused = True
         else:
-            self.pausebutton.text = 'Pause'
             self.logic.start_game()
             self.paused = False
 
-    def btn_fade(self, instance):
-        offset = self.size[1] / 2
-        if self.opened:
-            self.fadebutton.text = 'Up'
-            anim1 = Animation(y = -offset, t='out_bounce')
-            anim1.start(self)
-            self.opened = False
-        else:
-            self.fadebutton.text = 'Down'
-            # why 1? wtf!?
-            anim1 = Animation(y = 1, t='out_bounce')
-            anim1.start(self)
-            self.opened = True
+    def testfunction(self, instance):
+        print 'Jau!'

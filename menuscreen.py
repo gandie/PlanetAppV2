@@ -9,6 +9,8 @@ from kivy.uix.button import Button
 # does it need logic?!
 # everyone needs logic xD
 
+from kivy.core.window import Window
+
 class MenuScreen(Screen):
 
     '''

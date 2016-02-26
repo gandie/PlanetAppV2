@@ -34,6 +34,9 @@ class Logic(Screen):
     def __init__(self):
         self.planets = {}
 
+        self.distances = {}
+        self.forces = {}
+
         self.planet_textures = self.load_textures('./media/textures/planets/')
         self.sun_textures = self.load_textures('./media/textures/suns/')
 
@@ -114,48 +117,39 @@ class Logic(Screen):
             D[index]['widget'].center_y = D[index]['position_y']
 
     def merge_planets(self, dt):
-        D = self.planets
+        P = self.planets
         merged_planets = []
-        for index1 in D:
-            for index2 in D:
+        for index1 in P:
+            for index2 in P:
                 if index1 == index2:
                     continue
 
                 # collision, maybe write own collision-thingy?
-                #if not D[index1]['widget'].collide_widget(D[index2]['widget']):
+                #if not P[index1]['widget'].collide_widget(P[index2]['widget']):
                 #    continue
                 
                 if not self.check_collision(index1, index2):
                     continue
                 
                 # bigger body eats smaller one
-                if D[index1]['mass'] < D[index2]['mass']:
+                if P[index1]['mass'] < P[index2]['mass']:
                     continue
 
-                # ask the mighty planetcore for help doing calculations
-                planetcore = CPlanetcore(D[index1]['position_x'],
-                                         D[index1]['position_y'],
-                                         D[index1]['velocity_x'],
-                                         D[index1]['velocity_y'],
-                                         D[index1]['mass'])
+                planetcore = CPlanetcore(P[index1]['position_x'],
+                                         P[index1]['position_y'],
+                                         P[index2]['position_x'],
+                                         P[index2]['position_y'],
+                                         P[index1]['velocity_x'],
+                                         P[index1]['velocity_y'],
+                                         P[index2]['velocity_x'],
+                                         P[index2]['velocity_y'],
+                                         P[index1]['mass'],
+                                         P[index2]['mass'])
 
-                # planetcore knows how to calculate collision stuff
-                newmass = planetcore.calc_impulse(D[index2]['velocity_x'],
-                                                  D[index2]['velocity_y'],
-                                                  D[index2]['mass'])
+                P[index1]['mass'] = planetcore.calc_impulse()
+                P[index1]['velocity_x'] = planetcore.get_vel_p1_x()
+                P[index1]['velocity_y'] = planetcore.get_vel_p1_y()
 
-                # ask mighty planetcore for new velocity
-                new_vx = planetcore.get_vel_x()
-                new_vy = planetcore.get_vel_y()
-
-                #print type(new_vx)
-
-                D[index1]['velocity_x'] = planetcore.get_vel_x()
-                D[index1]['velocity_y'] = planetcore.get_vel_y()
-
-                D[index1]['mass'] = newmass
-
-                # kill planetcore due to memory-sanity
                 del planetcore
 
                 # calculate new size
@@ -167,35 +161,47 @@ class Logic(Screen):
         # remove merged planets afterwards
         for planetindex in merged_planets:
             self.delete_planet(planetindex)
-            #self.gamezone.remove_widget(D[planetindex]['widget'])
-            #D.pop(planetindex)
+            #self.gamezone.remove_widget(P[planetindex]['widget'])
+            #P.pop(planetindex)
 
     def calc_gravity(self, dt):
-        D = self.planets
-        # loop over planets
-        for index1 in D:
-            # initialize the mighty planetcore!
-            planetcore = CPlanetcore(D[index1]['position_x'],
-                                     D[index1]['position_y'],
-                                     D[index1]['velocity_x'],
-                                     D[index1]['velocity_y'],
-                                     D[index1]['mass'])
-            # loop over planets...again
-            for index2 in D:
-                # do not create singularites ;-)
-                if index1 == index2:
-                    continue
-                # let the mighty planetcore do its work
-                force = planetcore.calc_body(D[index2]['position_x'],
-                                             D[index2]['position_y'],
-                                             D[index2]['mass'])
+        P = self.planets
+        newlist = P.keys()
+        remove = newlist.remove
 
-            # ask mighty planetcore for results
-            D[index1]['velocity_x'] = planetcore.get_vel_x()
-            D[index1]['velocity_y'] = planetcore.get_vel_y()
+        # prepare distances
+        D = self.distances        
+        F = self.forces
+        for index in P:
+            D[index] = {}
+            F[index] = {}
 
-            # clear planetcore for hygienic purposes
-            del planetcore
+        for index1 in P:
+            remove(index1)
+            for index2 in newlist:
+                # initialize the new mighty planetcore
+                planetcore = CPlanetcore(P[index1]['position_x'],
+                                         P[index1]['position_y'],
+                                         P[index2]['position_x'],
+                                         P[index2]['position_y'],
+                                         P[index1]['velocity_x'],
+                                         P[index1]['velocity_y'],
+                                         P[index2]['velocity_x'],
+                                         P[index2]['velocity_y'],
+                                         P[index1]['mass'],
+                                         P[index2]['mass'])
+                dist = planetcore.calc_dist()
+                D[index1][index2] = dist
+                D[index2][index1] = dist
+                force = planetcore.calc_gravity()
+                F[index1][index2] = force
+                F[index2][index1] = force
+                P[index1]['velocity_x'] = planetcore.get_vel_p1_x()
+                P[index1]['velocity_y'] = planetcore.get_vel_p1_y()
+                P[index2]['velocity_x'] = planetcore.get_vel_p2_x()
+                P[index2]['velocity_y'] = planetcore.get_vel_p2_y()
+                
+                del planetcore
 
     def calc_trajectory(self):
         pass
@@ -225,6 +231,7 @@ class Logic(Screen):
 
     def check_proximity(self, dt):
         P = self.planets
+        D = self.distances
         #S = self.suns
         for index in P:
             if P[index]['body'] == 'sun':
@@ -233,17 +240,12 @@ class Logic(Screen):
             for index2 in P:
                 if P[index2]['body'] != 'sun':
                     continue
-                # ask the mighty planetcore for help doing calculations
-                planetcore = CPlanetcore(P[index]['position_x'],
-                                         P[index]['position_y'],
-                                         P[index]['velocity_x'],
-                                         P[index]['velocity_y'],
-                                         P[index]['mass'])
-                dist = planetcore.calc_dist(P[index2]['position_x'],
-                                            P[index2]['position_y'])
-                # kill planetcore - it's no longer needed...
-                del planetcore
-                distances.append(dist)
+                if index in D[index2] and index in D:
+                    dist = D[index2][index]
+                    distances.append(dist)
+                else:
+                    print 'nein'
+                
             if distances:
                 dist = min(distances)
                 # do smart stuff HERE!
@@ -252,26 +254,18 @@ class Logic(Screen):
                 P[index]['widget'].set_color(offset)
 
     def check_collision(self, index1, index2):
-        D = self.planets
+        P = self.planets
+        D = self.distances
 
         # get coords of second planet
-        p2_x = D[index2]['position_x']
-        p2_y = D[index2]['position_y']
+        p2_x = P[index2]['position_x']
+        p2_y = P[index2]['position_y']
 
         # get size of each planet / body
-        size1 = D[index1]['widget'].size[0]
-        size2 = D[index2]['widget'].size[0]
+        size1 = P[index1]['widget'].size[0]
+        size2 = P[index2]['widget'].size[0]
 
-        # cook planetcore for dist-calculation
-        planetcore = CPlanetcore(D[index1]['position_x'],
-                                 D[index1]['position_y'],
-                                 D[index1]['velocity_x'],
-                                 D[index1]['velocity_y'],
-                                 D[index1]['mass'])
-
-        dist = planetcore.calc_dist(p2_x, p2_y)
-
-        del planetcore
+        dist = D[index1][index2]
 
         if dist < ((size1 + size2)/2):
             return True
