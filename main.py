@@ -43,10 +43,36 @@ class PlanetApp(App):
         return self.screenmanager
 
     def on_start(self):
+        self.load_settings()
         self.load_game()
 
     def on_stop(self):
+        self.save_settings()
         self.save_game()
+
+    def load_settings(self):
+        try:
+            f = open('settings.json', 'r')
+            json_d = f.readline()
+            D = json.loads(json_d)
+            f.close
+        except:
+            print 'nein, keine settings'
+            D = {
+                'min_planet_mass' : 20,
+                'min_sun_mass' : 50000,
+                'planet_density' : 0.01,
+                'sun_density' : 0.005,
+                'norm_temp' : 200
+            }
+        self.logic.settings = D
+
+    def save_settings(self):
+        f = open('settings.json', 'w')
+        D = copy.deepcopy(self.logic.settings)
+        json_d = json.dumps(D)
+        f.write(json_d)
+        f.close()
 
     def load_game(self, slot = 'current'):
         self.logic.reset_planets(self)

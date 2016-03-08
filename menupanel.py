@@ -19,36 +19,6 @@ from kivy.core.window import Window
 from realbutton import RealButton
 from realbutton import RealToggleButton
 from realbutton import RealMenuToggleButton
-class MenuToggleButton(ToggleButtonBehavior, Button):
-
-    def __init__(self, **kwargs):
-        super(MenuToggleButton, self).__init__(**kwargs)
-
-    def on_state(self, widget, value):
-        # i hate this code, togglebuttons are strange
-        if self.parent != None:
-            if value == 'down':
-                if widget == self.parent.testbutton1:
-                    self.parent.option1 = True
-                    self.parent.option2 = False
-                    self.parent.option3 = False
-                    self.parent.option4 = False
-                elif widget == self.parent.testbutton2:
-                    self.parent.option1 = False
-                    self.parent.option2 = True
-                    self.parent.option3 = False
-                    self.parent.option4 = False
-                elif widget == self.parent.testbutton3:
-                    self.parent.option1 = False
-                    self.parent.option2 = False
-                    self.parent.option3 = True
-                    self.parent.option4 = False
-                elif widget == self.parent.testbutton4:
-                    self.parent.option1 = False
-                    self.parent.option2 = False
-                    self.parent.option3 = False
-                    self.parent.option4 = True
-
 
 class MenuPanel(FloatLayout):
 
@@ -57,6 +27,8 @@ class MenuPanel(FloatLayout):
     testbutton2 = ObjectProperty(None)
     testbutton3 = ObjectProperty(None)
     testbutton4 = ObjectProperty(None)
+    testbutton5 = ObjectProperty(None)
+
     menubutton = ObjectProperty(None)
     resetbutton = ObjectProperty(None)
     pausebutton = ObjectProperty(None)
@@ -65,10 +37,8 @@ class MenuPanel(FloatLayout):
         testbutton1,
         testbutton2,
         testbutton3,
-        testbutton4
-        #menubutton,
-        #resetbutton,
-        #pausebutton
+        testbutton4,
+        testbutton5
     )
 
     realbutton = ObjectProperty(None)
@@ -79,7 +49,8 @@ class MenuPanel(FloatLayout):
     option2 = BooleanProperty(False)
     option3 = BooleanProperty(False)
     option4 = BooleanProperty(False)
-    options = ReferenceListProperty(option1, option2, option3, option4)
+    option5 = BooleanProperty(False)
+    options = ReferenceListProperty(option1, option2, option3, option4, option5)
 
     logic = ObjectProperty(None)
 
@@ -87,7 +58,6 @@ class MenuPanel(FloatLayout):
        super(MenuPanel, self).__init__(**kwargs)
        self.logic = App.get_running_app().logic
 
-       #self.calc_iconsize()
        self.iconsize = iconsize
        self.iconratio = iconratio
 
@@ -100,6 +70,8 @@ class MenuPanel(FloatLayout):
         self.logic.zoom_mode = self.option2
         self.logic.add_sun_mode = self.option3
         self.logic.del_mode = self.option4
+        #self.logic.pick_mode = self.option5
+        self.logic.multi_mode = self.option5
 
     def build_interface(self):
 
@@ -119,98 +91,89 @@ class MenuPanel(FloatLayout):
         self.pausebutton = RealToggleButton(
             './media/icons/pause.png',
             './media/icons/pause_pressed.png',
-            #self.testfunction,
             self.pause_game,
             pos_hint = {'x' : 0, 'y' : self.iconratio},
             size_hint = (None, None),
             size = (self.iconsize, self.iconsize),
-            #on_press = self.goto_menu,
             source = './media/icons/pause.png',
             always_release = True
         )
 
         self.resetbutton = RealButton(
-            #text = 'Menu',
             './media/icons/reset.png',
             './media/icons/reset_pressed.png',
             self.logic.reset_planets,
             pos_hint = {'x' : 0, 'y' : self.iconratio * 2},
             size_hint = (None, None),
             size = (self.iconsize, self.iconsize),
-            #on_press = self.goto_menu,
             source = './media/icons/reset.png',
             always_release = True
         )
 
         self.testbutton4 = RealMenuToggleButton(
-            #text = 'del', 
             './media/icons/delete.png',
             './media/icons/delete_pressed.png',
             pos_hint = {'x' : 0, 'y' : self.iconratio * 3},
             size_hint = (None, None),
             size = (self.iconsize, self.iconsize),
-            #background_normal = './media/icons/delete.png',
-            #background_down = './media/icons/delete_pressed.png',
             source = './media/icons/delete.png',
             group = 'menu',
             allow_no_selection = False
         )
 
         self.testbutton3 = RealMenuToggleButton(
-            #text = 'sun', 
             './media/icons/add_sun.png',
             './media/icons/add_sun_pressed.png',
             pos_hint = {'x' : 0, 'y' : self.iconratio * 4},
             size_hint = (None, None),
             size = (self.iconsize, self.iconsize),
-            #background_normal = './media/icons/add_sun.png',
-            #background_down = './media/icons/add_sun_pressed.png',
             source = './media/icons/add_sun.png',
             group = 'menu',
             allow_no_selection = False
         )
 
         self.testbutton1 = RealMenuToggleButton(
-            #text = 'add_planet_mode',
             './media/icons/add_planet.png',
             './media/icons/add_planet_pressed.png',
             size_hint = (None, None), 
             size = (self.iconsize, self.iconsize),
             pos_hint = {'x' : 0, 'y' : self.iconratio * 5},
-            #size_hint = (0.09,1),
-            #size_hint = (0.07,1),
-
             group = 'menu',
             state = 'down',
             allow_no_selection = False,
-            #background_normal = './media/icons/add_planet.png',
-            #background_down = './media/icons/add_planet_pressed.png'
-            source = './media/icons/add_planet.png'
+            source = './media/icons/add_planet_pressed.png'
         )
 
         self.testbutton2 = RealMenuToggleButton(
-            #text = 'zoom',
             './media/icons/zoom_mode.png',
             './media/icons/zoom_mode_pressed.png',
             size_hint = (None, None), 
             size = (self.iconsize, self.iconsize),
             pos_hint = {'x' : 0, 'y' : self.iconratio * 6},
-            #size_hint = (0.1,1),
             group = 'menu',
             allow_no_selection = False,
-            #background_normal = './media/icons/zoom_mode.png',
-            #background_down = './media/icons/zoom_mode_pressed.png'
             source = './media/icons/zoom_mode.png'
+        )
+
+        self.testbutton5 = RealMenuToggleButton(
+            './media/icons/multipass.png',
+            './media/icons/multipass_pressed.png',
+            size_hint = (None, None), 
+            size = (self.iconsize, self.iconsize),
+            pos_hint = {'x' : 0, 'y' : self.iconratio * 7},
+            group = 'menu',
+            allow_no_selection = False,
+            source = './media/icons/multipass.png'
         )
 
         self.add_widget(self.testbutton1)
         self.add_widget(self.testbutton2)
         self.add_widget(self.testbutton3)
         self.add_widget(self.testbutton4)
+        self.add_widget(self.testbutton5)
         self.add_widget(self.menubutton)
         self.add_widget(self.pausebutton)
         self.add_widget(self.resetbutton)
-        #self.add_widget(self.realbutton)
 
     def goto_menu(self, instance):
         self.parent.manager.current = 'menu'

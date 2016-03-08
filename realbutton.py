@@ -64,21 +64,31 @@ class RealMenuToggleButton(ToggleButtonBehavior, Image):
                     self.parent.option2 = False
                     self.parent.option3 = False
                     self.parent.option4 = False
+                    self.parent.option5 = False
                 elif widget == self.parent.testbutton2:
                     self.parent.option1 = False
                     self.parent.option2 = True
                     self.parent.option3 = False
                     self.parent.option4 = False
+                    self.parent.option5 = False
                 elif widget == self.parent.testbutton3:
                     self.parent.option1 = False
                     self.parent.option2 = False
                     self.parent.option3 = True
                     self.parent.option4 = False
+                    self.parent.option5 = False
                 elif widget == self.parent.testbutton4:
                     self.parent.option1 = False
                     self.parent.option2 = False
                     self.parent.option3 = False
                     self.parent.option4 = True
+                    self.parent.option5 = False
+                elif widget == self.parent.testbutton5:
+                    self.parent.option1 = False
+                    self.parent.option2 = False
+                    self.parent.option3 = False
+                    self.parent.option4 = False
+                    self.parent.option5 = True
 
                 for dude in self.parent.optionbuttons:
                     if widget == dude:

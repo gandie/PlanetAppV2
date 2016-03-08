@@ -24,6 +24,12 @@ from kivy.clock import Clock
 
 from kivy.core.window import Window
 
+from tutorial_label import Tutorial_Label
+
+from infobox import Infobox
+
+from seltoggles import Seltoggles
+
 class MainScreen(Screen):
     '''
     see kv file for background path
@@ -33,8 +39,16 @@ class MainScreen(Screen):
     menupanel = ObjectProperty(None)
     gamezone = ObjectProperty(None)
 
+    # label for tutorial texts
+    tutorial_label = ObjectProperty(None)
+
+    # showing infos about selected planets
+    infobox = ObjectProperty(None)
+
+    seltoggles = ObjectProperty(None)
+
     # add widgets to interface for touch-handling
-    interface = ReferenceListProperty(menupanel, gamezone)
+    interface = ReferenceListProperty(menupanel, gamezone, tutorial_label, infobox, seltoggles)
 
     # LOGIC
     logic = ObjectProperty(None)
@@ -43,6 +57,7 @@ class MainScreen(Screen):
        super(MainScreen, self).__init__(**kwargs)
        self.build_interface()
        self.logic = App.get_running_app().logic
+       self.logic.register_mainscreen(self)
        #Clock.schedule_once(self.allign_gamezone, -1)
        #Clock.schedule_once(self.allign_gamezone, 0)
 
@@ -50,9 +65,30 @@ class MainScreen(Screen):
         self.allign_gamezone()
         if not self.menupanel.paused:
             self.logic.start_game()
+        if self.logic.tutorial_mode:
+            self.add_widget(self.tutorial_label)
+
+    def add_seltoggles(self):
+        if not self.seltoggles in self.children:
+            self.add_widget(self.seltoggles)
+
+    def remove_seltoggles(self):
+        if self.seltoggles in self.children:
+            self.remove_widget(self.seltoggles)
+
+    def add_infobox(self):
+        if not self.infobox in self.children:
+            self.add_widget(self.infobox)
+
+    def remove_infobox(self):
+        if self.infobox in self.children:
+            self.remove_widget(self.infobox)
 
     def on_leave(self):
         self.logic.stop_game()
+        if self.logic.tutorial_mode:
+            self.remove_widget(self.tutorial_label)
+            self.logic.tutorial_mode = False
 
     def allign_gamezone(self):
         self.gamezone.center_x = self.center_x
@@ -61,6 +97,8 @@ class MainScreen(Screen):
     # hand down touch events, hand to gamezone if nothing else matches
     def on_touch_down(self, touch):
         for thingy in self.interface:
+            if not thingy in self.children:
+                continue
             if thingy == self.gamezone:
                 continue
             if thingy.collide_point(touch.x,touch.y):
@@ -70,6 +108,8 @@ class MainScreen(Screen):
 
     def on_touch_move(self, touch):
         for thingy in self.interface:
+            if not thingy in self.children:
+                continue
             if thingy == self.gamezone:
                 continue
             if thingy.collide_point(touch.x,touch.y):
@@ -79,6 +119,8 @@ class MainScreen(Screen):
 
     def on_touch_up(self, touch):
         for thingy in self.interface:
+            if not thingy in self.children:
+                continue
             if thingy == self.gamezone:
                 continue
             if thingy.collide_point(touch.x,touch.y):
@@ -87,6 +129,26 @@ class MainScreen(Screen):
         self.gamezone.on_touch_up(touch)
 
     def build_interface(self):
+        self.calc_iconsize()
+
+        self.tutorial_label = Tutorial_Label(
+            size_hint = (0.8, 0.1),
+            pos_hint = {'x' : 0.2, 'y' : 0.9}
+        )
+
+        self.infobox = Infobox(
+            size_hint = (0.2, 0.5),
+            pos_hint = {'x' : 0.8, 'y' :0.5}
+        )
+
+        self.seltoggles = Seltoggles(
+            self.iconsize,
+            self.iconratio_x,
+            size_hint = (None, None),
+            size = (4 * self.iconsize, self.iconsize),
+            pos_hint = {'x' : 1 - 4 * self.iconratio_x, 'y' : 0}
+        )
+
         self.gamezone = Gamezone(
             #do_rotation=False,
             #do_translation_y=False,
@@ -99,12 +161,10 @@ class MainScreen(Screen):
         )
         self.add_widget(self.gamezone)
 
-        self.calc_iconsize()
-
         self.menupanel = MenuPanel(
             #size_hint = (1,0.1)
             self.iconsize,
-            self.iconratio,
+            self.iconratio_y,
             size_hint = (None, None),
             size = (self.iconsize, Window.height),
             pos_hint = {'x' : 0, 'y' : 0}
@@ -113,14 +173,10 @@ class MainScreen(Screen):
         self.add_widget(self.menupanel)
 
     def calc_iconsize(self):
-        icon_count = 7
+        icon_count = 8
         window_height = Window.height
+        window_width = Window.width
         iconsize = window_height / icon_count
-        self.iconratio = float(iconsize) / window_height
+        self.iconratio_y = float(iconsize) / window_height
+        self.iconratio_x = float(iconsize) / window_width
         self.iconsize = iconsize
-        #print iconsize
-        #print self.iconratio
-        #print Window.height
-        #self.settingsbutton.text = '{0} , {1}'.format(Window.width, Window.height)
-
-
