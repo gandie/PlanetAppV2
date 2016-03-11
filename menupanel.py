@@ -65,6 +65,14 @@ class MenuPanel(FloatLayout):
        self.logic.add_planet_mode = True
        self.logic.zoom_mode = False
 
+       self.keyword_map = {
+           'add_planet' : self.testbutton1,
+           'add_sun' : self.testbutton3,
+           'del' : self.testbutton4,
+           'zoom' : self.testbutton2,
+           'multi' : self.testbutton5
+       }
+
     def on_options(self, instance, value):
         self.logic.add_planet_mode = self.option1
         self.logic.zoom_mode = self.option2
@@ -72,6 +80,14 @@ class MenuPanel(FloatLayout):
         self.logic.del_mode = self.option4
         #self.logic.pick_mode = self.option5
         self.logic.multi_mode = self.option5
+
+    def press_button(self, keyword):
+        button = self.keyword_map[keyword]
+        for otherbutton in self.optionbuttons:
+            if otherbutton == button:
+                continue
+            otherbutton.state = 'normal'
+        button.state = 'down'
 
     def build_interface(self):
 

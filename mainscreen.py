@@ -132,8 +132,12 @@ class MainScreen(Screen):
         self.calc_iconsize()
 
         self.tutorial_label = Tutorial_Label(
-            size_hint = (0.8, 0.1),
-            pos_hint = {'x' : 0.2, 'y' : 0.9}
+            #size_hint = (None, None),
+            self.iconsize,
+            self.iconratio_x,
+            size_hint = (None, None),
+            size = (8 * self.iconsize, self.iconsize),
+            pos_hint = {'x' : 1 - 8 * self.iconratio_x - 0.2, 'y' : 0.875}
         )
 
         self.infobox = Infobox(
@@ -155,7 +159,7 @@ class MainScreen(Screen):
             #do_translation_x=False,
             auto_bring_to_front = False,
             scale_min = 0.1,
-            scale_max = 1,
+            scale_max = 5,
             size_hint = (10000,10000)
             #pos_hint = {'x':-0.5,'y':-0.5}
         )
@@ -169,6 +173,8 @@ class MainScreen(Screen):
             size = (self.iconsize, Window.height),
             pos_hint = {'x' : 0, 'y' : 0}
         )
+
+        self.tutorial_label.register_menupanel(self.menupanel)
 
         self.add_widget(self.menupanel)
 

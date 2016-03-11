@@ -45,21 +45,65 @@ class Logic(Screen):
         self.distances = {}
         self.forces = {}
 
+        self.moon_textures = self.load_textures('./media/textures/moons/')
         self.planet_textures = self.load_textures('./media/textures/planets/')
+        self.gasgiant_textures = self.load_textures('./media/textures/gasgiants/')
         self.sun_textures = self.load_textures('./media/textures/suns/')
+        self.bigsun_textures = self.load_textures('./media/textures/bigsuns/')
+        self.giantsun_textures = self.load_textures('./media/textures/giantsuns/')
+        self.blackhole_textures = self.load_textures('./media/textures/blackholes/')
+
         self.bind(selplanet = self.selplanet_change)
+
+    def load_transitions(self):
+        self.planet_transitions = {
+            'moon' : {'nextbody' : 'planet',
+                      'mass' : self.settings['min_planet_mass'],
+                      'density' : self.settings['planet_density'],
+                      'textures' : self.planet_textures},
+            'planet' : {'nextbody' : 'gasgiant',
+                        'mass' : self.settings['min_gasgiant_mass'],
+                        'density' : self.settings['gasgiant_density'],
+                        'textures' : self.gasgiant_textures},
+            'gasgiant' : {'nextbody' : 'sun',
+                          'mass' : self.settings['min_sun_mass'],
+                          'density' : self.settings['sun_density'],
+                          'textures' : self.sun_textures},
+            'sun' : {'nextbody' : 'bigsun',
+                     'mass' : self.settings['min_bigsun_mass'],
+                     'density' : self.settings['bigsun_density'],
+                     'textures' : self.bigsun_textures},
+            'bigsun' : {'nextbody' : 'giantsun',
+                        'mass' : self.settings['min_giantsun_mass'],
+                        'density' : self.settings['giantsun_density'],
+                        'textures' : self.giantsun_textures},
+            'giantsun' : {'nextbody' : 'blackhole',
+                          'mass' : self.settings['min_blackhole_mass'],
+                          'density' : self.settings['blackhole_density'],
+                          'textures' : self.blackhole_textures}
+        }
+
+        self.texture_mapping = {
+            'moon' : self.moon_textures,
+            'planet' : self.planet_textures,
+            'gasgiant' : self.gasgiant_textures,
+            'sun' : self.sun_textures,
+            'bigsun' : self.bigsun_textures,
+            'giantsun' : self.giantsun_textures,
+            'blackhole' : self.blackhole_textures
+        }
 
     def start_game(self):
         Clock.schedule_interval(self.move_planets, 1.0 / 30.0)
         Clock.schedule_interval(self.calc_gravity, 1.0 / 30.0)
         Clock.schedule_interval(self.merge_planets, 1.0 / 30.0)
-        Clock.schedule_interval(self.check_proximity, 1.0 / 20.0)
+        #Clock.schedule_interval(self.check_proximity, 1.0 / 20.0)
 
     def stop_game(self):
         Clock.unschedule(self.move_planets)
         Clock.unschedule(self.calc_gravity)
         Clock.unschedule(self.merge_planets)
-        Clock.unschedule(self.check_proximity)
+        #Clock.unschedule(self.check_proximity)
 
     def register(self, gamezone):
         self.gamezone = gamezone
@@ -74,14 +118,10 @@ class Logic(Screen):
         body = args.get('body', 'planet')
         pos = args.get('pos', (0, 0))
 
-        if body == 'planet':
-            texture_index = args.get('texture_index',
-                                     randint(0, len(self.planet_textures) - 1))
-            newplanet_texture = self.planet_textures[texture_index]
-        elif body == 'sun':
-            texture_index = args.get('texture_index',
-                                     randint(0, len(self.sun_textures) - 1))
-            newplanet_texture = self.sun_textures[texture_index]
+        texture_list = self.texture_mapping.get(body, self.planet_textures)
+        texture_index = args.get('texture_index',
+                                 randint(0, len(texture_list) - 1))
+        newplanet_texture = texture_list[texture_index]
 
         newplanet.set_base_image(newplanet_texture)
 
@@ -227,15 +267,13 @@ class Logic(Screen):
     def calc_planetsize(self, index):
         # now calculating in 3-dimensional space n shit (planets are spheres)
         D = self.planets
-        #diameter = 2 * sqrt(D[index]['density'] * D[index]['mass'] / 3.14)
-        diameter = ((3 * D[index]['mass']) / (4 * 3.14 * D[index]['density'])) ** (1/3.0)
-        D[index]['widget'].size = (diameter, diameter)
 
         # calculate light emission
-        if D[index]['body'] == 'sun':
+        if D[index]['body'] in ['sun', 'bigsun', 'giantsun']:
             light = D[index]['mass'] / self.settings['min_sun_mass']
             D[index]['light'] = light
 
+        '''
         # transition from planet to sun
         if (D[index]['body'] == 'planet'): 
             if D[index]['mass'] > self.settings['min_sun_mass']:
@@ -246,6 +284,23 @@ class Logic(Screen):
                 texture_index = randint(0, len(self.sun_textures) - 1)
                 newplanet_texture = self.sun_textures[texture_index]
                 D[index]['widget'].set_base_image(newplanet_texture)
+        '''
+
+        # new transitions system
+        transition = self.planet_transitions.get(D[index]['body'], None)
+        if transition:
+            if D[index]['mass'] > transition['mass']:
+                D[index]['temperature'] = 0
+                D[index]['widget'].set_color(0, 0, 0)
+                D[index]['body'] = transition['nextbody']
+                D[index]['density'] = transition['density']
+                texture_index = randint(0, len(transition['textures']) - 1)
+                newplanet_texture = transition['textures'][texture_index]
+                D[index]['widget'].set_base_image(newplanet_texture)
+
+        #diameter = 2 * sqrt(D[index]['density'] * D[index]['mass'] / 3.14)
+        diameter = ((3 * D[index]['mass']) / (4 * 3.14 * D[index]['density'])) ** (1/3.0)
+        D[index]['widget'].size = (diameter, diameter)
 
     # build separate module for canvas-shizzle?
     def draw_trajectory(self):
@@ -271,41 +326,52 @@ class Logic(Screen):
                 continue
 
             distances = []
+            
+            #offset_red = 0.7
+            #offset_green = 0.7
+            #offset_blue = 0.7
+            
+            offset = 0.8
 
-            offset_red = 0.7
-            offset_green = 0.7
-            offset_blue = 0.7
+            emitters = ['sun', 'bigsun', 'giantsun']
 
             for index2 in P:
-                if P[index2]['body'] != 'sun':
+                #if P[index2]['body'] != 'sun':
+                #    continue
+                if P[index2]['body'] not in emitters:
                     continue
                 dist = D.get(index2, {}).get(index, None)
                 if dist:
                     distances.append((dist, index2))
             if distances:
                 for dist_tuple in distances:
-                    x = dist_tuple[0] / 500
-                    y = dist_tuple[0] / 50
+                    #x = dist_tuple[0] / 500
+                    y = dist_tuple[0] / 250
                     index_sun = dist_tuple[1]
-                    temp_change = P[index_sun]['light'] / (x**2)
-                    light_change = P[index_sun]['light'] / (y**2)
-                    offset_red -= light_change
-                    offset_green -= light_change
-                    offset_blue -= light_change
-                    P[index]['temperature'] += temp_change
+                    #temp_change = P[index_sun]['light'] / (x**2)
+                    light_change = P[index_sun]['light'] * 0.5 ** (y)
+                    #print light_change
+                    offset -= light_change
+                    #offset_red -= light_change
+                    #offset_green -= light_change
+                    #offset_blue -= light_change
+                    #P[index]['temperature'] += temp_change
                     #print P[index]['temperature']
-            P[index]['temperature'] *= 0.99
+            #P[index]['temperature'] *= 0.99
 
+            '''
             #if P[index]['temperature'] > self.settings['norm_temp']:
             norm_temp = self.settings['norm_temp']
             diff = P[index]['temperature'] - norm_temp
             if diff > 0:
-                offset_red -= 0.6 * (diff / norm_temp)
+                offset_red -= 0.06 * (diff / norm_temp)
             else:
-                offset_blue += 0.8 * (diff / norm_temp)
-            offset_green *= 0.1 * abs(diff / norm_temp)
+                offset_blue += 0.08 * (diff / norm_temp)
+            #offset_green *= 0.01 * abs(diff / norm_temp)
+            '''
 
-            P[index]['widget'].set_color(offset_red, offset_green, offset_blue)
+            #P[index]['widget'].set_color(offset_red, offset_green, offset_blue)
+            P[index]['widget'].set_color(offset, offset, offset)
 
     def check_collision(self, index1, index2):
         P = self.planets

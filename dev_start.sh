@@ -1,1 +1,1 @@
-python main.py -m screen:onex,landscape
+python main.py -m screen:s3,landscape

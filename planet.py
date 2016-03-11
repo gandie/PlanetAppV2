@@ -17,7 +17,7 @@ class Planet(FloatLayout):
         self.base_image = Image(
             size_hint = (1, 1),
             pos_hint = {'x' : 0, 'y' : 0},
-            source = './media/textures/planets/planet.png',
+            source = './media/textures/planets/sandyone.png',
             allow_stretch = True
         )
 
@@ -26,7 +26,7 @@ class Planet(FloatLayout):
             size_hint = (None, None),
             pos_hint = {'x' : -0.25, 'y' : -0.25},
             #center = self.center,
-            source = './media/textures/planets/picked/picked.png',
+            source = './media/textures/picked/picked.png',
             allow_stretch = True
         )
             

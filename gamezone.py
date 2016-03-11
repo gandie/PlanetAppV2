@@ -186,8 +186,8 @@ class Gamezone(Scatter):
             velocity = (touchupv - touchdownv) / 10
             newmass = 5
 
-            random_pos = 10
-            random_vel = 5
+            random_pos = 20
+            random_vel = 2
             body_count = 10
             for i in range(body_count):
 
@@ -196,9 +196,10 @@ class Gamezone(Scatter):
                 randvel = (velocity.x + randint(-random_vel, random_vel),
                            velocity.y + randint(-random_vel, random_vel))
                 self.logic.add_body(
-                    pos = randpos, 
+                    pos = randpos,
                     vel = randvel,
                     mass = newmass,
+                    body = 'moon',
                     density = self.logic.settings['planet_density']
                 )
 

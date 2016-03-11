@@ -3,6 +3,7 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.properties import *
 from kivy.uix.behaviors import ToggleButtonBehavior
 
+from kivy.clock import Clock
 
 class RealButton(ButtonBehavior, Image):
 
@@ -20,6 +21,25 @@ class RealButton(ButtonBehavior, Image):
     def on_release(self):
         self.source = self.realtexture
         self.reload()
+
+class RealTimedButton(ButtonBehavior, Image):
+
+    def __init__(self, realtexture, realtexture_pressed, function, **kwargs):
+        super(RealTimedButton, self).__init__(**kwargs)
+        self.realtexture = realtexture
+        self.realtexture_pressed = realtexture_pressed
+        self.function = function
+
+    def on_press(self):
+        self.source = self.realtexture_pressed
+        self.reload()
+        Clock.schedule_interval(self.function, 1.0 / 10.0)
+
+    def on_release(self):
+        Clock.unschedule(self.function)
+        self.source = self.realtexture
+        self.reload()
+
 
 class RealToggleButton(ButtonBehavior, Image):
 

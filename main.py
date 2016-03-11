@@ -44,6 +44,7 @@ class PlanetApp(App):
 
     def on_start(self):
         self.load_settings()
+        self.logic.load_transitions()
         self.load_game()
 
     def on_stop(self):
@@ -59,10 +60,22 @@ class PlanetApp(App):
         except:
             print 'nein, keine settings'
             D = {
-                'min_planet_mass' : 20,
+                'min_moon_mass' : 0,
+                'min_planet_mass' : 30,
+                'min_gasgiant_mass' : 2000,
                 'min_sun_mass' : 50000,
+                'min_bigsun_mass' : 500000,
+                'min_giantsun_mass' : 1000000,
+                'min_blackhole_mass' : 2000000,
+
+                'moon_density' : 0.01,
                 'planet_density' : 0.01,
+                'gasgiant_density' : 0.008,
                 'sun_density' : 0.005,
+                'bigsun_density' : 0.006,
+                'giantsun_density' : 0.01,
+                'blackhole_density' : 1,
+
                 'norm_temp' : 200
             }
         self.logic.settings = D
@@ -85,7 +98,6 @@ class PlanetApp(App):
                 vel = (D[index]['velocity_x'], D[index]['velocity_y'])
                 self.logic.add_body(pos = pos, vel = vel, **D[index])
             f.close()
-            #self.logic.calc_gravity(1)
         except:
             print 'nein'
 

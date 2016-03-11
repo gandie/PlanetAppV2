@@ -46,6 +46,7 @@ class MenuScreen(Screen):
 
     def switchto_tutorial(self, instance):
         self.logic.tutorial_mode = True
+        self.logic.reset_planets(self)
         self.manager.transition = FadeTransition()
         self.manager.current = 'main'
 

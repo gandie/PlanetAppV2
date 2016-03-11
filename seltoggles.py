@@ -19,6 +19,7 @@ from kivy.core.window import Window
 from realbutton import RealButton
 from realbutton import RealToggleButton
 from realbutton import RealMenuToggleButton
+from realbutton import RealTimedButton
 
 class Seltoggles(FloatLayout):
 
@@ -42,13 +43,13 @@ class Seltoggles(FloatLayout):
     def build_interface(self):
 
         self.planet_fix_button = RealToggleButton(
-            './media/icons/settings.png',
-            './media/icons/settings_pressed.png',
+            './media/icons/fix.png',
+            './media/icons/fix_pressed.png',
             self.logic.fix_selected,
             pos_hint = {'x' : 0, 'y' : 0},
             size_hint = (None, None),
             size = (self.iconsize, self.iconsize),
-            source = './media/icons/settings.png',
+            source = './media/icons/fix.png',
             always_release = True
         )
 
@@ -63,7 +64,7 @@ class Seltoggles(FloatLayout):
             always_release = True
         )
 
-        self.planet_addmass_button = RealButton(
+        self.planet_addmass_button = RealTimedButton(
             './media/icons/settings.png',
             './media/icons/settings_pressed.png',
             self.logic.addmass_selected,
@@ -74,7 +75,7 @@ class Seltoggles(FloatLayout):
             always_release = True
         )
 
-        self.planet_submass_button = RealButton(
+        self.planet_submass_button = RealTimedButton(
             './media/icons/settings.png',
             './media/icons/settings_pressed.png',
             self.logic.submass_selected,
