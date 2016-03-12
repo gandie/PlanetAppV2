@@ -4,7 +4,6 @@ from kivy.properties import *
 
 from mainscreen import MainScreen
 
-
 from menuscreen import MenuScreen
 from settingsscreen import SettingsScreen
 from savegamescreen import SavegameScreen
@@ -17,6 +16,8 @@ import copy
 import os.path
 import time
 
+from kivy.core.window import Window
+
 class PlanetApp(App):
 
     screenmanager = ObjectProperty(None)
@@ -28,13 +29,28 @@ class PlanetApp(App):
     logic = ObjectProperty(None)
 
     def build(self):
-
+        self.calc_iconsize()
         self.logic = Logic()
         self.screenmanager = ScreenManager()
-        self.mainscreen = MainScreen(name = 'main')
+        self.mainscreen = MainScreen(
+            name = 'main', 
+            iconsize = self.iconsize,
+            iconratio_x = self.iconratio_x,
+            iconratio_y = self.iconratio_y
+        )
         self.menuscreen = MenuScreen(name = 'menu')
-        self.settingsscreen = SettingsScreen(name = 'settings')
-        self.savegamescreen = SavegameScreen(name = 'savegames')
+        self.settingsscreen = SettingsScreen(
+            name = 'settings',
+            iconsize = self.iconsize,
+            iconratio_x = self.iconratio_x,
+            iconratio_y = self.iconratio_y
+        )
+        self.savegamescreen = SavegameScreen(
+            name = 'savegames',
+            iconsize = self.iconsize,
+            iconratio_x = self.iconratio_x,
+            iconratio_y = self.iconratio_y
+        )
         self.screenmanager.add_widget(self.menuscreen)
         self.screenmanager.add_widget(self.mainscreen)
         self.screenmanager.add_widget(self.settingsscreen)
@@ -58,7 +74,7 @@ class PlanetApp(App):
             D = json.loads(json_d)
             f.close
         except:
-            print 'nein, keine settings'
+            # default settings
             D = {
                 'min_moon_mass' : 0,
                 'min_planet_mass' : 30,
@@ -123,6 +139,15 @@ class PlanetApp(App):
                 save_mtimes[i] = '<Empty>'
 
         return save_mtimes
+
+    def calc_iconsize(self):
+        icon_count = 8
+        window_height = Window.height
+        window_width = Window.width
+        iconsize = window_height / icon_count
+        self.iconratio_y = float(iconsize) / window_height
+        self.iconratio_x = float(iconsize) / window_width
+        self.iconsize = iconsize
 
 if __name__ == '__main__':
     PlanetApp().run()

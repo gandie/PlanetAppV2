@@ -40,7 +40,6 @@ class RealTimedButton(ButtonBehavior, Image):
         self.source = self.realtexture
         self.reload()
 
-
 class RealToggleButton(ButtonBehavior, Image):
 
     pressed = BooleanProperty(False)

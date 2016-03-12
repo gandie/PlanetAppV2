@@ -12,6 +12,8 @@ from kivy.uix.label import Label
 
 from slot import Slot
 
+from realbutton import RealButton
+
 class SavegameScreen(Screen):
     '''
     This screen will provide gui to save and load savegames
@@ -33,6 +35,11 @@ class SavegameScreen(Screen):
     def __init__(self, **kwargs):
        super(SavegameScreen, self).__init__(**kwargs)
        self.logic = App.get_running_app().logic
+
+       self.iconsize = kwargs.get('iconsize')
+       self.iconratio_x = kwargs.get('iconratio_x')
+       self.iconratio_y = kwargs.get('iconratio_y')
+
        self.build_interface()
 
     def on_enter(self):
@@ -62,11 +69,15 @@ class SavegameScreen(Screen):
 
         self.mainlayout.add_widget(self.buttonlayout)
 
-        self.menubutton = Button(
-            text = 'Menu',
-            size_hint = (0.1, 0.1),
+        self.menubutton = RealButton(
+            './media/icons/menu.png',
+            './media/icons/menu_pressed.png',
+            self.switchto_menu,
+            size_hint = (None, None),
+            size = (self.iconsize, self.iconsize),
             pos_hint = {'x' : 0, 'y' : 0},
-            on_press = self.switchto_menu
+            source = './media/icons/menu.png',
+            always_release = True
         )
 
         self.mainlayout.add_widget(self.menubutton)

@@ -55,11 +55,14 @@ class MainScreen(Screen):
 
     def __init__(self, **kwargs):
        super(MainScreen, self).__init__(**kwargs)
-       self.build_interface()
        self.logic = App.get_running_app().logic
        self.logic.register_mainscreen(self)
-       #Clock.schedule_once(self.allign_gamezone, -1)
-       #Clock.schedule_once(self.allign_gamezone, 0)
+
+       self.iconsize = kwargs.get('iconsize')
+       self.iconratio_x = kwargs.get('iconratio_x')
+       self.iconratio_y = kwargs.get('iconratio_y')
+
+       self.build_interface()
 
     def on_enter(self):
         self.allign_gamezone()
@@ -129,10 +132,8 @@ class MainScreen(Screen):
         self.gamezone.on_touch_up(touch)
 
     def build_interface(self):
-        self.calc_iconsize()
 
         self.tutorial_label = Tutorial_Label(
-            #size_hint = (None, None),
             self.iconsize,
             self.iconratio_x,
             size_hint = (None, None),
@@ -161,12 +162,10 @@ class MainScreen(Screen):
             scale_min = 0.1,
             scale_max = 5,
             size_hint = (10000,10000)
-            #pos_hint = {'x':-0.5,'y':-0.5}
         )
         self.add_widget(self.gamezone)
 
         self.menupanel = MenuPanel(
-            #size_hint = (1,0.1)
             self.iconsize,
             self.iconratio_y,
             size_hint = (None, None),
@@ -177,12 +176,3 @@ class MainScreen(Screen):
         self.tutorial_label.register_menupanel(self.menupanel)
 
         self.add_widget(self.menupanel)
-
-    def calc_iconsize(self):
-        icon_count = 8
-        window_height = Window.height
-        window_width = Window.width
-        iconsize = window_height / icon_count
-        self.iconratio_y = float(iconsize) / window_height
-        self.iconratio_x = float(iconsize) / window_width
-        self.iconsize = iconsize

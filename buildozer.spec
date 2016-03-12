@@ -29,7 +29,7 @@ source.include_exts = py,png,jpg,kv,atlas,so,pyx,h,c
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 0.1.2
+version = 0.1.3
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
@@ -43,7 +43,7 @@ requirements = kivy,cplanetcore
 #garden_requirements =
 
 # (str) Presplash of the application
-presplash.filename = %(source.dir)s/media/splashscreen/presplash_new.png
+presplash.filename = %(source.dir)s/media/splashscreen/presplash.png
 
 # (str) Icon of the application
 #icon.filename = %(source.dir)s/data/icon.png
