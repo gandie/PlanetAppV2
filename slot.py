@@ -6,6 +6,9 @@ from kivy.uix.label import Label
 from kivy.app import App
 from kivy.uix.screenmanager import FadeTransition
 
+from realbutton import RealToggleButton
+from kivy.uix.slider import Slider
+
 class Slot(FloatLayout):
 
     logic = ObjectProperty(None)
@@ -58,3 +61,56 @@ class Slot(FloatLayout):
         self.add_widget(self.label)
         self.add_widget(self.loadbutton)
         self.add_widget(self.savebutton)
+
+class SettingsSlot(FloatLayout):
+
+    logic = ObjectProperty(None)
+
+    label = ObjectProperty(None)
+    changer = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+       super(SettingsSlot, self).__init__(**kwargs)
+
+       self.setting_value = kwargs.get('setting_value')
+       self.setting_min = kwargs.get('setting_min')
+       self.setting_max = kwargs.get('setting_max')
+       self.setting_type = kwargs.get('setting_type')
+
+       self.label_text = kwargs.get('label_text')
+
+       self.build_interface()
+
+    def build_interface(self):
+        self.label = Label(
+            text = self.label_text,
+            size_hint = (0.3, 1),
+            pos_hint = {'x' : 0, 'y' : 0}
+        )
+
+        if self.setting_type == 'number':
+            self.changer = Slider(
+                min = self.setting_min,
+                max = self.setting_max,
+                value = self.setting_value,
+                size_hint = (0.7, 1),
+                pos_hint = {'x' : 0.3, 'y' : 0},
+                on_value = self.change_value
+            )
+        elif self.setting_type == 'bool':
+            self.changer = RealToggleButton(
+                './media/icons/settings.png',
+                './media/icons/settings_pressed.png',
+                self.change_value,
+                pos_hint = {'x' : 0.3, 'y' : 0},
+                size_hint = (0.1, 1),
+                #size = (self.iconsize, self.iconsize),
+                source = './media/icons/settings.png',
+                always_release = True
+            )
+
+        self.add_widget(self.label)
+        self.add_widget(self.changer)
+
+    def change_value(self, instance, value=0):
+        print 'ball'

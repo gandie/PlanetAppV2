@@ -78,7 +78,6 @@ class MenuPanel(FloatLayout):
         self.logic.zoom_mode = self.option2
         self.logic.add_sun_mode = self.option3
         self.logic.del_mode = self.option4
-        #self.logic.pick_mode = self.option5
         self.logic.multi_mode = self.option5
 
     def press_button(self, keyword):

@@ -23,7 +23,7 @@ class Gamezone(Scatter):
     def __init__(self, **kwargs):
         super(Gamezone, self).__init__(**kwargs)
         self.logic = App.get_running_app().logic
-        self.logic.register(self)
+        self.logic.register_gamezone(self)
 
     def on_touch_down(self, touch):
         if self.logic.zoom_mode:
@@ -44,14 +44,6 @@ class Gamezone(Scatter):
                     self.logic.delete_planet_widget(thingy)
                     break
             touch.pop()
-        elif self.logic.pick_mode:
-            touch.push()
-            touch.apply_transform_2d(self.to_local)
-            for thingy in self.children:
-                if thingy.collide_point(touch.x,touch.y):
-                    self.logic.select_planet(thingy)
-                    break
-            touch.pop()            
         elif self.logic.add_planet_mode:
             touch.push()
             touch.apply_transform_2d(self.to_local)

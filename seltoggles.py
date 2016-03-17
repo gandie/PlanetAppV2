@@ -31,6 +31,8 @@ class Seltoggles(FloatLayout):
     planet_addmass_button = ObjectProperty(None)
     planet_submass_button = ObjectProperty(None)
 
+    planet_fixview_button = ObjectProperty(None)
+
     def __init__(self, iconsize, iconratio, **kwargs):
        super(Seltoggles, self).__init__(**kwargs)
        self.logic = App.get_running_app().logic
@@ -57,7 +59,7 @@ class Seltoggles(FloatLayout):
             './media/icons/delete.png',
             './media/icons/delete_pressed.png',
             self.logic.delete_selected,
-            pos_hint = {'x' : 0.25, 'y' : 0},
+            pos_hint = {'x' : 0.2, 'y' : 0},
             size_hint = (None, None),
             size = (self.iconsize, self.iconsize),
             source = './media/icons/delete.png',
@@ -65,21 +67,32 @@ class Seltoggles(FloatLayout):
         )
 
         self.planet_addmass_button = RealTimedButton(
-            './media/icons/settings.png',
-            './media/icons/settings_pressed.png',
+            './media/icons/addsize.png',
+            './media/icons/addsize_pressed.png',
             self.logic.addmass_selected,
-            pos_hint = {'x' : 0.5, 'y' : 0},
+            pos_hint = {'x' : 0.4, 'y' : 0},
             size_hint = (None, None),
             size = (self.iconsize, self.iconsize),
-            source = './media/icons/settings.png',
+            source = './media/icons/addsize.png',
             always_release = True
         )
 
         self.planet_submass_button = RealTimedButton(
-            './media/icons/settings.png',
-            './media/icons/settings_pressed.png',
+            './media/icons/subsize.png',
+            './media/icons/subsize_pressed.png',
             self.logic.submass_selected,
-            pos_hint = {'x' : 0.75, 'y' : 0},
+            pos_hint = {'x' : 0.6, 'y' : 0},
+            size_hint = (None, None),
+            size = (self.iconsize, self.iconsize),
+            source = './media/icons/subsize.png',
+            always_release = True
+        )
+
+        self.planet_fixview_button = RealToggleButton(
+            './media/icons/view.png',
+            './media/icons/view_pressed.png',
+            self.logic.fixview_selected,
+            pos_hint = {'x' : 0.8, 'y' : 0},
             size_hint = (None, None),
             size = (self.iconsize, self.iconsize),
             source = './media/icons/settings.png',
@@ -90,11 +103,14 @@ class Seltoggles(FloatLayout):
         self.add_widget(self.planet_del_button)
         self.add_widget(self.planet_addmass_button)
         self.add_widget(self.planet_submass_button)
+        self.add_widget(self.planet_fixview_button)
 
     def update(self, **kwargs):
         fixed = kwargs.get('fixed', False)
+        fixview = kwargs.get('fixview', False)
         temp = kwargs.get('temperature', '<None>')
         fixbutton = self.planet_fix_button
+        fixview_button = self.planet_fixview_button
         if fixbutton:
             if fixed:
                 fixbutton.pressed = True
@@ -104,3 +120,12 @@ class Seltoggles(FloatLayout):
                 fixbutton.pressed = False
                 fixbutton.source = fixbutton.realtexture
                 fixbutton.reload()
+        if fixview_button:
+            if fixview:
+                fixview_button.pressed = True
+                fixview_button.source = fixview_button.realtexture_pressed
+                fixview_button.reload()
+            else:
+                fixview_button.pressed = False
+                fixview_button.source = fixview_button.realtexture
+                fixview_button.reload()

@@ -150,8 +150,8 @@ class MainScreen(Screen):
             self.iconsize,
             self.iconratio_x,
             size_hint = (None, None),
-            size = (4 * self.iconsize, self.iconsize),
-            pos_hint = {'x' : 1 - 4 * self.iconratio_x, 'y' : 0}
+            size = (5 * self.iconsize, self.iconsize),
+            pos_hint = {'x' : 1 - 5 * self.iconratio_x, 'y' : 0}
         )
 
         self.gamezone = Gamezone(

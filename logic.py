@@ -12,6 +12,7 @@ from random import choice, randint
 from math import sqrt
 from os import listdir
 
+from kivy.core.window import Window
 
 # logic needs to be a kivy object to make properties work? 
 class Logic(Screen):
@@ -27,9 +28,10 @@ class Logic(Screen):
     add_sun_mode = BooleanProperty(None)
     zoom_mode = BooleanProperty(None)
     del_mode = BooleanProperty(None)
-    pick_mode = BooleanProperty(None)
-
+    #pick_mode = BooleanProperty(None)
     multi_mode = BooleanProperty(None)
+
+    fixview_mode = BooleanProperty(None)
 
     currindex = NumericProperty(1)
 
@@ -40,11 +42,14 @@ class Logic(Screen):
     #settings = DictProperty(None)
 
     def __init__(self):
+
+        # set up dicts to be filled
         self.planets = {}
         self.settings = {}
         self.distances = {}
         self.forces = {}
 
+        # load textures for body-categories
         self.moon_textures = self.load_textures('./media/textures/moons/')
         self.planet_textures = self.load_textures('./media/textures/planets/')
         self.gasgiant_textures = self.load_textures('./media/textures/gasgiants/')
@@ -53,6 +58,7 @@ class Logic(Screen):
         self.giantsun_textures = self.load_textures('./media/textures/giantsuns/')
         self.blackhole_textures = self.load_textures('./media/textures/blackholes/')
 
+        # observe selplanet
         self.bind(selplanet = self.selplanet_change)
 
     def load_transitions(self):
@@ -105,7 +111,7 @@ class Logic(Screen):
         Clock.unschedule(self.merge_planets)
         #Clock.unschedule(self.check_proximity)
 
-    def register(self, gamezone):
+    def register_gamezone(self, gamezone):
         self.gamezone = gamezone
 
     def register_mainscreen(self, mainscreen):
@@ -148,7 +154,6 @@ class Logic(Screen):
         self.calc_planetsize(index)
         newplanet.center = pos
         self.gamezone.add_widget(newplanet)
-        #print self.gamezone.children
         self.currindex += 1
 
     def reset_planets(self, instance):
@@ -159,7 +164,6 @@ class Logic(Screen):
             
     def move_planets(self, dt):
         D = self.planets
-        #print D
         for index in D:
             if D[index]['fixed']:
                 continue
@@ -168,6 +172,11 @@ class Logic(Screen):
             D[index]['widget'].center_x = D[index]['position_x']
             D[index]['widget'].center_y = D[index]['position_y']
 
+        # fixing view on a body must be done here to avoid ugly glitches
+        if self.selplanet_index and self.fixview_mode:
+            #print 'ball'
+            self.center_planet(self.selplanet_index)
+
     def merge_planets(self, dt):
         P = self.planets
         merged_planets = []
@@ -175,11 +184,6 @@ class Logic(Screen):
             for index2 in P:
                 if index1 == index2:
                     continue
-
-                # collision, maybe write own collision-thingy?
-                #if not P[index1]['widget'].collide_widget(P[index2]['widget']):
-                #    continue
-                
                 if not self.check_collision(index1, index2):
                     continue
                 
@@ -216,15 +220,13 @@ class Logic(Screen):
         # remove merged planets afterwards
         for planetindex in merged_planets:
             self.delete_planet(planetindex)
-            #self.gamezone.remove_widget(P[planetindex]['widget'])
-            #P.pop(planetindex)
 
     def calc_gravity(self, dt):
         P = self.planets
         newlist = P.keys()
         remove = newlist.remove
 
-        # prepare distances
+        # prepare distances and forces to be filled
         D = self.distances        
         F = self.forces
         for index in P:
@@ -264,26 +266,16 @@ class Logic(Screen):
     def calc_hillbodies(self):
         pass
 
+    # now calculating in 3-dimensional space n shit (planets are spheres)
     def calc_planetsize(self, index):
-        # now calculating in 3-dimensional space n shit (planets are spheres)
         D = self.planets
 
+        # disabled - reactivate when light-calculation is reworked
+        '''
         # calculate light emission
         if D[index]['body'] in ['sun', 'bigsun', 'giantsun']:
             light = D[index]['mass'] / self.settings['min_sun_mass']
             D[index]['light'] = light
-
-        '''
-        # transition from planet to sun
-        if (D[index]['body'] == 'planet'): 
-            if D[index]['mass'] > self.settings['min_sun_mass']:
-                D[index]['temperature'] = 0
-                D[index]['widget'].set_color(0, 0, 0)
-                D[index]['body'] = 'sun'
-                D[index]['density'] = self.settings['sun_density']
-                texture_index = randint(0, len(self.sun_textures) - 1)
-                newplanet_texture = self.sun_textures[texture_index]
-                D[index]['widget'].set_base_image(newplanet_texture)
         '''
 
         # new transitions system
@@ -298,7 +290,6 @@ class Logic(Screen):
                 newplanet_texture = transition['textures'][texture_index]
                 D[index]['widget'].set_base_image(newplanet_texture)
 
-        #diameter = 2 * sqrt(D[index]['density'] * D[index]['mass'] / 3.14)
         diameter = ((3 * D[index]['mass']) / (4 * 3.14 * D[index]['density'])) ** (1/3.0)
         D[index]['widget'].size = (diameter, diameter)
 
@@ -317,6 +308,7 @@ class Logic(Screen):
             texture_list.append(path + filename)
         return texture_list
 
+    # REWORK THIS!
     def check_proximity(self, dt):
         P = self.planets
         D = self.distances
@@ -326,11 +318,6 @@ class Logic(Screen):
                 continue
 
             distances = []
-            
-            #offset_red = 0.7
-            #offset_green = 0.7
-            #offset_blue = 0.7
-            
             offset = 0.8
 
             emitters = ['sun', 'bigsun', 'giantsun']
@@ -345,32 +332,11 @@ class Logic(Screen):
                     distances.append((dist, index2))
             if distances:
                 for dist_tuple in distances:
-                    #x = dist_tuple[0] / 500
                     y = dist_tuple[0] / 250
                     index_sun = dist_tuple[1]
-                    #temp_change = P[index_sun]['light'] / (x**2)
                     light_change = P[index_sun]['light'] * 0.5 ** (y)
-                    #print light_change
                     offset -= light_change
-                    #offset_red -= light_change
-                    #offset_green -= light_change
-                    #offset_blue -= light_change
-                    #P[index]['temperature'] += temp_change
-                    #print P[index]['temperature']
-            #P[index]['temperature'] *= 0.99
 
-            '''
-            #if P[index]['temperature'] > self.settings['norm_temp']:
-            norm_temp = self.settings['norm_temp']
-            diff = P[index]['temperature'] - norm_temp
-            if diff > 0:
-                offset_red -= 0.06 * (diff / norm_temp)
-            else:
-                offset_blue += 0.08 * (diff / norm_temp)
-            #offset_green *= 0.01 * abs(diff / norm_temp)
-            '''
-
-            #P[index]['widget'].set_color(offset_red, offset_green, offset_blue)
             P[index]['widget'].set_color(offset, offset, offset)
 
     def check_collision(self, index1, index2):
@@ -388,12 +354,12 @@ class Logic(Screen):
         else:
             return False
 
+    # USE THIS TO DELETE PLANETS!
     def delete_planet(self, index):
         D = self.planets
         if not index in D:
             return
         widget = D[index]['widget']
-        #self.gamezone.remove_widget(D[index]['widget'])
         self.gamezone.remove_widget(widget)
         if widget == self.selplanet:
             self.selplanet = None
@@ -426,15 +392,15 @@ class Logic(Screen):
             self.selplanet_index = None
             Clock.unschedule(self.update_infobox)
             Clock.unschedule(self.update_seltoggles)
-            #print 'ball None!'
+            self.fixview_mode = False
+            #Clock.schedule(self.fix_view)
         else:
             self.selplanet_index = self.get_planet_index(value)
-            #print self.selplanet_index
             self.mainscreen.add_infobox()
             self.mainscreen.add_seltoggles()
             Clock.schedule_interval(self.update_infobox, 1.0 / 10.0)
             Clock.schedule_interval(self.update_seltoggles, 1.0 / 10.0)
-            #print 'foo'
+            #Clock.schedule_interval(self.fix_view, 1.0 / 60.0)
 
     def update_infobox(self, dt):
         if self.selplanet_index:
@@ -446,6 +412,7 @@ class Logic(Screen):
         if self.selplanet_index:
             P = self.planets
             D = P[self.selplanet_index]
+            D['fixview'] = self.fixview_mode
             self.mainscreen.seltoggles.update(**D)
 
     def delete_selected(self, instance):
@@ -477,3 +444,24 @@ class Logic(Screen):
             P = self.planets
             P[index]['mass'] *= 0.9
             self.calc_planetsize(index)
+
+    # delete planets far away from anything else
+    def collect_garbage(self):
+        P = self.planets
+
+    def center_planet(self, index):
+        P = self.planets
+        pos_x = P[index]['position_x']
+        pos_y = P[index]['position_y']
+        newpos = self.gamezone.to_parent(pos_x, pos_y)
+        offset_x = newpos[0] - Window.width/2
+        offset_y = newpos[1] - Window.height/2
+        new_center = (self.gamezone.center[0] - offset_x,
+                      self.gamezone.center[1] - offset_y)
+        self.gamezone.center = new_center
+        
+    def fixview_selected(self, instance):
+        if self.fixview_mode:
+            self.fixview_mode = False
+        else:
+            self.fixview_mode = True
