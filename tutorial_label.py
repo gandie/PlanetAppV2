@@ -23,12 +23,12 @@ class Tutorial_Label(FloatLayout):
        self.state_texts = {
            1 : 'Welcome to tutorial of PlanetApp!',
            2 : 'This tutorial will show the basic functions of this sandbox',
-           3 : 'Lets start adding some planets. Add-planet icon has been selected from the left panel',
+           3 : 'Lets start by adding some planets. Note, that the add-planet icon has already been selected from the left panel.',
            4 : 'To add a planet to the simulation, wipe over the screen.',
-           5 : 'The drawn line indicates the velocity of the planet added.',
+           5 : 'The line you draw indicates the velocity of the planet added.',
            6 : 'The longer you hold before releasing, the more mass the added planet will have.',
-           7 : 'The same principle applies to the add-sun-mode, try it out!',
-           8 : 'Next mode is the delete-mode',
+           7 : 'The same principle applies to the "add-sun"-mode, try it out!',
+           8 : 'The next mode is the delete-mode',
            9 : 'If you now tap on any body in the simulation, it will be deleted.',
            10 : 'The last mode shown in this tutorial is the zoom-mode.',
            11 : 'If you wipe over the screen now, you can scroll the view on the simulation.',
@@ -38,9 +38,9 @@ class Tutorial_Label(FloatLayout):
            15 : 'On the top right of the screen you see an infobox giving you additional information about the planet selected.',
            16 : 'On the bottom right you see icons to manipulate the selected body.',
            17 : 'You can fix a body to prevent it from moving...very useful!',
-           18 : 'The delete-icon is self-explaining...',
+           18 : 'The delete icon is self-explanatory...',
            19 : 'The icons on the right can be used to add or subtract mass from the selected body',
-           20 : 'Thank you for completing the tutorial, now have fun messing arround with gravity!'
+           20 : 'Thank you for completing the tutorial, now have fun messing around with gravity!'
        }
 
        self.state_actions = {
