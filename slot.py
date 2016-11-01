@@ -9,6 +9,8 @@ from kivy.uix.screenmanager import FadeTransition
 from realbutton import RealToggleButton
 from kivy.uix.slider import Slider
 
+from kivy.uix.gridlayout import GridLayout
+
 class Slot(FloatLayout):
 
     logic = ObjectProperty(None)
@@ -62,12 +64,15 @@ class Slot(FloatLayout):
         self.add_widget(self.loadbutton)
         self.add_widget(self.savebutton)
 
-class SettingsSlot(FloatLayout):
+#class SettingsSlot(FloatLayout):
+class SettingsSlot(GridLayout):
 
     logic = ObjectProperty(None)
 
     label = ObjectProperty(None)
     changer = ObjectProperty(None)
+
+    value = ObjectProperty(None)
 
     def __init__(self, **kwargs):
        super(SettingsSlot, self).__init__(**kwargs)
@@ -79,13 +84,24 @@ class SettingsSlot(FloatLayout):
 
        self.label_text = kwargs.get('label_text')
 
+       self.rows = 1
+
+       #self.value = None
+
        self.build_interface()
+
+    def on_value(self, instance, value):
+
+        if self.setting_type == 'number':
+            #self.value = value
+            self.changer.value = value
+        elif self.setting_type == 'bool':
+            #self.value = not self.changer.pressed
+            pass
 
     def build_interface(self):
         self.label = Label(
             text = self.label_text,
-            size_hint = (0.3, 1),
-            pos_hint = {'x' : 0, 'y' : 0}
         )
 
         if self.setting_type == 'number':
@@ -93,18 +109,13 @@ class SettingsSlot(FloatLayout):
                 min = self.setting_min,
                 max = self.setting_max,
                 value = self.setting_value,
-                size_hint = (0.7, 1),
-                pos_hint = {'x' : 0.3, 'y' : 0},
-                on_value = self.change_value
             )
+            self.changer.bind(value = self.change_value)
         elif self.setting_type == 'bool':
             self.changer = RealToggleButton(
                 './media/icons/settings.png',
                 './media/icons/settings_pressed.png',
                 self.change_value,
-                pos_hint = {'x' : 0.3, 'y' : 0},
-                size_hint = (0.1, 1),
-                #size = (self.iconsize, self.iconsize),
                 source = './media/icons/settings.png',
                 always_release = True
             )
@@ -113,4 +124,7 @@ class SettingsSlot(FloatLayout):
         self.add_widget(self.changer)
 
     def change_value(self, instance, value=0):
-        print 'ball'
+        if self.setting_type == 'number':
+            self.value = value
+        elif self.setting_type == 'bool':
+            self.value = not self.changer.pressed

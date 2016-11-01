@@ -118,34 +118,32 @@ class Logic(Screen):
         self.mainscreen = mainscreen
 
     # my own tiny planet-factory
-    def add_body(self, **args):
+    def add_body(self, body = 'planet', pos = (0,0), texture_index = None,
+                 vel = (0, 0), density = 1, mass = 100, fixed = False,
+                 light = 0, temperature = 0):
         index = self.currindex
         newplanet = Planet()
-        body = args.get('body', 'planet')
-        pos = args.get('pos', (0, 0))
 
         texture_list = self.texture_mapping.get(body, self.planet_textures)
-        texture_index = args.get('texture_index',
-                                 randint(0, len(texture_list) - 1))
-        newplanet_texture = texture_list[texture_index]
+        texture_index = texture_index or randint(0, len(texture_list) - 1)
 
+        newplanet_texture = texture_list[texture_index]
         newplanet.set_base_image(newplanet_texture)
 
-        # build planet dictionary
         planet_d = {
             'position_x' : pos[0],
             'position_y' : pos[1],
-            'velocity_x' : args.get('vel', (0, 0))[0],
-            'velocity_y' : args.get('vel', (0, 0))[1],
-            'density' : args.get('density', 1),
-            'mass' : args.get('mass', 100),
-            'fixed' : args.get('fixed', False),
+            'velocity_x' : vel[0],
+            'velocity_y' : vel[1],
+            'density' : density,
+            'mass' : mass,
+            'fixed' : fixed,
             'hillbodies' : [],
             'widget' : newplanet,
             'texture_index' : texture_index,
             'body' : body,
-            'light' : args.get('light', 0),
-            'temperature' : args.get('temperature', 0)
+            'light' : light,
+            'temperature' : temperature
         }
 
         # write dict into planets-dict
@@ -237,16 +235,18 @@ class Logic(Screen):
             remove(index1)
             for index2 in newlist:
                 # initialize the new mighty planetcore
-                planetcore = CPlanetcore(P[index1]['position_x'],
-                                         P[index1]['position_y'],
-                                         P[index2]['position_x'],
-                                         P[index2]['position_y'],
-                                         P[index1]['velocity_x'],
-                                         P[index1]['velocity_y'],
-                                         P[index2]['velocity_x'],
-                                         P[index2]['velocity_y'],
-                                         P[index1]['mass'],
-                                         P[index2]['mass'])
+                planetcore = CPlanetcore(
+                    P[index1]['position_x'],
+                    P[index1]['position_y'],
+                    P[index2]['position_x'],
+                    P[index2]['position_y'],
+                    P[index1]['velocity_x'],
+                    P[index1]['velocity_y'],
+                    P[index2]['velocity_x'],
+                    P[index2]['velocity_y'],
+                    P[index1]['mass'],
+                    P[index2]['mass']
+                )
                 dist = planetcore.calc_dist()
                 D[index1][index2] = dist
                 D[index2][index1] = dist
@@ -446,6 +446,7 @@ class Logic(Screen):
             self.calc_planetsize(index)
 
     # delete planets far away from anything else
+    # TO BE DONE
     def collect_garbage(self):
         P = self.planets
 

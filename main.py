@@ -7,7 +7,7 @@ from mainscreen import MainScreen
 from menuscreen import MenuScreen
 from settingsscreen import SettingsScreen
 from savegamescreen import SavegameScreen
-
+from creditsscreen import CreditsScreen
 from logic import Logic
 
 import json
@@ -25,6 +25,7 @@ class PlanetApp(App):
     menuscreen = ObjectProperty(None)
     settingsscreen = ObjectProperty(None)
     savegamescreen = ObjectProperty(None)
+    creditsscreen = ObjectProperty(None)
 
     logic = ObjectProperty(None)
 
@@ -32,29 +33,42 @@ class PlanetApp(App):
         self.calc_iconsize()
         self.logic = Logic()
         self.screenmanager = ScreenManager()
+
         self.mainscreen = MainScreen(
             name = 'main', 
             iconsize = self.iconsize,
             iconratio_x = self.iconratio_x,
             iconratio_y = self.iconratio_y
         )
+
         self.menuscreen = MenuScreen(name = 'menu')
+
         self.settingsscreen = SettingsScreen(
             name = 'settings',
             iconsize = self.iconsize,
             iconratio_x = self.iconratio_x,
             iconratio_y = self.iconratio_y
         )
+
         self.savegamescreen = SavegameScreen(
             name = 'savegames',
             iconsize = self.iconsize,
             iconratio_x = self.iconratio_x,
             iconratio_y = self.iconratio_y
         )
+
+        self.creditsscreen = CreditsScreen(
+            name = 'credits',
+            iconsize = self.iconsize,
+            iconratio_x = self.iconratio_x,
+            iconratio_y = self.iconratio_y
+        )
+
         self.screenmanager.add_widget(self.menuscreen)
         self.screenmanager.add_widget(self.mainscreen)
         self.screenmanager.add_widget(self.settingsscreen)
         self.screenmanager.add_widget(self.savegamescreen)
+        self.screenmanager.add_widget(self.creditsscreen)
 
         return self.screenmanager
 

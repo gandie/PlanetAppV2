@@ -98,7 +98,6 @@ class MenuPanel(FloatLayout):
             pos_hint = {'x' : 0, 'y' : 0},
             size_hint = (None, None),
             size = (self.iconsize, self.iconsize),
-            #on_press = self.goto_menu,
             source = './media/icons/menu.png',
             always_release = True
         )

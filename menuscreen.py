@@ -54,27 +54,12 @@ class MenuScreen(Screen):
 
     def build_interface(self):
         self.mainlayout = FloatLayout()
-        '''
-        self.buttonlayout = GridLayout(cols=1,
-                                       size_hint=(0.4,0.5),
-                                       pos_hint={"x":0.6,"y":0})
-        '''
-        '''
-        self.startbutton = Button(text = "Start Game",
-                                  on_press = self.switchto_main)
-        self.settingsbutton = Button(text = "Settings",
-                                  on_press = self.switchto_settings)
-        self.savegamebutton = Button(text = "Savegames",
-                                     on_press = self.switchto_savegames)
-        self.tutorialbutton = Button(text = "Tutorial",
-                                     on_press = self.switchto_tutorial)
-        '''
+
         self.startbutton = RealButton(
             './media/buttons/play.png',
             './media/buttons/play_pressed.png',
             self.switchto_main,
             size_hint = (0.4, 0.4),
-            #size = (self.iconsize, self.iconsize),
             pos_hint = {'x' : 0.6, 'y' : 0.3},
             source = './media/buttons/play.png',
             always_release = True
@@ -85,7 +70,6 @@ class MenuScreen(Screen):
             './media/buttons/settings_pressed.png',
             self.switchto_settings,
             size_hint = (0.2, 0.2),
-            #size = (self.iconsize, self.iconsize),
             pos_hint = {'x' : 0.32, 'y' : 0.7},
             source = './media/buttons/settings.png',
             always_release = True
@@ -96,7 +80,6 @@ class MenuScreen(Screen):
             './media/buttons/saves_pressed.png',
             self.switchto_savegames,
             size_hint = (0.2, 0.2),
-            #size = (self.iconsize, self.iconsize),
             pos_hint = {'x' : 0.07, 'y' : 0.4},
             source = './media/buttons/saves.png',
             always_release = True
@@ -107,7 +90,6 @@ class MenuScreen(Screen):
             './media/buttons/tutorial_pressed.png',
             self.switchto_tutorial,
             size_hint = (0.2, 0.2),
-            #size = (self.iconsize, self.iconsize),
             pos_hint = {'x' : 0.57, 'y' : 0.06},
             source = './media/buttons/tutorial.png',
             always_release = True
@@ -117,5 +99,4 @@ class MenuScreen(Screen):
         self.mainlayout.add_widget(self.tutorialbutton)
         self.mainlayout.add_widget(self.settingsbutton)
         self.mainlayout.add_widget(self.savegamebutton)
-        #self.mainlayout.add_widget(self.buttonlayout)
         self.add_widget(self.mainlayout)
