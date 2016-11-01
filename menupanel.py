@@ -11,7 +11,6 @@ from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.togglebutton import ToggleButton
 from kivy.app import App
 
-from cplanetcore import CPlanetcore
 from logic import Logic
 
 from kivy.core.window import Window

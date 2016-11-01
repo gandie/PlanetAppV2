@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = PocketC
+title = Pocket Cosmos
 
 # (str) Package name
 package.name = pocketcosmos
@@ -13,7 +13,7 @@ package.domain = org.test
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,so,pyx,h,c
+source.include_exts = py,png,jpg,kv,atlas,pyx,h,c
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
@@ -33,7 +33,7 @@ version = 0.2.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy,cplanetcore
+requirements = kivy,cplanet
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes

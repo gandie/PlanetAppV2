@@ -98,13 +98,13 @@ class PlanetApp(App):
                 'min_giantsun_mass' : 1000000,
                 'min_blackhole_mass' : 2000000,
 
-                'moon_density' : 0.01,
-                'planet_density' : 0.01,
-                'gasgiant_density' : 0.008,
-                'sun_density' : 0.005,
-                'bigsun_density' : 0.006,
-                'giantsun_density' : 0.01,
-                'blackhole_density' : 1,
+                'moon_density' : 0.1,
+                'planet_density' : 0.1,
+                'gasgiant_density' : 0.5,
+                'sun_density' : 1.5,
+                'bigsun_density' : 2.6,
+                'giantsun_density' : 3,
+                'blackhole_density' : 20,
 
                 'norm_temp' : 200
             }
