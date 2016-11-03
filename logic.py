@@ -44,8 +44,6 @@ class Logic(Screen):
         # set up dicts to be filled
         self.planets = {}
         self.settings = {}
-        #self.distances = {}
-        #self.forces = {}
 
         # initialize planetkeeper
         self.keeper = CPlanetKeeper()
@@ -102,10 +100,12 @@ class Logic(Screen):
 
 
     def start_game(self):
-        Clock.schedule_interval(self.update_game, 1.0 / 30.0)
+        Clock.schedule_interval(self.update_game, 1.0 / 25.0)
+        Clock.schedule_interval(self.tick_engine, 1.0 / 25.0)
 
     def stop_game(self):
         Clock.unschedule(self.update_game)
+        Clock.unschedule(self.tick_engine)
 
     def register_gamezone(self, gamezone):
         self.gamezone = gamezone
@@ -156,9 +156,11 @@ class Logic(Screen):
         # write dict into planets-dict
         self.planets[newindex] = planet_d
 
-        newplanet.center = pos
+
         newplanet.size = (radius * 2, radius * 2)
         self.gamezone.add_widget(newplanet)
+        newplanet.center = pos
+
 
     def reset_planets(self, instance):
         for index in self.planets.keys():
@@ -180,8 +182,10 @@ class Logic(Screen):
         index = self.get_planet_index(widget)
         self.delete_planet(index)
 
-    def update_game(self, dt):
+    def tick_engine(self, dt):
         self.keeper.tick()
+
+    def update_game(self, dt):
 
         del_indexes = []
 
