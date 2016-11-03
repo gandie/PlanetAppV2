@@ -107,7 +107,6 @@ class Seltoggles(FloatLayout):
     def update(self, **kwargs):
         fixed = kwargs.get('fixed', False)
         fixview = kwargs.get('fixview', False)
-        temp = kwargs.get('temperature', '<None>')
         fixbutton = self.planet_fix_button
         fixview_button = self.planet_fixview_button
         if fixbutton:

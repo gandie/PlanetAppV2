@@ -228,7 +228,6 @@ class Logic(Screen):
         if self.selplanet_index and self.fixview_mode:
             self.center_planet(self.selplanet_index)
 
-
     def load_textures(self, path):
         texture_list = []
         for filename in listdir(path):
@@ -290,13 +289,13 @@ class Logic(Screen):
 
     def fix_selected(self, instance):
         index = self.selplanet_index
-        if index:
+        if index != None:
             P = self.planets
             if P[index]['fixed']:
-                P[index]['velocity_x'] = 0
-                P[index]['velocity_y'] = 0
+                self.keeper.unfix_planet(index)
                 P[index]['fixed'] = False
             else:
+                self.keeper.fix_planet(index)
                 P[index]['fixed'] = True
 
     def addmass_selected(self, instance):
