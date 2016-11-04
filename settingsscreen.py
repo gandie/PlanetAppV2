@@ -1,3 +1,4 @@
+# KIVY
 from kivy.uix.screenmanager import Screen
 from kivy.uix.screenmanager import FadeTransition
 from kivy.properties import *
@@ -5,15 +6,11 @@ from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
-
+from kivy.uix.slider import Slider
 from kivy.uix.scrollview import ScrollView
 
-# does it need logic?!
-# everyone needs logic xD
-
+# CUSTOM
 from realbutton import RealButton
-from kivy.uix.slider import Slider
-
 from slot import SettingsSlot
 
 class SettingsScreen(Screen):

@@ -1,25 +1,26 @@
+# KIVY
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager
 from kivy.properties import *
+from kivy.core.window import Window
 
+# CUSTOM
 from mainscreen import MainScreen
-
 from menuscreen import MenuScreen
 from settingsscreen import SettingsScreen
 from savegamescreen import SavegameScreen
 from creditsscreen import CreditsScreen
 from logic import Logic
 
+# BUILTIN
 import json
-
 import copy
 import os.path
 import time
 
-from kivy.core.window import Window
-
 class PlanetApp(App):
 
+    # SCREENS AND SCREENMANAGER
     screenmanager = ObjectProperty(None)
     mainscreen = ObjectProperty(None)
     menuscreen = ObjectProperty(None)
@@ -27,6 +28,7 @@ class PlanetApp(App):
     savegamescreen = ObjectProperty(None)
     creditsscreen = ObjectProperty(None)
 
+    # MAIN LOGIC
     logic = ObjectProperty(None)
 
     def build(self):
@@ -119,6 +121,7 @@ class PlanetApp(App):
 
     def load_game(self, slot = 'current'):
         self.logic.reset_planets(self)
+        # this try-block is needed to make first start of app work
         try:
             f = open('save_{}.json'.format(slot), 'r')
             json_d = f.readline()
@@ -129,7 +132,7 @@ class PlanetApp(App):
                 self.logic.add_body(pos = pos, vel = vel, **D[index])
             f.close()
         except:
-            print 'nein'
+            print 'no savegame found'
 
     def save_game(self, slot = 'current'):
         f = open('save_{}.json'.format(slot), 'w')
@@ -155,6 +158,7 @@ class PlanetApp(App):
         return save_mtimes
 
     def calc_iconsize(self):
+        # magic number here! this is how many icons will be shown in menupanel
         icon_count = 8
         window_height = Window.height
         window_width = Window.width

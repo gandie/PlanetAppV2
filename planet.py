@@ -1,14 +1,18 @@
+# KIVY
 from kivy.uix.image import Image
-#from kivy.uix.widget import Widget
 from kivy.properties import *
 from kivy.uix.floatlayout import FloatLayout
 
 class Planet(FloatLayout):
 
+    '''
+    this widget is used to show planets in mainscreen
+    '''
+
     base_image = ObjectProperty(None)
-    #base_image_source = StringProperty(None)
     select_overlay = ObjectProperty(None)
 
+    # complete this!?
     shadow_overlay = ObjectProperty(None)
 
     def __init__(self,**kwargs):

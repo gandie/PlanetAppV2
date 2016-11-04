@@ -1,3 +1,4 @@
+# KIVY
 from kivy.uix.screenmanager import Screen
 from kivy.uix.screenmanager import FadeTransition
 from kivy.properties import *
@@ -6,9 +7,9 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
-
 from kivy.uix.scrollview import ScrollView
 
+# CUSTOM
 from realbutton import RealButton
 
 class CreditsScreen(Screen):
@@ -91,28 +92,3 @@ class CreditsScreen(Screen):
             '## Thanks to ##',
             'Everyone else i forgtot to mention'
             ]
-
-
-
-
-
-'''            #### Credits ####
-            
-            ## Devs ##
-            gandie -- main developer -- sip01@perfact.de
-            mattis -- developer, tester
-            nichtpeter -- developer, tester
-            jean_borrow -- developer, tester
-
-            ## Artists ##
-            dude -- layout, graphics
-
-            ## Tester ##
-            McStorm
-            Peter Oswald
-            Uedii
-            many many more people frmo FLAFLA
-
-            ## Thanks to ##
-            Everyone else i forgtot to mention
-'''

@@ -1,21 +1,17 @@
+# KIVY
 from kivy.uix.scatter import Scatter
 from kivy.graphics import Line, Color
 from kivy.properties import *
 from kivy.app import App
-
 from kivy.vector import Vector
 
+# BUILTIN
 import time
-
 from random import randint
 
 class Gamezone(Scatter):
 
     logic = ObjectProperty(None)
-
-    '''
-    children of this dude will be planets!?
-    '''
 
     # BUILT DECORATORS FOR TOUCH TRANSFORMATION N SHIT!!!
     # PUT SPECIAL CODE INTO FUNCTIONS

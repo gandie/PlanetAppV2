@@ -1,3 +1,4 @@
+# KIVY
 from kivy.uix.screenmanager import Screen
 from kivy.uix.screenmanager import FadeTransition
 from kivy.properties import *
@@ -7,11 +8,8 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 
-# does it need logic?!
-# everyone needs logic xD
-
+# CUSTOM
 from slot import Slot
-
 from realbutton import RealButton
 
 class SavegameScreen(Screen):
@@ -81,10 +79,8 @@ class SavegameScreen(Screen):
         )
 
         self.mainlayout.add_widget(self.menubutton)
-
         self.add_widget(self.mainlayout)
 
-        
     def switchto_menu(self, instance):
         self.manager.transition = FadeTransition()
         self.manager.current = 'menu'

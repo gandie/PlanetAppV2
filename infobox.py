@@ -1,3 +1,4 @@
+# KIVY
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
@@ -5,11 +6,14 @@ from kivy.uix.label import Label
 from kivy.properties import *
 from kivy.uix.button import Button
 from kivy.uix.slider import Slider
-
 from kivy.app import App
 
 
 class Infobox(ScrollView):
+
+    '''
+    infobox show when planet is selected
+    '''
 
     layout = ObjectProperty(None)
 
@@ -63,12 +67,12 @@ class Infobox(ScrollView):
         self.add_widget(self.layout)
 
     def update(self, **kwargs):
-        # write smart stuff here!!
+        # write smarter stuff here!!
         mass = kwargs.get('mass', 0)
         body = kwargs.get('body', '<None>')
         fixed = kwargs.get('fixed', False)
-        temp = kwargs.get('temperature', '<None>')
-        light = kwargs.get('light', '<None>')
+        temp = kwargs.get('temperature', 0.0)
+        light = kwargs.get('light', 0.0)
         vel_x = round(kwargs.get('velocity_x', 0.0), 1)
         vel_y = round(kwargs.get('velocity_y', 0.0), 1)
         vel = (vel_x, vel_y)

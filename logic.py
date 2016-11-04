@@ -1,28 +1,34 @@
-#from kivy.core.image import Image
+# KIVY
 from kivy.uix.image import Image
 from kivy.properties import *
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
-
-from planet import Planet
-#from cplanetcore import CPlanetcore
-
-from cplanet import CPlanetKeeper
-
-from random import choice, randint
-# put that into c code!
-from math import sqrt
-from os import listdir
-
 from kivy.core.window import Window
 
-# logic needs to be a kivy object to make properties work? 
+# CUSTOM
+from planet import Planet
+
+# ENGINE
+from cplanet import CPlanetKeeper
+
+# BUILTIN
+from random import choice, randint
+from os import listdir
+
 class Logic(Screen):
+
+    '''
+    main logic object, directly accessible from app
+
+    this object talks to the main engine of the planetapp and
+    hands over informations to widgets and stuff.
+    '''
 
     # gui elements to talk to
     gamezone = ObjectProperty(None)
     mainscreen = ObjectProperty(None)
 
+    # MODI-FLAGS
     tutorial_mode = BooleanProperty(None)
 
     # GUI DATA
@@ -33,12 +39,11 @@ class Logic(Screen):
     multi_mode = BooleanProperty(None)
     fixview_mode = BooleanProperty(None)
 
+    # SELECTED PLANET
     selplanet = ObjectProperty(None, allownone = True)
-
     selplanet_index = NumericProperty(None, allownone = True)
 
-    #settings = DictProperty(None)
-
+    # this is called when app is built!
     def __init__(self):
 
         # set up dicts to be filled
@@ -113,19 +118,20 @@ class Logic(Screen):
     def register_mainscreen(self, mainscreen):
         self.mainscreen = mainscreen
 
-    # my own tiny planet-factory
     def add_body(self, body = 'planet', pos = (0,0), texture_index = None,
                  vel = (0, 0), density = 1, mass = 100, fixed = False,
-                 light = 0, temperature = 0):
+                 light = 0, temperature = 0, **kwargs):
 
+        # create new widget
         newplanet = Planet()
 
+        # texture of new body, defaults to planet
         texture_list = self.texture_mapping.get(body, self.planet_textures)
         texture_index = texture_index or randint(0, len(texture_list) - 1)
-
         newplanet_texture = texture_list[texture_index]
         newplanet.set_base_image(newplanet_texture)
 
+        # inform the keeper
         newindex = self.keeper.create_planet(
             pos_x = pos[0],
             pos_y = pos[1],
@@ -135,11 +141,11 @@ class Logic(Screen):
             density = density
         )
 
+        # if keeper says no, do nothing
         if newindex == -1:
             return
 
         radius = self.keeper.get_planet_radius(newindex)
-
         planet_d = {
             'position_x' : pos[0],
             'position_y' : pos[1],
@@ -156,11 +162,11 @@ class Logic(Screen):
         # write dict into planets-dict
         self.planets[newindex] = planet_d
 
-
+        # modify planet widget
         newplanet.size = (radius * 2, radius * 2)
-        self.gamezone.add_widget(newplanet)
         newplanet.center = pos
 
+        self.gamezone.add_widget(newplanet)
 
     def reset_planets(self, instance):
         for index in self.planets.keys():
@@ -168,20 +174,20 @@ class Logic(Screen):
 
     # USE THIS TO DELETE PLANETS!
     def delete_planet(self, index):
-        D = self.planets
-        if not index in D:
+        if not index in self.planets:
             return
-        widget = D[index]['widget']
+        widget = self.planets[index]['widget']
         self.gamezone.remove_widget(widget)
         if widget == self.selplanet:
             self.selplanet = None
         self.keeper.delete_planet(index)
-        D.pop(index)
+        self.planets.pop(index)
 
     def delete_planet_widget(self, widget):
         index = self.get_planet_index(widget)
         self.delete_planet(index)
 
+    # let the keeper do its work
     def tick_engine(self, dt):
         self.keeper.tick()
 
@@ -220,8 +226,9 @@ class Logic(Screen):
                         newplanet_texture = transition['textures'][texture_index]
                         self.planets[index]['widget'].set_base_image(newplanet_texture)
             else:
+                # collect planets to be deleted
                 del_indexes.append(index)
-                
+
         for index in del_indexes:
             self.delete_planet(index)
 
@@ -253,6 +260,7 @@ class Logic(Screen):
             self.selplanet.select()
 
     def selplanet_change(self, instance, value):
+
         if value == None:
             self.mainscreen.remove_infobox()
             self.mainscreen.remove_seltoggles()
@@ -270,13 +278,13 @@ class Logic(Screen):
             #Clock.schedule_interval(self.fix_view, 1.0 / 60.0)
 
     def update_infobox(self, dt):
-        if self.selplanet_index:
+        if self.selplanet_index != None:
             P = self.planets
             D = P[self.selplanet_index]
             self.mainscreen.infobox.update(**D)
 
     def update_seltoggles(self, dt):
-        if self.selplanet_index:
+        if self.selplanet_index != None:
             P = self.planets
             D = P[self.selplanet_index]
             D['fixview'] = self.fixview_mode
@@ -290,42 +298,43 @@ class Logic(Screen):
     def fix_selected(self, instance):
         index = self.selplanet_index
         if index != None:
-            P = self.planets
-            if P[index]['fixed']:
+            if self.planets[index]['fixed']:
                 self.keeper.unfix_planet(index)
-                P[index]['fixed'] = False
+                self.planets[index]['fixed'] = False
             else:
                 self.keeper.fix_planet(index)
-                P[index]['fixed'] = True
+                self.planets[index]['fixed'] = True
 
     def addmass_selected(self, instance):
         index = self.selplanet_index
-        if index:
-            P = self.planets
-            P[index]['mass'] *= 1.1
-            self.calc_planetsize(index)
+        if index != None:
+            newmass = self.planets[index]['mass'] * 1.1
+            self.keeper.set_planet_mass(index, newmass)
 
     def submass_selected(self, instance):
         index = self.selplanet_index
-        if index:
-            P = self.planets
-            P[index]['mass'] *= 0.9
-            self.calc_planetsize(index)
+        if index != None:
+            newmass = self.planets[index]['mass'] * 0.9
+            self.keeper.set_planet_mass(index, newmass)
 
     # delete planets far away from anything else
     # TO BE DONE
     def collect_garbage(self):
-        P = self.planets
+        pass
 
     def center_planet(self, index):
-        P = self.planets
-        pos_x = P[index]['position_x']
-        pos_y = P[index]['position_y']
+
+        pos_x = self.planets[index]['position_x']
+        pos_y = self.planets[index]['position_y']
+
         newpos = self.gamezone.to_parent(pos_x, pos_y)
+
         offset_x = newpos[0] - Window.width/2
         offset_y = newpos[1] - Window.height/2
+
         new_center = (self.gamezone.center[0] - offset_x,
                       self.gamezone.center[1] - offset_y)
+
         self.gamezone.center = new_center
         
     def fixview_selected(self, instance):

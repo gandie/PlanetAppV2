@@ -6,8 +6,6 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 
-# does it need logic?!
-# everyone needs logic xD
 
 from kivy.core.window import Window
 

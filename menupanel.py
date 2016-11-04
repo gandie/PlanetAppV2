@@ -1,5 +1,5 @@
+# KIVY
 from kivy.uix.floatlayout import FloatLayout
-#from kivy.uix.textinput import TextInput
 from kivy.properties import *
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
@@ -10,18 +10,23 @@ from kivy.uix.image import Image
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.togglebutton import ToggleButton
 from kivy.app import App
-
-from logic import Logic
-
 from kivy.core.window import Window
 
+# CUSTOM
+from logic import Logic
 from realbutton import RealButton
 from realbutton import RealToggleButton
 from realbutton import RealMenuToggleButton
 
 class MenuPanel(FloatLayout):
 
+    '''
+    menupanel shown on the left side of the screen in mainscreen
+    contains main buttons to control the game
+    '''
+
     # buttons
+    # argh rework this!
     testbutton1 = ObjectProperty(None)
     testbutton2 = ObjectProperty(None)
     testbutton3 = ObjectProperty(None)

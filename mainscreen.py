@@ -45,9 +45,10 @@ class MainScreen(Screen):
     # showing infos about selected planets
     infobox = ObjectProperty(None)
 
+    # buttons for selected planet
     seltoggles = ObjectProperty(None)
 
-    # add widgets to interface for touch-handling
+    # add touchable widgets to interface for touch-handling
     interface = ReferenceListProperty(menupanel, gamezone, tutorial_label, infobox, seltoggles)
 
     # LOGIC
@@ -99,35 +100,35 @@ class MainScreen(Screen):
 
     # hand down touch events, hand to gamezone if nothing else matches
     def on_touch_down(self, touch):
-        for thingy in self.interface:
-            if not thingy in self.children:
+        for widget in self.interface:
+            if not widget in self.children:
                 continue
-            if thingy == self.gamezone:
+            if widget == self.gamezone:
                 continue
-            if thingy.collide_point(touch.x,touch.y):
-                thingy.on_touch_down(touch)
+            if widget.collide_point(touch.x,touch.y):
+                widget.on_touch_down(touch)
                 return
         self.gamezone.on_touch_down(touch)
 
     def on_touch_move(self, touch):
-        for thingy in self.interface:
-            if not thingy in self.children:
+        for widget in self.interface:
+            if not widget in self.children:
                 continue
-            if thingy == self.gamezone:
+            if widget == self.gamezone:
                 continue
-            if thingy.collide_point(touch.x,touch.y):
-                thingy.on_touch_move(touch)
+            if widget.collide_point(touch.x,touch.y):
+                widget.on_touch_move(touch)
                 return
         self.gamezone.on_touch_move(touch)
 
     def on_touch_up(self, touch):
-        for thingy in self.interface:
-            if not thingy in self.children:
+        for widget in self.interface:
+            if not widget in self.children:
                 continue
-            if thingy == self.gamezone:
+            if widget == self.gamezone:
                 continue
-            if thingy.collide_point(touch.x,touch.y):
-                thingy.on_touch_up(touch)
+            if widget.collide_point(touch.x,touch.y):
+                widget.on_touch_up(touch)
                 return
         self.gamezone.on_touch_up(touch)
 
@@ -159,8 +160,8 @@ class MainScreen(Screen):
             #do_translation_y=False,
             #do_translation_x=False,
             auto_bring_to_front = False,
-            scale_min = 0.1,
-            scale_max = 5,
+            scale_min = 0.01,
+            scale_max = 50,
             size_hint = (10000,10000)
         )
         self.add_widget(self.gamezone)
