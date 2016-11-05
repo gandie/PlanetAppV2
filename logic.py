@@ -107,10 +107,12 @@ class Logic(Screen):
     def start_game(self):
         Clock.schedule_interval(self.update_game, 1.0 / 25.0)
         Clock.schedule_interval(self.tick_engine, 1.0 / 25.0)
+        Clock.schedule_interval(self.collect_garbage, 1.0 / 10.0)
 
     def stop_game(self):
         Clock.unschedule(self.update_game)
         Clock.unschedule(self.tick_engine)
+        Clock.unschedule(self.collect_garbage)
 
     def register_gamezone(self, gamezone):
         self.gamezone = gamezone
@@ -190,6 +192,13 @@ class Logic(Screen):
     # let the keeper do its work
     def tick_engine(self, dt):
         self.keeper.tick()
+
+    # collect orphaned widgets
+    # TODO: collect bodies far away
+    def collect_garbage(self, dt):
+        for widget in self.gamezone.children:
+            if self.get_planet_index(widget) == None:
+                self.gamezone.remove_widget(widget)
 
     def update_game(self, dt):
 
@@ -316,11 +325,6 @@ class Logic(Screen):
         if index != None:
             newmass = self.planets[index]['mass'] * 0.9
             self.keeper.set_planet_mass(index, newmass)
-
-    # delete planets far away from anything else
-    # TO BE DONE
-    def collect_garbage(self):
-        pass
 
     def center_planet(self, index):
 

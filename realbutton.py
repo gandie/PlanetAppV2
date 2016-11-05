@@ -76,7 +76,6 @@ class RealMenuToggleButton(ToggleButtonBehavior, Image):
         # i hate this code, togglebuttons are strange
         if self.parent != None:
             if value == 'down':
-                #print '###'
 
                 if widget == self.parent.testbutton1:
                     self.parent.option1 = True
