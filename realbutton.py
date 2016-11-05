@@ -77,45 +77,18 @@ class RealMenuToggleButton(ToggleButtonBehavior, Image):
         if self.parent != None:
             if value == 'down':
 
-                if widget == self.parent.testbutton1:
-                    self.parent.option1 = True
-                    self.parent.option2 = False
-                    self.parent.option3 = False
-                    self.parent.option4 = False
-                    self.parent.option5 = False
-                elif widget == self.parent.testbutton2:
-                    self.parent.option1 = False
-                    self.parent.option2 = True
-                    self.parent.option3 = False
-                    self.parent.option4 = False
-                    self.parent.option5 = False
-                elif widget == self.parent.testbutton3:
-                    self.parent.option1 = False
-                    self.parent.option2 = False
-                    self.parent.option3 = True
-                    self.parent.option4 = False
-                    self.parent.option5 = False
-                elif widget == self.parent.testbutton4:
-                    self.parent.option1 = False
-                    self.parent.option2 = False
-                    self.parent.option3 = False
-                    self.parent.option4 = True
-                    self.parent.option5 = False
-                elif widget == self.parent.testbutton5:
-                    self.parent.option1 = False
-                    self.parent.option2 = False
-                    self.parent.option3 = False
-                    self.parent.option4 = False
-                    self.parent.option5 = True
+                # switch option
+                for button in self.parent.option_map:
+                    if button == widget:
+                        self.parent.option_map[button] = True
+                    else:
+                        self.parent.option_map[button] = False
 
+                # update textures
                 for dude in self.parent.optionbuttons:
                     if widget == dude:
-                        #print 'ja'
-                        #self.parent.optionmap[dude] = True
                         dude.source = dude.realtexture_pressed
                         dude.reload()
                     else:
-                        #print 'nein'
-                        #self.parent.optionmap[dude] = False
                         dude.source = dude.realtexture
                         dude.reload()

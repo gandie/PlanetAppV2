@@ -25,36 +25,36 @@ class MenuPanel(FloatLayout):
     contains main buttons to control the game
     '''
 
-    # buttons
-    # argh rework this!
-    testbutton1 = ObjectProperty(None)
-    testbutton2 = ObjectProperty(None)
-    testbutton3 = ObjectProperty(None)
-    testbutton4 = ObjectProperty(None)
-    testbutton5 = ObjectProperty(None)
+    # toggle buttons
+    add_planet_button = ObjectProperty(None)
+    zoom_button = ObjectProperty(None)
+    add_sun_button = ObjectProperty(None)
+    del_button = ObjectProperty(None)
+    multi_button = ObjectProperty(None)
 
+    optionbuttons = ReferenceListProperty(
+        add_planet_button,
+        zoom_button,
+        add_sun_button,
+        del_button,
+        multi_button
+    )
+
+    # normal button
     menubutton = ObjectProperty(None)
     resetbutton = ObjectProperty(None)
     pausebutton = ObjectProperty(None)
 
-    optionbuttons = ReferenceListProperty(
-        testbutton1,
-        testbutton2,
-        testbutton3,
-        testbutton4,
-        testbutton5
-    )
-
-    realbutton = ObjectProperty(None)
-
     paused = BooleanProperty(False)
 
-    option1 = BooleanProperty(True)
-    option2 = BooleanProperty(False)
-    option3 = BooleanProperty(False)
-    option4 = BooleanProperty(False)
-    option5 = BooleanProperty(False)
-    options = ReferenceListProperty(option1, option2, option3, option4, option5)
+    # modes
+    add_planet_mode = BooleanProperty(True)
+    zoom_mode = BooleanProperty(False)
+    add_sun_mode = BooleanProperty(False)
+    del_mode = BooleanProperty(False)
+    multi_mode = BooleanProperty(False)
+
+    option_map = DictProperty()
 
     logic = ObjectProperty(None)
 
@@ -69,20 +69,29 @@ class MenuPanel(FloatLayout):
        self.logic.add_planet_mode = True
        self.logic.zoom_mode = False
 
+       # keywords to press buttons from other modules
        self.keyword_map = {
-           'add_planet' : self.testbutton1,
-           'add_sun' : self.testbutton3,
-           'del' : self.testbutton4,
-           'zoom' : self.testbutton2,
-           'multi' : self.testbutton5
+           'add_planet' : self.add_planet_button,
+           'add_sun' : self.add_sun_button,
+           'del' : self.del_button,
+           'zoom' : self.zoom_button,
+           'multi' : self.multi_button
        }
 
-    def on_options(self, instance, value):
-        self.logic.add_planet_mode = self.option1
-        self.logic.zoom_mode = self.option2
-        self.logic.add_sun_mode = self.option3
-        self.logic.del_mode = self.option4
-        self.logic.multi_mode = self.option5
+       self.option_map = {
+           self.add_planet_button : self.add_planet_mode,
+           self.zoom_button : self.zoom_mode,
+           self.add_sun_button : self.add_sun_mode,
+           self.del_button : self.del_mode,
+           self.multi_button : self.multi_mode
+       }
+
+    def on_option_map(self, instance, value):
+        self.logic.add_planet_mode = self.option_map[self.add_planet_button]
+        self.logic.zoom_mode = self.option_map[self.zoom_button]
+        self.logic.add_sun_mode = self.option_map[self.add_sun_button]
+        self.logic.del_mode = self.option_map[self.del_button]
+        self.logic.multi_mode = self.option_map[self.multi_button]
 
     def press_button(self, keyword):
         button = self.keyword_map[keyword]
@@ -95,7 +104,6 @@ class MenuPanel(FloatLayout):
     def build_interface(self):
 
         self.menubutton = RealButton(
-            #text = 'Menu',
             './media/icons/menu.png',
             './media/icons/menu_pressed.png',
             self.goto_menu,
@@ -128,7 +136,7 @@ class MenuPanel(FloatLayout):
             always_release = True
         )
 
-        self.testbutton4 = RealMenuToggleButton(
+        self.del_button = RealMenuToggleButton(
             './media/icons/delete.png',
             './media/icons/delete_pressed.png',
             pos_hint = {'x' : 0, 'y' : self.iconratio * 3},
@@ -139,7 +147,7 @@ class MenuPanel(FloatLayout):
             allow_no_selection = False
         )
 
-        self.testbutton3 = RealMenuToggleButton(
+        self.add_sun_button = RealMenuToggleButton(
             './media/icons/add_sun.png',
             './media/icons/add_sun_pressed.png',
             pos_hint = {'x' : 0, 'y' : self.iconratio * 4},
@@ -150,7 +158,7 @@ class MenuPanel(FloatLayout):
             allow_no_selection = False
         )
 
-        self.testbutton1 = RealMenuToggleButton(
+        self.add_planet_button = RealMenuToggleButton(
             './media/icons/add_planet.png',
             './media/icons/add_planet_pressed.png',
             size_hint = (None, None), 
@@ -162,7 +170,7 @@ class MenuPanel(FloatLayout):
             source = './media/icons/add_planet_pressed.png'
         )
 
-        self.testbutton2 = RealMenuToggleButton(
+        self.zoom_button = RealMenuToggleButton(
             './media/icons/zoom_mode.png',
             './media/icons/zoom_mode_pressed.png',
             size_hint = (None, None), 
@@ -173,7 +181,7 @@ class MenuPanel(FloatLayout):
             source = './media/icons/zoom_mode.png'
         )
 
-        self.testbutton5 = RealMenuToggleButton(
+        self.multi_button = RealMenuToggleButton(
             './media/icons/multipass.png',
             './media/icons/multipass_pressed.png',
             size_hint = (None, None), 
@@ -184,11 +192,11 @@ class MenuPanel(FloatLayout):
             source = './media/icons/multipass.png'
         )
 
-        self.add_widget(self.testbutton1)
-        self.add_widget(self.testbutton2)
-        self.add_widget(self.testbutton3)
-        self.add_widget(self.testbutton4)
-        self.add_widget(self.testbutton5)
+        self.add_widget(self.add_planet_button)
+        self.add_widget(self.zoom_button)
+        self.add_widget(self.add_sun_button)
+        self.add_widget(self.del_button)
+        self.add_widget(self.multi_button)
         self.add_widget(self.menubutton)
         self.add_widget(self.pausebutton)
         self.add_widget(self.resetbutton)
