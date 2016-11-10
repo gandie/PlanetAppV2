@@ -29,15 +29,15 @@ source.include_exts = py,png,jpg,kv,atlas,pyx,h,c
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 0.3.1
+version = 0.3.2
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy,cplanet
+requirements = kivy,hostpython2,cplanet
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
-# requirements.source.kivy = ../../kivy
+#requirements.source.kivy =
 
 # (list) Garden requirements
 #garden_requirements =
@@ -87,7 +87,7 @@ fullscreen = 1
 #android.ant_path =
 
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
-#android.p4a_dir =
+android.p4a_dir = %(source.dir)s/.buildozer/android/platform/python-for-android-master/
 
 # (list) python-for-android whitelist
 #android.p4a_whitelist =
