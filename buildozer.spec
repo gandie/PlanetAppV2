@@ -87,7 +87,8 @@ fullscreen = 1
 #android.ant_path =
 
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
-android.p4a_dir = %(source.dir)s/.buildozer/android/platform/python-for-android-master/
+android.p4a_dir = /home/lars/Dev/Python/Kivy/Buildvenv/python-for-android/
+#android.p4a_dir = %(source.dir)s/.buildozer/android/platform/python-for-android-master/
 
 # (list) python-for-android whitelist
 #android.p4a_whitelist =
