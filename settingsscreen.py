@@ -53,13 +53,17 @@ class SettingsScreen(Screen):
             pos_hint = {'x' : 0.15, 'y' : 0.15}
         )
 
+        # use gridlayout to put items into scrollview
         self.settingslayout = GridLayout(
             cols = 1,
             size_hint_y = None,
             spacing = 10
         )
+
+        # magic binding
         self.settingslayout.bind(minimum_height = self.settingslayout.setter('height'))
 
+        # create items and add to settingslayout
         self.planet_mass = SettingsSlot(
                 size_hint = (1, None),
                 #height = 100,
@@ -234,6 +238,7 @@ class SettingsScreen(Screen):
             on_press = self.switchto_credits
         )
 
+        # add settingslayout to scrollview
         self.settingsview.add_widget(self.settingslayout)
         self.mainlayout.add_widget(self.menubutton)
         self.mainlayout.add_widget(self.creditsbutton)

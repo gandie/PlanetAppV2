@@ -37,6 +37,8 @@ class Logic(Screen):
     zoom_mode = BooleanProperty(None)
     del_mode = BooleanProperty(None)
     multi_mode = BooleanProperty(None)
+
+
     fixview_mode = BooleanProperty(None)
 
     # SELECTED PLANET

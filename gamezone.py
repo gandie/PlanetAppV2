@@ -41,19 +41,8 @@ class Gamezone(Scatter):
                     break
             touch.pop()
         elif self.logic.add_planet_mode:
-            touch.push()
-            touch.apply_transform_2d(self.to_local)
-            ud = touch.ud
-            ud['id'] = 'gametouch'
-            ud['touchtime'] = time.time()
-            ud['firstpos'] = touch.pos
-            ud['group'] = g = str(touch.uid)
-            with self.canvas:
-                ud['lines'] = [
-                    Line(points = (touch.x, touch.y, touch.x+1, touch.y+1),
-                         width = 1, group = g)]
-            touch.grab(self)
-            touch.pop()
+            self.add_planet_down(touch)
+
         elif self.logic.add_sun_mode:
             touch.push()
             touch.apply_transform_2d(self.to_local)
@@ -87,14 +76,8 @@ class Gamezone(Scatter):
         if self.logic.zoom_mode:
             super(Gamezone, self).on_touch_move(touch)
         elif self.logic.add_planet_mode:
-            if touch.grab_current is not self:
-                return
-            touch.push()
-            touch.apply_transform_2d(self.to_local)
-            ud = touch.ud
-            ud['lines'][0].points = (ud['firstpos'][0],ud['firstpos'][1],
-                                     touch.x,touch.y)
-            touch.pop()
+            self.add_planet_move(touch)
+
         elif self.logic.add_sun_mode:
             if touch.grab_current is not self:
                 return
@@ -118,27 +101,7 @@ class Gamezone(Scatter):
         if self.logic.zoom_mode:
             super(Gamezone, self).on_touch_up(touch)
         elif self.logic.add_planet_mode:
-            if touch.grab_current is not self:
-                return
-            touch.push()
-            touch.apply_transform_2d(self.to_local)
-            ud = touch.ud
-            touchdownv = Vector(ud['firstpos'])
-            touchupv = Vector(touch.pos)
-            velocity = (touchupv - touchdownv) / 10
-            newmass = (((time.time() - ud['touchtime']) / 0.2) ** 2)
-            if newmass < self.logic.settings['min_planet_mass']:
-                newmass = self.logic.settings['min_planet_mass']
-            print newmass
-            self.logic.add_body(
-                pos = ud['firstpos'], 
-                vel = (velocity.x, velocity.y),
-                mass = newmass,
-                density = self.logic.settings['planet_density']
-            )
-            self.canvas.remove_group(ud['group'])
-            touch.ungrab(self)
-            touch.pop()
+            self.add_planet_up(touch)
         elif self.logic.add_sun_mode:
             if touch.grab_current is not self:
                 return
@@ -194,3 +157,61 @@ class Gamezone(Scatter):
             self.canvas.remove_group(ud['group'])
             touch.ungrab(self)
             touch.pop()
+
+    def add_planet_down(self, touch):
+        touch.push()
+
+        #touch.apply_transform_2d(self.to_local)
+
+        ud = touch.ud
+        #ud['id'] = 'gametouch'
+        ud['touchtime'] = time.time()
+        ud['firstpos'] = touch.pos
+
+        ud['group'] = g = str(touch.uid)
+
+        with self.parent.canvas:
+            ud['lines'] = [
+                Line(points = (touch.x, touch.y, touch.x+1, touch.y+1),
+                     width = 1, group = g)]
+
+        touch.grab(self)
+        touch.pop()
+
+    def add_planet_move(self, touch):
+        if touch.grab_current is not self:
+            return
+        touch.push()
+        #touch.apply_transform_2d(self.to_local)
+        ud = touch.ud
+        ud['lines'][0].points = (ud['firstpos'][0],ud['firstpos'][1],
+                                 touch.x,touch.y)
+        touch.pop()
+
+    def add_planet_up(self, touch):
+        if touch.grab_current is not self:
+            return
+        touch.push()
+        #touch.apply_transform_2d(self.to_local)
+
+        ud = touch.ud
+        touchdownv = Vector(ud['firstpos'])
+        touchupv = Vector(touch.pos)
+        velocity = (touchupv - touchdownv) / 10
+
+        newmass = (((time.time() - ud['touchtime']) / 0.2) ** 2)
+        if newmass < self.logic.settings['min_planet_mass']:
+            newmass = self.logic.settings['min_planet_mass']
+
+        relpos = self.to_local(ud['firstpos'][0], ud['firstpos'][1])
+
+        self.logic.add_body(
+            pos = relpos,
+            vel = (velocity.x, velocity.y),
+            mass = newmass,
+            density = self.logic.settings['planet_density']
+        )
+        self.parent.canvas.remove_group(ud['group'])
+        touch.ungrab(self)
+        touch.pop()
+        
