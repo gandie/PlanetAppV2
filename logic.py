@@ -15,6 +15,8 @@ from cplanet import CPlanetKeeper
 from random import choice, randint
 from os import listdir
 
+from game_modi import AddBodyMode, AddBodyMode_Multi, ZoomMode, DelMode
+
 class Logic(Screen):
 
     '''
@@ -31,15 +33,9 @@ class Logic(Screen):
     # MODI-FLAGS
     tutorial_mode = BooleanProperty(None)
 
-    # GUI DATA
-    add_planet_mode = BooleanProperty(None)
-    add_sun_mode = BooleanProperty(None)
-    zoom_mode = BooleanProperty(None)
-    del_mode = BooleanProperty(None)
-    multi_mode = BooleanProperty(None)
-
-
     fixview_mode = BooleanProperty(None)
+
+    cur_guimode = ObjectProperty(None)
 
     # SELECTED PLANET
     selplanet = ObjectProperty(None, allownone = True)
@@ -55,6 +51,14 @@ class Logic(Screen):
         # initialize planetkeeper
         self.keeper = CPlanetKeeper()
 
+        # temporary keeper for trajectory calculation
+        self.temp_keeper = CPlanetKeeper()
+
+        # time per time ratio
+        self.tick_ratio = 1.0
+
+        self.slider_value = 10
+
         # load textures for body-categories
         self.moon_textures = self.load_textures('./media/textures/moons/')
         self.planet_textures = self.load_textures('./media/textures/planets/')
@@ -65,8 +69,9 @@ class Logic(Screen):
         self.blackhole_textures = self.load_textures('./media/textures/blackholes/')
 
         # observe selplanet
-        self.bind(selplanet = self.selplanet_change)
+        self.bind(selplanet = self.on_selplanet)
 
+    # called after loading setting by app
     def load_transitions(self):
         self.planet_transitions = {
             'moon' : {'nextbody' : 'planet',
@@ -106,14 +111,31 @@ class Logic(Screen):
         }
 
 
+        self.mode_map = {
+            'zoom' : ZoomMode(self.gamezone),
+            'add_planet' : AddBodyMode(self.gamezone, body = 'planet', draw_trajectory = True),
+            'add_sun' : AddBodyMode(self.gamezone, body = 'sun', draw_trajectory = True),
+            'multi' : AddBodyMode_Multi(self.gamezone, body = 'moon', draw_trajectory = True),
+            'del' : DelMode(self.gamezone)
+        }
+
+        self.cur_guimode = self.mode_map['add_planet']
+
+
     def start_game(self):
+
         Clock.schedule_interval(self.update_game, 1.0 / 25.0)
         Clock.schedule_interval(self.tick_engine, 1.0 / 25.0)
+        Clock.schedule_interval(self.clone_engine, 1.0 / 25.0)
+
         Clock.schedule_interval(self.collect_garbage, 1.0 / 10.0)
 
     def stop_game(self):
+
         Clock.unschedule(self.update_game)
         Clock.unschedule(self.tick_engine)
+        Clock.unschedule(self.clone_engine)
+
         Clock.unschedule(self.collect_garbage)
 
     def register_gamezone(self, gamezone):
@@ -163,6 +185,10 @@ class Logic(Screen):
             'body' : body
         }
 
+        # fix body in keeper if neccessary
+        if fixed:
+            self.keeper.fix_planet(newindex)
+
         # write dict into planets-dict
         self.planets[newindex] = planet_d
 
@@ -193,7 +219,7 @@ class Logic(Screen):
 
     # let the keeper do its work
     def tick_engine(self, dt):
-        self.keeper.tick()
+        self.keeper.tick(self.tick_ratio)
 
     # collect orphaned widgets
     # TODO: collect bodies far away
@@ -214,17 +240,23 @@ class Logic(Screen):
                 mass = self.keeper.get_planet_mass(index)
                 radius = self.keeper.get_planet_radius(index)
                 density = self.keeper.get_planet_density(index)
+                vel_x = self.keeper.get_planet_vel_x(index)
+                vel_y = self.keeper.get_planet_vel_y(index)
 
-                # update data
+                # update physics data
                 self.planets[index]['position_x'] = pos_x
                 self.planets[index]['position_y'] = pos_y
+                self.planets[index]['velocity_x'] = vel_x
+                self.planets[index]['velocity_y'] = vel_y
                 self.planets[index]['mass'] = mass
                 self.planets[index]['density'] = density
+
+                # update planet widget
                 self.planets[index]['widget'].center_x = pos_x
                 self.planets[index]['widget'].center_y = pos_y
                 self.planets[index]['widget'].size = (radius * 2, radius * 2)
 
-                transition = self.planet_transitions.get(self.planets[index]['body'], None)
+                transition = self.planet_transitions.get(self.planets[index]['body'])
                 if transition:
                     if self.planets[index]['mass'] > transition['mass']:
                         self.planets[index]['widget'].set_color(0, 0, 0)
@@ -243,7 +275,7 @@ class Logic(Screen):
         for index in del_indexes:
             self.delete_planet(index)
 
-        if self.selplanet_index and self.fixview_mode:
+        if self.selplanet_index != None and self.fixview_mode:
             self.center_planet(self.selplanet_index)
 
     def load_textures(self, path):
@@ -270,8 +302,7 @@ class Logic(Screen):
             self.selplanet = widget
             self.selplanet.select()
 
-    def selplanet_change(self, instance, value):
-
+    def on_selplanet(self, instance, value):
         if value == None:
             self.mainscreen.remove_infobox()
             self.mainscreen.remove_seltoggles()
@@ -348,3 +379,53 @@ class Logic(Screen):
             self.fixview_mode = False
         else:
             self.fixview_mode = True
+
+    # reset temporary keeper
+    def clone_engine(self, dt):
+
+        # clear temp-engine
+        for index in range(1000):
+            self.temp_keeper.delete_planet(index)
+
+        # populate temp engine
+        for index in self.planets:
+            planet_d = self.planets[index]
+            self.temp_keeper.create_planet(
+                pos_x = planet_d['position_x'],
+                pos_y = planet_d['position_y'],
+                vel_x = planet_d['velocity_x'],
+                vel_y = planet_d['velocity_y'],
+                mass = planet_d['mass'],
+                density = planet_d['density']
+            )
+            # do not forget to also fix bodies for trajectory calc. 
+            if planet_d['fixed']:
+                self.temp_keeper.fix_planet(index)
+
+    # calc trajectory of not-yet-existing body
+    def calc_trajectory(self, planet_d, ticks = 25, ratio_multiplier = 5):
+
+        # list of points for trajectory in keeper coord.-system
+        temp_list = []
+
+        # create temporary body in temp keeper
+        temp_index = self.temp_keeper.create_planet(
+            pos_x = planet_d['position_x'],
+            pos_y = planet_d['position_y'],
+            vel_x = planet_d['velocity_x'],
+            vel_y = planet_d['velocity_y'],
+            mass = planet_d['mass'],
+            density = planet_d['density']
+        )
+
+        # look into the future using the temp keeper
+        for _ in range(ticks):
+            self.temp_keeper.tick(self.tick_ratio * ratio_multiplier)
+            if self.temp_keeper.planet_exists(temp_index):
+                # fetch data from keeper, track position
+                pos_x = self.temp_keeper.get_planet_pos_x(temp_index)
+                pos_y = self.temp_keeper.get_planet_pos_y(temp_index)
+                pos = (pos_x, pos_y)
+                temp_list.append(pos)
+
+        return temp_list

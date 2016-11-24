@@ -34,12 +34,18 @@ class SettingsScreen(Screen):
        self.build_interface()
 
     def on_enter(self):
+        '''
+        get settings from logic
+        '''
         logic_settings = self.logic.settings
         for key in logic_settings.keys():
             if self.setting_items.has_key(key):
                 self.setting_items[key].value = logic_settings[key]
 
     def on_leave(self):
+        '''
+        write setting to logic
+        '''
         logic_settings = self.logic.settings
         for key in logic_settings.keys():
             if self.setting_items.has_key(key):
@@ -62,6 +68,18 @@ class SettingsScreen(Screen):
 
         # magic binding
         self.settingslayout.bind(minimum_height = self.settingslayout.setter('height'))
+
+        self.background_toggle = SettingsSlot(
+                size_hint = (1, None),
+                #height = 100,
+                setting_min = 0.8,
+                setting_max = 1.2,
+                setting_value = 1,
+                setting_type = 'bool',
+                label_text = 'Background'
+            )
+        self.setting_items['background'] = self.background_toggle
+        self.settingslayout.add_widget(self.background_toggle)
 
         # create items and add to settingslayout
         self.planet_mass = SettingsSlot(

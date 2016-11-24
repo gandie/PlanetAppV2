@@ -108,7 +108,7 @@ class PlanetApp(App):
                 'giantsun_density' : 3,
                 'blackhole_density' : 20,
 
-                'norm_temp' : 200
+                'background' : True
             }
         self.logic.settings = D
 

@@ -11,6 +11,7 @@ from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.togglebutton import ToggleButton
 from kivy.app import App
 from kivy.core.window import Window
+from kivy.uix.slider import Slider
 
 # CUSTOM
 from logic import Logic
@@ -47,16 +48,9 @@ class MenuPanel(FloatLayout):
 
     paused = BooleanProperty(False)
 
-    # modes
-    add_planet_mode = BooleanProperty(True)
-    zoom_mode = BooleanProperty(False)
-    add_sun_mode = BooleanProperty(False)
-    del_mode = BooleanProperty(False)
-    multi_mode = BooleanProperty(False)
-
-    option_map = DictProperty()
-
     logic = ObjectProperty(None)
+
+    cur_mode = StringProperty('add_planet')
 
     def __init__(self, iconsize, iconratio, **kwargs):
        super(MenuPanel, self).__init__(**kwargs)
@@ -66,8 +60,6 @@ class MenuPanel(FloatLayout):
        self.iconratio = iconratio
 
        self.build_interface()
-       self.logic.add_planet_mode = True
-       self.logic.zoom_mode = False
 
        # keywords to press buttons from other modules
        self.keyword_map = {
@@ -78,20 +70,8 @@ class MenuPanel(FloatLayout):
            'multi' : self.multi_button
        }
 
-       self.option_map = {
-           self.add_planet_button : self.add_planet_mode,
-           self.zoom_button : self.zoom_mode,
-           self.add_sun_button : self.add_sun_mode,
-           self.del_button : self.del_mode,
-           self.multi_button : self.multi_mode
-       }
-
-    def on_option_map(self, instance, value):
-        self.logic.add_planet_mode = self.option_map[self.add_planet_button]
-        self.logic.zoom_mode = self.option_map[self.zoom_button]
-        self.logic.add_sun_mode = self.option_map[self.add_sun_button]
-        self.logic.del_mode = self.option_map[self.del_button]
-        self.logic.multi_mode = self.option_map[self.multi_button]
+    def on_cur_mode(self, instance, value):
+        self.logic.cur_guimode = self.logic.mode_map[value]
 
     def press_button(self, keyword):
         button = self.keyword_map[keyword]
@@ -139,6 +119,7 @@ class MenuPanel(FloatLayout):
         self.del_button = RealMenuToggleButton(
             './media/icons/delete.png',
             './media/icons/delete_pressed.png',
+            'del',
             pos_hint = {'x' : 0, 'y' : self.iconratio * 3},
             size_hint = (None, None),
             size = (self.iconsize, self.iconsize),
@@ -150,6 +131,7 @@ class MenuPanel(FloatLayout):
         self.add_sun_button = RealMenuToggleButton(
             './media/icons/add_sun.png',
             './media/icons/add_sun_pressed.png',
+            'add_sun',
             pos_hint = {'x' : 0, 'y' : self.iconratio * 4},
             size_hint = (None, None),
             size = (self.iconsize, self.iconsize),
@@ -161,6 +143,7 @@ class MenuPanel(FloatLayout):
         self.add_planet_button = RealMenuToggleButton(
             './media/icons/add_planet.png',
             './media/icons/add_planet_pressed.png',
+            'add_planet',
             size_hint = (None, None), 
             size = (self.iconsize, self.iconsize),
             pos_hint = {'x' : 0, 'y' : self.iconratio * 5},
@@ -173,6 +156,7 @@ class MenuPanel(FloatLayout):
         self.zoom_button = RealMenuToggleButton(
             './media/icons/zoom_mode.png',
             './media/icons/zoom_mode_pressed.png',
+            'zoom',
             size_hint = (None, None), 
             size = (self.iconsize, self.iconsize),
             pos_hint = {'x' : 0, 'y' : self.iconratio * 6},
@@ -184,6 +168,7 @@ class MenuPanel(FloatLayout):
         self.multi_button = RealMenuToggleButton(
             './media/icons/multipass.png',
             './media/icons/multipass_pressed.png',
+            'multi',
             size_hint = (None, None), 
             size = (self.iconsize, self.iconsize),
             pos_hint = {'x' : 0, 'y' : self.iconratio * 7},

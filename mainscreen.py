@@ -1,17 +1,10 @@
 from kivy.uix.floatlayout import FloatLayout
-#from kivy.uix.textinput import TextInput
-#from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import *
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
-#from kivy.uix.gridlayout import GridLayout
-#from kivy.clock import Clock
-#from kivy.uix.label import Label
-#from kivy.network.urlrequest import UrlRequest
-#import json
+from kivy.uix.slider import Slider
 from kivy.uix.screenmanager import Screen
 from kivy.animation import Animation
-#from logic import Logic
 from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
 from kivy.app import App
@@ -48,8 +41,16 @@ class MainScreen(Screen):
     # buttons for selected planet
     seltoggles = ObjectProperty(None)
 
+    # experimental slider for time ratio
+    ratio_slider = ObjectProperty(None)
+
+    value_slider = ObjectProperty(None)
+
     # add touchable widgets to interface for touch-handling
-    interface = ReferenceListProperty(menupanel, gamezone, tutorial_label, infobox, seltoggles)
+    interface = ReferenceListProperty(
+        menupanel, gamezone, tutorial_label, infobox, 
+        seltoggles, ratio_slider, value_slider
+    )
 
     # LOGIC
     logic = ObjectProperty(None)
@@ -65,8 +66,18 @@ class MainScreen(Screen):
 
        self.build_interface()
 
+       # get background rect from canvas
+       self.background = self.canvas.get_group('background')[0]
+
     def on_enter(self):
         self.allign_gamezone()
+
+        # check for background
+        if self.logic.settings['background']:
+            self.background.size = self.size
+        else:
+            self.background.size = (0,0)
+
         if not self.menupanel.paused:
             self.logic.start_game()
         if self.logic.tutorial_mode:
@@ -174,6 +185,45 @@ class MainScreen(Screen):
             pos_hint = {'x' : 0, 'y' : 0}
         )
 
+        self.ratio_slider = Slider(
+            min = 0.1,
+            max = 2.0,
+            value = 1.0,
+            orientation = 'vertical',
+            pos_hint = {'x' : 0.9, 'y' : 0},
+            size_hint = (0.1, 1)
+        )
+
+        self.value_slider = Slider(
+            min = 5,
+            max = 50,
+            value = 10,
+            step = 1,
+            orientation = 'horizontal',
+            pos_hint = {'x' : self.iconratio_x, 'y' : 0},
+            size_hint = (0.3, 0.1)
+        )
+
+        self.ratio_slider.bind(value = self.slider_change)
+        self.value_slider.bind(value = self.value_slider_change)
+
+        self.add_widget(self.ratio_slider)
+
         self.tutorial_label.register_menupanel(self.menupanel)
 
         self.add_widget(self.menupanel)
+
+    def slider_change(self, instance, value):
+        self.logic.tick_ratio = value
+        #print value
+
+    def value_slider_change(self, instance, value):
+        self.logic.slider_value = value
+        #print value
+
+    def add_value_slider(self):
+        if not self.value_slider in self.children:
+            self.add_widget(self.value_slider)
+
+    def remove_value_slider(self):
+        self.remove_widget(self.value_slider)

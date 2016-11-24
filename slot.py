@@ -93,11 +93,15 @@ class SettingsSlot(GridLayout):
     def on_value(self, instance, value):
 
         if self.setting_type == 'number':
-            #self.value = value
             self.changer.value = value
         elif self.setting_type == 'bool':
-            #self.value = not self.changer.pressed
-            pass
+            self.changer.pressed = value
+            if not value:
+                self.changer.source = self.changer.realtexture
+                self.changer.reload()
+            else:
+                self.changer.source = self.changer.realtexture_pressed
+                self.changer.reload()
 
     def build_interface(self):
         self.label = Label(
