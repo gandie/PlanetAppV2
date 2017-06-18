@@ -1,6 +1,7 @@
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import *
 from kivy.uix.button import Button
+from kivy.uix.label import Label
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.slider import Slider
 from kivy.uix.screenmanager import Screen
@@ -23,6 +24,7 @@ from infobox import Infobox
 
 from seltoggles import Seltoggles
 
+
 class MainScreen(Screen):
     '''
     see kv file for background path
@@ -41,33 +43,31 @@ class MainScreen(Screen):
     # buttons for selected planet
     seltoggles = ObjectProperty(None)
 
-    # experimental slider for time ratio
-    ratio_slider = ObjectProperty(None)
-
+    # context slider for gui modes
     value_slider = ObjectProperty(None)
 
     # add touchable widgets to interface for touch-handling
     interface = ReferenceListProperty(
-        menupanel, gamezone, tutorial_label, infobox, 
-        seltoggles, ratio_slider, value_slider
+        menupanel, gamezone, tutorial_label, infobox,
+        seltoggles, value_slider
     )
 
     # LOGIC
     logic = ObjectProperty(None)
 
     def __init__(self, **kwargs):
-       super(MainScreen, self).__init__(**kwargs)
-       self.logic = App.get_running_app().logic
-       self.logic.register_mainscreen(self)
+        super(MainScreen, self).__init__(**kwargs)
+        self.logic = App.get_running_app().logic
+        self.logic.register_mainscreen(self)
 
-       self.iconsize = kwargs.get('iconsize')
-       self.iconratio_x = kwargs.get('iconratio_x')
-       self.iconratio_y = kwargs.get('iconratio_y')
+        self.iconsize = kwargs.get('iconsize')
+        self.iconratio_x = kwargs.get('iconratio_x')
+        self.iconratio_y = kwargs.get('iconratio_y')
 
-       self.build_interface()
+        self.build_interface()
 
-       # get background rect from canvas
-       self.background = self.canvas.get_group('background')[0]
+        # get background rect from canvas
+        self.background = self.canvas.get_group('background')[0]
 
     def on_enter(self):
         self.allign_gamezone()
@@ -76,7 +76,7 @@ class MainScreen(Screen):
         if self.logic.settings['background']:
             self.background.size = self.size
         else:
-            self.background.size = (0,0)
+            self.background.size = (0, 0)
 
         if not self.menupanel.paused:
             self.logic.start_game()
@@ -116,7 +116,7 @@ class MainScreen(Screen):
                 continue
             if widget == self.gamezone:
                 continue
-            if widget.collide_point(touch.x,touch.y):
+            if widget.collide_point(touch.x, touch.y):
                 widget.on_touch_down(touch)
                 return
         self.gamezone.on_touch_down(touch)
@@ -127,7 +127,7 @@ class MainScreen(Screen):
                 continue
             if widget == self.gamezone:
                 continue
-            if widget.collide_point(touch.x,touch.y):
+            if widget.collide_point(touch.x, touch.y):
                 widget.on_touch_move(touch)
                 return
         self.gamezone.on_touch_move(touch)
@@ -138,7 +138,7 @@ class MainScreen(Screen):
                 continue
             if widget == self.gamezone:
                 continue
-            if widget.collide_point(touch.x,touch.y):
+            if widget.collide_point(touch.x, touch.y):
                 widget.on_touch_up(touch)
                 return
         self.gamezone.on_touch_up(touch)
@@ -148,82 +148,85 @@ class MainScreen(Screen):
         self.tutorial_label = Tutorial_Label(
             self.iconsize,
             self.iconratio_x,
-            size_hint = (None, None),
-            size = (8 * self.iconsize, self.iconsize),
-            pos_hint = {'x' : 1 - 8 * self.iconratio_x - 0.2, 'y' : 0.875}
+            size_hint=(None, None),
+            size=(8 * self.iconsize, self.iconsize),
+            pos_hint={'x': 1 - 8 * self.iconratio_x - 0.2, 'y': 0.875}
         )
 
         self.infobox = Infobox(
-            size_hint = (0.2, 0.5),
-            pos_hint = {'x' : 0.8, 'y' :0.5}
+            size_hint=(0.2, 0.5),
+            pos_hint={'x': 0.8, 'y': 0.5}
         )
 
         self.seltoggles = Seltoggles(
             self.iconsize,
             self.iconratio_x,
-            size_hint = (None, None),
-            size = (5 * self.iconsize, self.iconsize),
-            pos_hint = {'x' : 1 - 5 * self.iconratio_x, 'y' : 0}
+            size_hint=(None, None),
+            size=(5 * self.iconsize, self.iconsize),
+            pos_hint={'x': 1 - 5 * self.iconratio_x, 'y': 0}
         )
 
         self.gamezone = Gamezone(
-            #do_rotation=False,
-            #do_translation_y=False,
-            #do_translation_x=False,
-            auto_bring_to_front = False,
-            scale_min = 0.01,
-            scale_max = 50,
-            size_hint = (10000,10000)
+            # do_rotation=False,
+            # do_translation_y=False,
+            # do_translation_x=False,
+            auto_bring_to_front=False,
+            scale_min=0.01,
+            scale_max=50,
+            size_hint=(100, 100)
         )
         self.add_widget(self.gamezone)
 
         self.menupanel = MenuPanel(
             self.iconsize,
             self.iconratio_y,
-            size_hint = (None, None),
-            size = (self.iconsize, Window.height),
-            pos_hint = {'x' : 0, 'y' : 0}
-        )
-
-        self.ratio_slider = Slider(
-            min = 0.1,
-            max = 2.0,
-            value = 1.0,
-            orientation = 'vertical',
-            pos_hint = {'x' : 0.9, 'y' : 0},
-            size_hint = (0.1, 1)
+            size_hint=(None, None),
+            size=(self.iconsize, Window.height),
+            pos_hint={'x': 0, 'y': 0}
         )
 
         self.value_slider = Slider(
-            min = 5,
-            max = 50,
-            value = 10,
-            step = 1,
-            orientation = 'horizontal',
-            pos_hint = {'x' : self.iconratio_x, 'y' : 0},
-            size_hint = (0.3, 0.1)
+            min=5,
+            max=50,
+            value=10,
+            step=1,
+            orientation='horizontal',
+            pos_hint={'x': self.iconratio_x, 'y': 0},
+            size_hint=(0.3, 0.1)
+            # size=(0.3, self.iconsize)
         )
 
-        self.ratio_slider.bind(value = self.slider_change)
-        self.value_slider.bind(value = self.value_slider_change)
+        self.label = Label(
+            text='Some value: 9999',
+            size_hint=(0.2, 0.1),
+            pos_hint={'x': self.iconratio_x + 0.3, 'y': 0},
+            halign='left'
+        )
 
-        self.add_widget(self.ratio_slider)
+        self.value_slider.bind(value=self.value_slider_change)
 
         self.tutorial_label.register_menupanel(self.menupanel)
-
         self.add_widget(self.menupanel)
-
-    def slider_change(self, instance, value):
-        self.logic.tick_ratio = value
-        #print value
+        # self.add_widget(self.label)
 
     def value_slider_change(self, instance, value):
-        self.logic.slider_value = value
-        #print value
+        if self.logic.cur_guimode == self.logic.mode_map['zoom']:
+            self.logic.tick_ratio = value
+        else:
+            self.logic.slider_value = value
+        self.label.text = self.logic.cur_guimode.slider_label + ':' + str(value)
 
-    def add_value_slider(self):
-        if not self.value_slider in self.children:
+    def add_value_slider(self, mode):
+        if self.value_slider not in self.children:
+            self.value_slider.min = mode.settings['min']
+            self.value_slider.max = mode.settings['max']
+            self.value_slider.step = mode.settings['step']
+            self.value_slider.value = mode.settings['max'] / 2
+            self.label.text = mode.slider_label + ':' + str(self.value_slider.value)
             self.add_widget(self.value_slider)
+            self.add_widget(self.label)
 
     def remove_value_slider(self):
-        self.remove_widget(self.value_slider)
+        if self.value_slider in self.children:
+            self.remove_widget(self.value_slider)
+            self.remove_widget(self.label)

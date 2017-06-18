@@ -23,46 +23,38 @@ class Infobox(ScrollView):
 
     planet_mass_label = ObjectProperty(None)
     planet_body_label = ObjectProperty(None)
-    planet_temp_label = ObjectProperty(None)
     planet_vel_label = ObjectProperty(None)
 
     def __init__(self, **kwargs):
-       super(Infobox, self).__init__(**kwargs)
-       self.logic = App.get_running_app().logic
-
-       self.build_interface()
+        super(Infobox, self).__init__(**kwargs)
+        self.logic = App.get_running_app().logic
+        self.build_interface()
 
     def build_interface(self):
         self.layout = GridLayout(
-            cols = 1,
-            size_hint_y = None,
-            spacing = 10
+            cols=1,
+            size_hint_y=None,
+            spacing=10
         )
-        self.layout.bind(minimum_height = self.layout.setter('height'))
+        self.layout.bind(minimum_height=self.layout.setter('height'))
 
         self.planet_mass_label = Label(
-            text = 'mass',
-            size_hint = (1, None)
+            text='mass',
+            size_hint=(1, None)
         )
 
         self.planet_body_label = Label(
-            text = 'body',
-            size_hint = (1, None)
-        )
-    
-        self.planet_temp_label = Label(
-            text = 'temp',
-            size_hint = (1, None)
+            text='body',
+            size_hint=(1, None)
         )
 
         self.planet_vel_label = Label(
-            text = 'vel',
-            size_hint = (1, None)
+            text='vel',
+            size_hint=(1, None)
         )
 
         self.layout.add_widget(self.planet_mass_label)
         self.layout.add_widget(self.planet_body_label)
-        self.layout.add_widget(self.planet_temp_label)
         self.layout.add_widget(self.planet_vel_label)
         self.add_widget(self.layout)
 
@@ -78,12 +70,8 @@ class Infobox(ScrollView):
         vel = (vel_x, vel_y)
 
         if fixed:
-            self.planet_vel_label.text = 'Vel. : {}'.format((0,0))
+            self.planet_vel_label.text = 'Vel. : {}'.format((0, 0))
         else:
             self.planet_vel_label.text = 'Vel. : {}'.format(vel)
         self.planet_mass_label.text = 'Mass : {}'.format(round(mass, 2))
         self.planet_body_label.text = 'Body : {}'.format(body)
-        if body == 'planet':
-            self.planet_temp_label.text = 'Temp. : {}'.format(round(temp, 2))
-        elif body == 'sun':
-            self.planet_temp_label.text = 'Light : {}'.format(round(light, 2))

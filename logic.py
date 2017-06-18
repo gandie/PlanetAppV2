@@ -17,6 +17,7 @@ from os import listdir
 
 from game_modi import AddBodyMode, AddBodyMode_Multi, ZoomMode, DelMode
 
+
 class Logic(Screen):
 
     '''
@@ -32,14 +33,12 @@ class Logic(Screen):
 
     # MODI-FLAGS
     tutorial_mode = BooleanProperty(None)
-
     fixview_mode = BooleanProperty(None)
-
     cur_guimode = ObjectProperty(None)
 
     # SELECTED PLANET
-    selplanet = ObjectProperty(None, allownone = True)
-    selplanet_index = NumericProperty(None, allownone = True)
+    selplanet = ObjectProperty(None, allownone=True)
+    selplanet_index = NumericProperty(None, allownone=True)
 
     # this is called when app is built!
     def __init__(self):
@@ -69,58 +68,114 @@ class Logic(Screen):
         self.blackhole_textures = self.load_textures('./media/textures/blackholes/')
 
         # observe selplanet
-        self.bind(selplanet = self.on_selplanet)
+        self.bind(selplanet=self.on_selplanet)
 
     # called after loading setting by app
     def load_transitions(self):
         self.planet_transitions = {
-            'moon' : {'nextbody' : 'planet',
-                      'mass' : self.settings['min_planet_mass'],
-                      'density' : self.settings['planet_density'],
-                      'textures' : self.planet_textures},
-            'planet' : {'nextbody' : 'gasgiant',
-                        'mass' : self.settings['min_gasgiant_mass'],
-                        'density' : self.settings['gasgiant_density'],
-                        'textures' : self.gasgiant_textures},
-            'gasgiant' : {'nextbody' : 'sun',
-                          'mass' : self.settings['min_sun_mass'],
-                          'density' : self.settings['sun_density'],
-                          'textures' : self.sun_textures},
-            'sun' : {'nextbody' : 'bigsun',
-                     'mass' : self.settings['min_bigsun_mass'],
-                     'density' : self.settings['bigsun_density'],
-                     'textures' : self.bigsun_textures},
-            'bigsun' : {'nextbody' : 'giantsun',
-                        'mass' : self.settings['min_giantsun_mass'],
-                        'density' : self.settings['giantsun_density'],
-                        'textures' : self.giantsun_textures},
-            'giantsun' : {'nextbody' : 'blackhole',
-                          'mass' : self.settings['min_blackhole_mass'],
-                          'density' : self.settings['blackhole_density'],
-                          'textures' : self.blackhole_textures}
+            'moon': {'nextbody': 'planet',
+                     'mass': self.settings['min_planet_mass'],
+                     'density': self.settings['planet_density'],
+                     'textures': self.planet_textures},
+            'planet': {'nextbody': 'gasgiant',
+                       'mass': self.settings['min_gasgiant_mass'],
+                       'density': self.settings['gasgiant_density'],
+                       'textures': self.gasgiant_textures},
+            'gasgiant': {'nextbody': 'sun',
+                         'mass': self.settings['min_sun_mass'],
+                         'density': self.settings['sun_density'],
+                         'textures': self.sun_textures},
+            'sun': {'nextbody': 'bigsun',
+                    'mass': self.settings['min_bigsun_mass'],
+                    'density': self.settings['bigsun_density'],
+                    'textures': self.bigsun_textures},
+            'bigsun': {'nextbody': 'giantsun',
+                       'mass': self.settings['min_giantsun_mass'],
+                       'density': self.settings['giantsun_density'],
+                       'textures': self.giantsun_textures},
+            'giantsun': {'nextbody': 'blackhole',
+                         'mass': self.settings['min_blackhole_mass'],
+                         'density': self.settings['blackhole_density'],
+                         'textures': self.blackhole_textures}
         }
 
         self.texture_mapping = {
-            'moon' : self.moon_textures,
-            'planet' : self.planet_textures,
-            'gasgiant' : self.gasgiant_textures,
-            'sun' : self.sun_textures,
-            'bigsun' : self.bigsun_textures,
-            'giantsun' : self.giantsun_textures,
-            'blackhole' : self.blackhole_textures
+            'moon': self.moon_textures,
+            'planet': self.planet_textures,
+            'gasgiant': self.gasgiant_textures,
+            'sun': self.sun_textures,
+            'bigsun': self.bigsun_textures,
+            'giantsun': self.giantsun_textures,
+            'blackhole': self.blackhole_textures
         }
 
+        self.mode_setting = {
+            'add_planet': {
+                'min': self.settings['min_planet_mass'],
+                'max': self.settings['min_gasgiant_mass'] * 0.9,
+                'step': self.settings['min_gasgiant_mass'] * 0.9 * 0.1
+            },
+            'add_sun': {
+                'min': self.settings['min_sun_mass'],
+                'max': self.settings['min_bigsun_mass'] * 0.9,
+                'step': self.settings['min_bigsun_mass'] * 0.9 * 0.1
+            },
+            'multi': {
+                'min': int(self.settings['multi_shot_min']),
+                'max': int(self.settings['multi_shot_max']),
+                'step': int(0.1 * self.settings['multi_shot_max'])
+            },
+            'zoom': {
+                'min': 0.1,
+                'max': 2,
+                'step': 0.1,
+            }
+        }
 
         self.mode_map = {
-            'zoom' : ZoomMode(self.gamezone),
-            'add_planet' : AddBodyMode(self.gamezone, body = 'planet', draw_trajectory = True),
-            'add_sun' : AddBodyMode(self.gamezone, body = 'sun', draw_trajectory = True),
-            'multi' : AddBodyMode_Multi(self.gamezone, body = 'moon', draw_trajectory = True),
-            'del' : DelMode(self.gamezone)
+            'zoom': ZoomMode(
+                self.gamezone,
+                sizeable=True,
+                settings=self.mode_setting['zoom'],
+                slider_label='Time Ratio'
+            ),
+            'add_planet': AddBodyMode(
+                self.gamezone, body='planet',
+                draw_trajectory=True,
+                sizeable=True,
+                settings=self.mode_setting['add_planet'],
+                slider_label='Body Mass'
+            ),
+            'add_sun': AddBodyMode(
+                self.gamezone, body='sun',
+                draw_trajectory=True,
+                sizeable=True,
+                settings=self.mode_setting['add_sun'],
+                slider_label='Sun Mass'
+            ),
+            'multi': AddBodyMode_Multi(
+                self.gamezone, body='moon',
+                draw_trajectory=True,
+                sizeable=True,
+                settings=self.mode_setting['multi'],
+                slider_label='Body Count'
+            ),
+            'del': DelMode(self.gamezone)
         }
 
+        #if self.cur_guimode is None:
         self.cur_guimode = self.mode_map['add_planet']
+        self.bind(cur_guimode=self.on_cur_guimode)
+        self.mainscreen.add_value_slider(self.cur_guimode)
 
+    def on_cur_guimode(self, instance, value):
+        # ask mode wether slider values have to be set
+        # apply data from mode to slider...
+
+        self.mainscreen.remove_value_slider()
+        if value.sizeable:
+            # value is a mode here!
+            self.mainscreen.add_value_slider(value)
 
     def start_game(self):
 
@@ -144,9 +199,9 @@ class Logic(Screen):
     def register_mainscreen(self, mainscreen):
         self.mainscreen = mainscreen
 
-    def add_body(self, body = 'planet', pos = (0,0), texture_index = None,
-                 vel = (0, 0), density = 1, mass = 100, fixed = False,
-                 light = 0, temperature = 0, **kwargs):
+    def add_body(self, body='planet', pos=(0, 0), texture_index=None,
+                 vel=(0, 0), density=1, mass=100, fixed=False,
+                 light=0, temperature=0, **kwargs):
 
         # create new widget
         newplanet = Planet()
@@ -159,12 +214,12 @@ class Logic(Screen):
 
         # inform the keeper
         newindex = self.keeper.create_planet(
-            pos_x = pos[0],
-            pos_y = pos[1],
-            vel_x = vel[0],
-            vel_y = vel[1],
-            mass = mass,
-            density = density
+            pos_x=pos[0],
+            pos_y=pos[1],
+            vel_x=vel[0],
+            vel_y=vel[1],
+            mass=mass,
+            density=density
         )
 
         # if keeper says no, do nothing
@@ -173,16 +228,16 @@ class Logic(Screen):
 
         radius = self.keeper.get_planet_radius(newindex)
         planet_d = {
-            'position_x' : pos[0],
-            'position_y' : pos[1],
-            'velocity_x' : vel[0],
-            'velocity_y' : vel[1],
-            'density' : density,
-            'mass' : mass,
-            'fixed' : fixed,
-            'widget' : newplanet,
-            'texture_index' : texture_index,
-            'body' : body
+            'position_x': pos[0],
+            'position_y': pos[1],
+            'velocity_x': vel[0],
+            'velocity_y': vel[1],
+            'density': density,
+            'mass': mass,
+            'fixed': fixed,
+            'widget': newplanet,
+            'texture_index': texture_index,
+            'body': body
         }
 
         # fix body in keeper if neccessary
@@ -310,7 +365,7 @@ class Logic(Screen):
             Clock.unschedule(self.update_infobox)
             Clock.unschedule(self.update_seltoggles)
             self.fixview_mode = False
-            #Clock.schedule(self.fix_view)
+            # Clock.schedule(self.fix_view)
         else:
             self.selplanet_index = self.get_planet_index(value)
             self.mainscreen.add_infobox()
@@ -366,14 +421,14 @@ class Logic(Screen):
 
         newpos = self.gamezone.to_parent(pos_x, pos_y)
 
-        offset_x = newpos[0] - Window.width/2
-        offset_y = newpos[1] - Window.height/2
+        offset_x = newpos[0] - Window.width / 2
+        offset_y = newpos[1] - Window.height / 2
 
         new_center = (self.gamezone.center[0] - offset_x,
                       self.gamezone.center[1] - offset_y)
 
         self.gamezone.center = new_center
-        
+
     def fixview_selected(self, instance):
         if self.fixview_mode:
             self.fixview_mode = False
@@ -384,42 +439,42 @@ class Logic(Screen):
     def clone_engine(self, dt):
 
         # clear temp-engine
-        for index in range(1000):
+        for index in xrange(1000):
             self.temp_keeper.delete_planet(index)
 
         # populate temp engine
         for index in self.planets:
             planet_d = self.planets[index]
-            self.temp_keeper.create_planet(
-                pos_x = planet_d['position_x'],
-                pos_y = planet_d['position_y'],
-                vel_x = planet_d['velocity_x'],
-                vel_y = planet_d['velocity_y'],
-                mass = planet_d['mass'],
-                density = planet_d['density']
+            temp_id = self.temp_keeper.create_planet(
+                pos_x=planet_d['position_x'],
+                pos_y=planet_d['position_y'],
+                vel_x=planet_d['velocity_x'],
+                vel_y=planet_d['velocity_y'],
+                mass=planet_d['mass'],
+                density=planet_d['density']
             )
-            # do not forget to also fix bodies for trajectory calc. 
+            # do not forget to also fix bodies for trajectory calc.
             if planet_d['fixed']:
-                self.temp_keeper.fix_planet(index)
+                self.temp_keeper.fix_planet(temp_id)
 
     # calc trajectory of not-yet-existing body
-    def calc_trajectory(self, planet_d, ticks = 25, ratio_multiplier = 5):
+    def calc_trajectory(self, planet_d, ticks=30, ratio_multiplier=4):
 
         # list of points for trajectory in keeper coord.-system
         temp_list = []
 
         # create temporary body in temp keeper
         temp_index = self.temp_keeper.create_planet(
-            pos_x = planet_d['position_x'],
-            pos_y = planet_d['position_y'],
-            vel_x = planet_d['velocity_x'],
-            vel_y = planet_d['velocity_y'],
-            mass = planet_d['mass'],
-            density = planet_d['density']
+            pos_x=planet_d['position_x'],
+            pos_y=planet_d['position_y'],
+            vel_x=planet_d['velocity_x'],
+            vel_y=planet_d['velocity_y'],
+            mass=planet_d['mass'],
+            density=planet_d['density']
         )
 
         # look into the future using the temp keeper
-        for _ in range(ticks):
+        for _ in xrange(ticks):
             self.temp_keeper.tick(self.tick_ratio * ratio_multiplier)
             if self.temp_keeper.planet_exists(temp_index):
                 # fetch data from keeper, track position

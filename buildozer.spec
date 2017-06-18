@@ -29,7 +29,7 @@ source.include_exts = py,png,jpg,kv,atlas,pyx,h,c
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 0.3.3
+version = 0.4.0
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
@@ -87,7 +87,8 @@ fullscreen = 1
 #android.ant_path =
 
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
-android.p4a_dir = /home/lars/Dev/Python/Kivy/Buildvenv/python-for-android/
+#android.p4a_dir = /home/lars/Dev/python-for-android/
+android.p4a_dir = /home/lars/Dev/python-for-android/
 #android.p4a_dir = %(source.dir)s/.buildozer/android/platform/python-for-android-master/
 
 # (list) python-for-android whitelist

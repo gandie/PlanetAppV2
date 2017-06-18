@@ -18,6 +18,7 @@ import copy
 import os.path
 import time
 
+
 class PlanetApp(App):
 
     # SCREENS AND SCREENMANAGER
@@ -37,33 +38,33 @@ class PlanetApp(App):
         self.screenmanager = ScreenManager()
 
         self.mainscreen = MainScreen(
-            name = 'main', 
-            iconsize = self.iconsize,
-            iconratio_x = self.iconratio_x,
-            iconratio_y = self.iconratio_y
+            name='main',
+            iconsize=self.iconsize,
+            iconratio_x=self.iconratio_x,
+            iconratio_y=self.iconratio_y
         )
 
-        self.menuscreen = MenuScreen(name = 'menu')
+        self.menuscreen = MenuScreen(name='menu')
 
         self.settingsscreen = SettingsScreen(
-            name = 'settings',
-            iconsize = self.iconsize,
-            iconratio_x = self.iconratio_x,
-            iconratio_y = self.iconratio_y
+            name='settings',
+            iconsize=self.iconsize,
+            iconratio_x=self.iconratio_x,
+            iconratio_y=self.iconratio_y
         )
 
         self.savegamescreen = SavegameScreen(
-            name = 'savegames',
-            iconsize = self.iconsize,
-            iconratio_x = self.iconratio_x,
-            iconratio_y = self.iconratio_y
+            name='savegames',
+            iconsize=self.iconsize,
+            iconratio_x=self.iconratio_x,
+            iconratio_y=self.iconratio_y
         )
 
         self.creditsscreen = CreditsScreen(
-            name = 'credits',
-            iconsize = self.iconsize,
-            iconratio_x = self.iconratio_x,
-            iconratio_y = self.iconratio_y
+            name='credits',
+            iconsize=self.iconsize,
+            iconratio_x=self.iconratio_x,
+            iconratio_y=self.iconratio_y
         )
 
         self.screenmanager.add_widget(self.menuscreen)
@@ -92,23 +93,26 @@ class PlanetApp(App):
         except:
             # default settings
             D = {
-                'min_moon_mass' : 0,
-                'min_planet_mass' : 30,
-                'min_gasgiant_mass' : 2000,
-                'min_sun_mass' : 50000,
-                'min_bigsun_mass' : 500000,
-                'min_giantsun_mass' : 1000000,
-                'min_blackhole_mass' : 2000000,
+                'min_moon_mass': 0,
+                'min_planet_mass': 30,
+                'min_gasgiant_mass': 2000,
+                'min_sun_mass': 50000,
+                'min_bigsun_mass': 500000,
+                'min_giantsun_mass': 1000000,
+                'min_blackhole_mass': 2000000,
 
-                'moon_density' : 0.1,
-                'planet_density' : 0.1,
-                'gasgiant_density' : 0.5,
-                'sun_density' : 1.5,
-                'bigsun_density' : 2.6,
-                'giantsun_density' : 3,
-                'blackhole_density' : 20,
+                'moon_density': 2,
+                'planet_density': 3,
+                'gasgiant_density': 3,
+                'sun_density': 4,
+                'bigsun_density': 4,
+                'giantsun_density': 4,
+                'blackhole_density': 20,
 
-                'background' : True
+                'background': True,
+
+                'multi_shot_min': 10,
+                'multi_shot_max': 50,
             }
         self.logic.settings = D
 
@@ -119,7 +123,7 @@ class PlanetApp(App):
         f.write(json_d)
         f.close()
 
-    def load_game(self, slot = 'current'):
+    def load_game(self, slot='current'):
         self.logic.reset_planets(self)
         # this try-block is needed to make first start of app work
         try:
@@ -129,12 +133,12 @@ class PlanetApp(App):
             for index in D:
                 pos = (D[index]['position_x'], D[index]['position_y'])
                 vel = (D[index]['velocity_x'], D[index]['velocity_y'])
-                self.logic.add_body(pos = pos, vel = vel, **D[index])
+                self.logic.add_body(pos=pos, vel=vel, **D[index])
             f.close()
         except:
             print 'no savegame found'
 
-    def save_game(self, slot = 'current'):
+    def save_game(self, slot='current'):
         f = open('save_{}.json'.format(slot), 'w')
         # make deepcopy to avoid deleting widget ref from logic.planets
         D = copy.deepcopy(self.logic.planets)
@@ -167,5 +171,16 @@ class PlanetApp(App):
         self.iconratio_x = float(iconsize) / window_width
         self.iconsize = iconsize
 
+
 if __name__ == '__main__':
     PlanetApp().run()
+
+    '''
+    'moon_density' : 0.1,
+    'planet_density' : 0.1,
+    'gasgiant_density' : 0.5,
+    'sun_density' : 1.5,
+    'bigsun_density' : 2.6,
+    'giantsun_density' : 3,
+    'blackhole_density' : 20,
+    '''
