@@ -17,10 +17,10 @@ from slot import SettingsSlot
 class SettingsScreen(Screen):
 
     logic = ObjectProperty(None)
-
     mainlayout = ObjectProperty(None)
     menubutton = ObjectProperty(None)
-
+    creditsbutton = ObjectProperty(None)
+    settingsbutton = ObjectProperty(None)
     settingsview = ObjectProperty(None)
 
     def __init__(self, **kwargs):
@@ -40,7 +40,7 @@ class SettingsScreen(Screen):
         '''
         logic_settings = self.logic.settings
         for key in logic_settings.keys():
-            if self.setting_items.has_key(key):
+            if key in self.setting_items:
                 self.setting_items[key].value = logic_settings[key]
 
     def on_leave(self):
@@ -49,7 +49,7 @@ class SettingsScreen(Screen):
         '''
         logic_settings = self.logic.settings
         for key in logic_settings.keys():
-            if self.setting_items.has_key(key):
+            if key in self.setting_items:
                 logic_settings[key] = self.setting_items[key].value
 
     def build_interface(self):
@@ -72,7 +72,6 @@ class SettingsScreen(Screen):
 
         self.background_toggle = SettingsSlot(
             size_hint=(1, None),
-            # height = 100,
             setting_min=0.8,
             setting_max=1.2,
             setting_value=1,
@@ -85,7 +84,6 @@ class SettingsScreen(Screen):
         # create items and add to settingslayout
         self.multi_shot_min = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=5,
             setting_max=50,
             setting_value=10,
@@ -97,7 +95,6 @@ class SettingsScreen(Screen):
 
         self.multi_shot_max = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=50,
             setting_max=100,
             setting_value=75,
@@ -109,7 +106,6 @@ class SettingsScreen(Screen):
 
         self.planet_mass = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=10,
             setting_max=50,
             setting_value=30,
@@ -121,7 +117,6 @@ class SettingsScreen(Screen):
 
         self.gasgiant_mass = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=500,
             setting_max=3500,
             setting_value=2000,
@@ -133,7 +128,6 @@ class SettingsScreen(Screen):
 
         self.sun_mass = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=5000,
             setting_max=95000,
             setting_value=50000,
@@ -145,7 +139,6 @@ class SettingsScreen(Screen):
 
         self.bigsun_mass = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=100000,
             setting_max=900000,
             setting_value=500000,
@@ -169,7 +162,6 @@ class SettingsScreen(Screen):
 
         self.blackhole_mass = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=500000,
             setting_max=1500000,
             setting_value=1000000,
@@ -181,7 +173,6 @@ class SettingsScreen(Screen):
 
         self.moon_density = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=0.005,
             setting_max=0.015,
             setting_value=0.01,
@@ -193,7 +184,6 @@ class SettingsScreen(Screen):
 
         self.planet_density = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=0.005,
             setting_max=0.015,
             setting_value=0.01,
@@ -205,7 +195,6 @@ class SettingsScreen(Screen):
 
         self.gasgiant_density = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=0.004,
             setting_max=0.012,
             setting_value=0.008,
@@ -217,7 +206,6 @@ class SettingsScreen(Screen):
 
         self.sun_density = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=0.001,
             setting_max=0.009,
             setting_value=0.005,
@@ -229,7 +217,6 @@ class SettingsScreen(Screen):
 
         self.bigsun_density = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=0.002,
             setting_max=0.01,
             setting_value=0.006,
@@ -241,7 +228,6 @@ class SettingsScreen(Screen):
 
         self.giantsun_density = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=0.005,
             setting_max=0.015,
             setting_value=0.01,
@@ -253,7 +239,6 @@ class SettingsScreen(Screen):
 
         self.blackhole_density = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=0.8,
             setting_max=1.2,
             setting_value=1,
@@ -276,15 +261,23 @@ class SettingsScreen(Screen):
 
         self.creditsbutton = Button(
             text='Credits',
-            size_hint=(0.1, 0.1),
-            pos_hint={'x': 0.9, 'y': 0},
+            size_hint=(0.2, 0.1),
+            pos_hint={'x': 0.8, 'y': 0},
             on_press=self.switchto_credits
+        )
+
+        self.settingsbutton = Button(
+            text='KivySettings',
+            size_hint=(0.2, 0.1),
+            pos_hint={'x': 0.6, 'y': 0},
+            on_press=self.switchto_kivysettings
         )
 
         # add settingslayout to scrollview
         self.settingsview.add_widget(self.settingslayout)
         self.mainlayout.add_widget(self.menubutton)
         self.mainlayout.add_widget(self.creditsbutton)
+        self.mainlayout.add_widget(self.settingsbutton)
         self.mainlayout.add_widget(self.settingsview)
         self.add_widget(self.mainlayout)
 
@@ -295,3 +288,6 @@ class SettingsScreen(Screen):
     def switchto_credits(self, instance):
         self.manager.transition = FadeTransition()
         self.manager.current = 'credits'
+
+    def switchto_kivysettings(self, instance):
+        App.get_running_app().open_settings()

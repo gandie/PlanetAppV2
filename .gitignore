@@ -1,0 +1,9 @@
+*.pyc
+*.*~
+*.sh
+*.so
+*.json
+.buildozer
+bin
+docs
+bla

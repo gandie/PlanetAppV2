@@ -9,6 +9,7 @@ from kivy.vector import Vector
 import time
 from random import randint
 
+
 class Gamezone(Scatter):
 
     logic = ObjectProperty(None)
@@ -26,4 +27,3 @@ class Gamezone(Scatter):
 
     def on_touch_up(self, touch):
         self.logic.cur_guimode.touch_up(touch)
-        

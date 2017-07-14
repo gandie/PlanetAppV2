@@ -182,7 +182,6 @@ class Logic(Screen):
         Clock.schedule_interval(self.update_game, 1.0 / 25.0)
         Clock.schedule_interval(self.tick_engine, 1.0 / 25.0)
         Clock.schedule_interval(self.clone_engine, 1.0 / 25.0)
-
         Clock.schedule_interval(self.collect_garbage, 1.0 / 10.0)
 
     def stop_game(self):
@@ -190,7 +189,6 @@ class Logic(Screen):
         Clock.unschedule(self.update_game)
         Clock.unschedule(self.tick_engine)
         Clock.unschedule(self.clone_engine)
-
         Clock.unschedule(self.collect_garbage)
 
     def register_gamezone(self, gamezone):
@@ -314,7 +312,6 @@ class Logic(Screen):
                 transition = self.planet_transitions.get(self.planets[index]['body'])
                 if transition:
                     if self.planets[index]['mass'] > transition['mass']:
-                        self.planets[index]['widget'].set_color(0, 0, 0)
                         self.planets[index]['body'] = transition['nextbody']
                         self.planets[index]['density'] = transition['density']
 
@@ -358,34 +355,31 @@ class Logic(Screen):
             self.selplanet.select()
 
     def on_selplanet(self, instance, value):
-        if value == None:
+        if value is None:
             self.mainscreen.remove_infobox()
             self.mainscreen.remove_seltoggles()
             self.selplanet_index = None
             Clock.unschedule(self.update_infobox)
             Clock.unschedule(self.update_seltoggles)
             self.fixview_mode = False
-            # Clock.schedule(self.fix_view)
         else:
             self.selplanet_index = self.get_planet_index(value)
             self.mainscreen.add_infobox()
             self.mainscreen.add_seltoggles()
             Clock.schedule_interval(self.update_infobox, 1.0 / 10.0)
             Clock.schedule_interval(self.update_seltoggles, 1.0 / 10.0)
-            #Clock.schedule_interval(self.fix_view, 1.0 / 60.0)
 
     def update_infobox(self, dt):
-        if self.selplanet_index != None:
-            P = self.planets
-            D = P[self.selplanet_index]
-            self.mainscreen.infobox.update(**D)
+        if self.selplanet_index is not None:
+            planet_dict = self.planet[self.selplanet_index]
+            self.mainscreen.infobox.update(**planet_dict)
 
     def update_seltoggles(self, dt):
-        if self.selplanet_index != None:
-            P = self.planets
-            D = P[self.selplanet_index]
-            D['fixview'] = self.fixview_mode
-            self.mainscreen.seltoggles.update(**D)
+        if self.selplanet_index is not None:
+            planet_dict = self.planet[self.selplanet_index]
+            # add fixview attribute to dict to update fixedview (eye-icon)
+            planet_dict['fixview'] = self.fixview_mode
+            self.mainscreen.seltoggles.update(**planet_dict)
 
     def delete_selected(self, instance):
         index = self.selplanet_index
@@ -394,7 +388,7 @@ class Logic(Screen):
 
     def fix_selected(self, instance):
         index = self.selplanet_index
-        if index != None:
+        if index is not None:
             if self.planets[index]['fixed']:
                 self.keeper.unfix_planet(index)
                 self.planets[index]['fixed'] = False
@@ -404,26 +398,22 @@ class Logic(Screen):
 
     def addmass_selected(self, instance):
         index = self.selplanet_index
-        if index != None:
+        if index is not None:
             newmass = self.planets[index]['mass'] * 1.1
             self.keeper.set_planet_mass(index, newmass)
 
     def submass_selected(self, instance):
         index = self.selplanet_index
-        if index != None:
+        if index is not None:
             newmass = self.planets[index]['mass'] * 0.9
             self.keeper.set_planet_mass(index, newmass)
 
     def center_planet(self, index):
-
         pos_x = self.planets[index]['position_x']
         pos_y = self.planets[index]['position_y']
-
         newpos = self.gamezone.to_parent(pos_x, pos_y)
-
         offset_x = newpos[0] - Window.width / 2
         offset_y = newpos[1] - Window.height / 2
-
         new_center = (self.gamezone.center[0] - offset_x,
                       self.gamezone.center[1] - offset_y)
 

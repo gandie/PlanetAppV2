@@ -12,41 +12,44 @@ from kivy.uix.scrollview import ScrollView
 # CUSTOM
 from realbutton import RealButton
 
+
 class CreditsScreen(Screen):
+
+    '''
+    simple screen to show some credits
+    '''
 
     logic = ObjectProperty(None)
     mainlayout = ObjectProperty(None)
 
     def __init__(self, **kwargs):
-       super(CreditsScreen, self).__init__(**kwargs)
-       self.logic = App.get_running_app().logic
-       self.iconsize = kwargs.get('iconsize')
-       self.iconratio_x = kwargs.get('iconratio_x')
-       self.iconratio_y = kwargs.get('iconratio_y')
-
-       self.build_interface()
-
+        super(CreditsScreen, self).__init__(**kwargs)
+        self.logic = App.get_running_app().logic
+        self.iconsize = kwargs.get('iconsize')
+        self.iconratio_x = kwargs.get('iconratio_x')
+        self.iconratio_y = kwargs.get('iconratio_y')
+        self.build_interface()
 
     def build_interface(self):
         self.mainlayout = FloatLayout()
 
         self.creditsview = ScrollView(
-            size_hint = (0.7, 0.7),
-            pos_hint = {'x' : 0.15, 'y' : 0.15}
+            size_hint=(0.7, 0.7),
+            pos_hint={'x': 0.15, 'y': 0.15}
         )
 
         self.creditslayout = GridLayout(
-            cols = 1,
-            size_hint_y = None,
-            spacing = 10
+            cols=1,
+            size_hint_y=None,
+            spacing=10
         )
-        self.creditslayout.bind(minimum_height = self.creditslayout.setter('height'))
+        self.creditslayout.bind(minimum_height=self.creditslayout.setter('height'))
         self.creditsview.add_widget(self.creditslayout)
 
         for line in self.creditlines():
             creditline = Label(
-                text = line,
-                size_hint = (1, None)
+                text=line,
+                size_hint=(1, None)
             )
             self.creditslayout.add_widget(creditline)
 
@@ -54,13 +57,12 @@ class CreditsScreen(Screen):
             './media/icons/menu.png',
             './media/icons/menu_pressed.png',
             self.switchto_menu,
-            size_hint = (None, None),
-            size = (self.iconsize, self.iconsize),
-            pos_hint = {'x' : 0, 'y' : 0},
-            source = './media/icons/menu.png',
-            always_release = True
+            size_hint=(None, None),
+            size=(self.iconsize, self.iconsize),
+            pos_hint={'x': 0, 'y': 0},
+            source='./media/icons/menu.png',
+            always_release=True
         )
-
 
         self.mainlayout.add_widget(self.menubutton)
         self.mainlayout.add_widget(self.creditsview)
@@ -75,7 +77,7 @@ class CreditsScreen(Screen):
             '#### Credits ####',
             '',
             '## Devs ##',
-            'gandie -- main developer -- lb@perfact.de',
+            'gandie -- main developer -- lars@bergmann82.de',
             '',
             '## Artists ##',
             'dude -- layout, graphics',
@@ -91,4 +93,4 @@ class CreditsScreen(Screen):
             '',
             '## Thanks to ##',
             'Everyone else i forgtot to mention'
-            ]
+        ]

@@ -8,6 +8,13 @@ from random import randint
 import random
 from gamezone import Gamezone
 
+'''
+Module for game mode controls.
+Starts with abstract class GameMode nearly all specific modes inherit from.
+Main purpose of this mpdule is to avoid code duplication for game modes adding
+bodies to the simulation.
+'''
+
 
 class GameMode(Screen):
 
@@ -165,8 +172,6 @@ class AddBodyMode_Multi(AddBodyMode):
         velocity = self.calc_velocity(touch)
 
         newmass = 5
-        # random_vel = 2
-
         body_count = int(self.logic.slider_value)
         random_pos = body_count * 2
 
@@ -191,6 +196,9 @@ class AddBodyMode_Multi(AddBodyMode):
 
 
 class ZoomMode(GameMode):
+    '''
+    Select body if a body is hit or call scatter object zooming functionality
+    '''
 
     def touch_down(self, touch):
         touch.push()

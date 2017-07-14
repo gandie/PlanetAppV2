@@ -1,9 +1,10 @@
+# KIVY
 from kivy.uix.image import Image
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.properties import *
 from kivy.uix.behaviors import ToggleButtonBehavior
-
 from kivy.clock import Clock
+
 
 class RealButton(ButtonBehavior, Image):
 
@@ -22,6 +23,7 @@ class RealButton(ButtonBehavior, Image):
         self.source = self.realtexture
         self.reload()
 
+
 class RealTimedButton(ButtonBehavior, Image):
 
     def __init__(self, realtexture, realtexture_pressed, function, **kwargs):
@@ -39,6 +41,7 @@ class RealTimedButton(ButtonBehavior, Image):
         Clock.unschedule(self.function)
         self.source = self.realtexture
         self.reload()
+
 
 class RealToggleButton(ButtonBehavior, Image):
 
@@ -65,9 +68,10 @@ class RealToggleButton(ButtonBehavior, Image):
     def on_release(self):
         pass
 
+
 class RealMenuToggleButton(ToggleButtonBehavior, Image):
 
-    def __init__(self, realtexture, realtexture_pressed, keyword,**kwargs):
+    def __init__(self, realtexture, realtexture_pressed, keyword, **kwargs):
         super(RealMenuToggleButton, self).__init__(**kwargs)
         self.realtexture = realtexture
         self.realtexture_pressed = realtexture_pressed
@@ -77,17 +81,7 @@ class RealMenuToggleButton(ToggleButtonBehavior, Image):
         # i hate this code, togglebuttons are strange
         if self.parent != None:
             if value == 'down':
-
-                '''
-                # switch option
-                for button in self.parent.option_map:
-                    if button == widget:
-                        self.parent.option_map[button] = True
-                    else:
-                        self.parent.option_map[button] = False
-                '''
                 self.parent.cur_mode = self.keyword
-
                 # update textures
                 for dude in self.parent.optionbuttons:
                     if widget == dude:

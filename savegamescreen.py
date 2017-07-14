@@ -12,6 +12,7 @@ from kivy.uix.label import Label
 from slot import Slot
 from realbutton import RealButton
 
+
 class SavegameScreen(Screen):
     '''
     This screen will provide gui to save and load savegames
@@ -25,20 +26,18 @@ class SavegameScreen(Screen):
 
     buttonlayout = ObjectProperty(None)
     mainlayout = ObjectProperty(None)
-
     menubutton = ObjectProperty(None)
-
     logic = ObjectProperty(None)
 
     def __init__(self, **kwargs):
-       super(SavegameScreen, self).__init__(**kwargs)
-       self.logic = App.get_running_app().logic
+        super(SavegameScreen, self).__init__(**kwargs)
+        self.logic = App.get_running_app().logic
 
-       self.iconsize = kwargs.get('iconsize')
-       self.iconratio_x = kwargs.get('iconratio_x')
-       self.iconratio_y = kwargs.get('iconratio_y')
+        self.iconsize = kwargs.get('iconsize')
+        self.iconratio_x = kwargs.get('iconratio_x')
+        self.iconratio_y = kwargs.get('iconratio_y')
 
-       self.build_interface()
+        self.build_interface()
 
     def on_enter(self):
         self.update_saves()
@@ -57,9 +56,9 @@ class SavegameScreen(Screen):
         self.mainlayout = FloatLayout()
         self.buttonlayout = GridLayout(
             cols=1,
-            size_hint=(0.75,0.5),
-            pos_hint={"x" : 0.125,
-                      "y" : 0.25}
+            size_hint=(0.75, 0.5),
+            pos_hint={"x": 0.125,
+                      "y": 0.25}
         )
 
         for i in range(1, 6):
@@ -71,11 +70,11 @@ class SavegameScreen(Screen):
             './media/icons/menu.png',
             './media/icons/menu_pressed.png',
             self.switchto_menu,
-            size_hint = (None, None),
-            size = (self.iconsize, self.iconsize),
-            pos_hint = {'x' : 0, 'y' : 0},
-            source = './media/icons/menu.png',
-            always_release = True
+            size_hint=(None, None),
+            size=(self.iconsize, self.iconsize),
+            pos_hint={'x': 0, 'y': 0},
+            source='./media/icons/menu.png',
+            always_release=True
         )
 
         self.mainlayout.add_widget(self.menubutton)
@@ -88,4 +87,3 @@ class SavegameScreen(Screen):
     def switchto_main(self, instance):
         self.manager.transition = FadeTransition()
         self.manager.current = 'main'
-    

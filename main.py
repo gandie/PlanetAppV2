@@ -174,13 +174,3 @@ class PlanetApp(App):
 
 if __name__ == '__main__':
     PlanetApp().run()
-
-    '''
-    'moon_density' : 0.1,
-    'planet_density' : 0.1,
-    'gasgiant_density' : 0.5,
-    'sun_density' : 1.5,
-    'bigsun_density' : 2.6,
-    'giantsun_density' : 3,
-    'blackhole_density' : 20,
-    '''

@@ -1,3 +1,4 @@
+# KIVY
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import *
 from kivy.uix.button import Button
@@ -9,19 +10,15 @@ from kivy.animation import Animation
 from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
 from kivy.app import App
-import time
 from kivy.uix.behaviors import ToggleButtonBehavior
-from menupanel import MenuPanel
-from gamezone import Gamezone
-
 from kivy.clock import Clock
-
 from kivy.core.window import Window
 
+# CUSTOM
+from menupanel import MenuPanel
+from gamezone import Gamezone
 from tutorial_label import Tutorial_Label
-
 from infobox import Infobox
-
 from seltoggles import Seltoggles
 
 
@@ -84,7 +81,7 @@ class MainScreen(Screen):
             self.add_widget(self.tutorial_label)
 
     def add_seltoggles(self):
-        if not self.seltoggles in self.children:
+        if self.seltoggles not in self.children:
             self.add_widget(self.seltoggles)
 
     def remove_seltoggles(self):
@@ -92,7 +89,7 @@ class MainScreen(Screen):
             self.remove_widget(self.seltoggles)
 
     def add_infobox(self):
-        if not self.infobox in self.children:
+        if self.infobox not in self.children:
             self.add_widget(self.infobox)
 
     def remove_infobox(self):
@@ -112,7 +109,7 @@ class MainScreen(Screen):
     # hand down touch events, hand to gamezone if nothing else matches
     def on_touch_down(self, touch):
         for widget in self.interface:
-            if not widget in self.children:
+            if widget not in self.children:
                 continue
             if widget == self.gamezone:
                 continue
@@ -123,7 +120,7 @@ class MainScreen(Screen):
 
     def on_touch_move(self, touch):
         for widget in self.interface:
-            if not widget in self.children:
+            if widget not in self.children:
                 continue
             if widget == self.gamezone:
                 continue
@@ -134,7 +131,7 @@ class MainScreen(Screen):
 
     def on_touch_up(self, touch):
         for widget in self.interface:
-            if not widget in self.children:
+            if widget not in self.children:
                 continue
             if widget == self.gamezone:
                 continue
@@ -193,7 +190,6 @@ class MainScreen(Screen):
             orientation='horizontal',
             pos_hint={'x': self.iconratio_x, 'y': 0},
             size_hint=(0.3, 0.1)
-            # size=(0.3, self.iconsize)
         )
 
         self.label = Label(
