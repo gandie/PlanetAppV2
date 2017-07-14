@@ -371,12 +371,12 @@ class Logic(Screen):
 
     def update_infobox(self, dt):
         if self.selplanet_index is not None:
-            planet_dict = self.planet[self.selplanet_index]
+            planet_dict = self.planets[self.selplanet_index]
             self.mainscreen.infobox.update(**planet_dict)
 
     def update_seltoggles(self, dt):
         if self.selplanet_index is not None:
-            planet_dict = self.planet[self.selplanet_index]
+            planet_dict = self.planets[self.selplanet_index]
             # add fixview attribute to dict to update fixedview (eye-icon)
             planet_dict['fixview'] = self.fixview_mode
             self.mainscreen.seltoggles.update(**planet_dict)
