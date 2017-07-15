@@ -3,12 +3,12 @@ from kivy.uix.image import Image
 from kivy.properties import *
 from kivy.uix.floatlayout import FloatLayout
 
+'''
+this widget is used to show planets in the gamezone
+'''
+
 
 class Planet(FloatLayout):
-
-    '''
-    this widget is used to show planets in mainscreen
-    '''
 
     base_image = ObjectProperty(None)
     select_overlay = ObjectProperty(None)

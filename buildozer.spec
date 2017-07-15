@@ -87,7 +87,11 @@ fullscreen = 1
 #android.ant_path =
 
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
-#android.p4a_dir = /home/lars/Dev/python-for-android/
+############ ALTER THIS LINE TO BUILD ON YOUR SYSTEM!! ###############
+# CUSTOM python-for-android is used for version-pinning and custom recipes
+# like cplanet. Put the engine_src/cplanet directory of this repository to the recipes
+# folder of your python-for-android so cplanet is available to be installed into
+# the apk.
 android.p4a_dir = /home/lars/Dev/python-for-android/
 #android.p4a_dir = %(source.dir)s/.buildozer/android/platform/python-for-android-master/
 

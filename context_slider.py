@@ -8,7 +8,7 @@ from kivy.app import App
 class Context_Slider(FloatLayout):
 
     '''
-    labeled slider with changing context
+    labeled slider with changing context depending on current game-mode
     '''
 
     logic = ObjectProperty(None)

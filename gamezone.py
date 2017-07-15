@@ -9,6 +9,12 @@ from kivy.vector import Vector
 import time
 from random import randint
 
+'''
+This is the widget where the actuall simluation is displayed.
+Scatter widget can be zoomed, translated and rotated which is basically the
+zooming functionality. Hands down touch events to current mode.
+'''
+
 
 class Gamezone(Scatter):
 

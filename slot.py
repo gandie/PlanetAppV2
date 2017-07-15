@@ -11,6 +11,11 @@ from kivy.uix.gridlayout import GridLayout
 # CUSTOM
 from realbutton import RealToggleButton
 
+'''
+Slot = widget to show savegame-slot
+SettingsSlot = widget to show settings item
+'''
+
 
 class Slot(FloatLayout):
 

@@ -19,6 +19,11 @@ from realbutton import RealToggleButton
 from realbutton import RealMenuToggleButton
 from realbutton import RealTimedButton
 
+'''
+buttons shown on the right bottom when a planet is selected. needs to be
+updated depending on planet data (fixed) and logic fixview mode
+'''
+
 
 class Seltoggles(FloatLayout):
 
@@ -103,6 +108,8 @@ class Seltoggles(FloatLayout):
         self.add_widget(self.planet_fixview_button)
 
     def update(self, **kwargs):
+        # update buttons depending in planet selected. kwargs contain
+        # complete planet dictionary and fixview flag from logic
         fixed = kwargs.get('fixed', False)
         fixview = kwargs.get('fixview', False)
         fixbutton = self.planet_fix_button

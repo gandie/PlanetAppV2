@@ -8,6 +8,12 @@ from kivy.uix.button import Button
 from kivy.uix.slider import Slider
 from kivy.app import App
 
+'''
+Infoxbox displayed on the top right when a body is seleceted. Recieves
+Planet dictionary in update method to display planet information in
+corresponding labels
+'''
+
 
 class Infobox(ScrollView):
 

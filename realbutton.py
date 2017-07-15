@@ -5,6 +5,10 @@ from kivy.properties import *
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.clock import Clock
 
+'''
+custom button mechanics due to problems with texture scaling in kivy buttons
+'''
+
 
 class RealButton(ButtonBehavior, Image):
 

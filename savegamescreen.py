@@ -12,17 +12,18 @@ from kivy.uix.label import Label
 from slot import Slot
 from realbutton import RealButton
 
+'''
+This screen will provide gui to save and load savegames
+from json-files
+savegame-files are:
+save_current.json -> allways keep current game
+save_1.json -> First savegame-slot
+[...]
+save_5.json -> last savegame-slot
+'''
+
 
 class SavegameScreen(Screen):
-    '''
-    This screen will provide gui to save and load savegames
-    from json-files
-    savegame-files are:
-    save_current.json -> allways keep current game
-    save_1.json -> First savegame-slot
-    [...]
-    save_5.json -> last savegame-slot
-    '''
 
     buttonlayout = ObjectProperty(None)
     mainlayout = ObjectProperty(None)

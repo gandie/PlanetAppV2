@@ -5,13 +5,13 @@ from kivy.uix.button import Button
 
 from realbutton import RealButton
 
+'''
+simple tutorial mechanics working with states mapped in two dictionaries
+state_texts and state_actions
+'''
+
 
 class Tutorial_Label(FloatLayout):
-
-    '''
-    simple tutorial mechanics working with states mapped in two dictionaries
-    state_texts and state_actions
-    '''
 
     label = ObjectProperty(None)
     menupanel = ObjectProperty(None)

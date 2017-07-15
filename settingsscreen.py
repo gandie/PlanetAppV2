@@ -13,6 +13,11 @@ from kivy.uix.scrollview import ScrollView
 from realbutton import RealButton
 from slot import SettingsSlot
 
+'''
+screen to alter settings. basically a scrollview containing settings slots.
+also access kivy settings from here.
+'''
+
 
 class SettingsScreen(Screen):
 

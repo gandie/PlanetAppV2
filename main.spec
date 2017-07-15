@@ -3,7 +3,6 @@ from kivy.deps import sdl2, glew
 
 block_cipher = None
 
-
 a = Analysis(['main.py'],
              pathex=['C:\\PlanetAppV2'],
              binaries=[],

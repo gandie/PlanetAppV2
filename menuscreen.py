@@ -1,3 +1,4 @@
+# KIVY
 from kivy.uix.screenmanager import Screen
 from kivy.uix.screenmanager import FadeTransition
 from kivy.properties import *
@@ -5,17 +6,18 @@ from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
-
-
 from kivy.core.window import Window
+
+# CUSTOM
 from realbutton import RealButton
+
+'''
+Menuscreen shown when app has started. Access savegames, settings, credits and
+tutorial from here.
+'''
 
 
 class MenuScreen(Screen):
-
-    '''
-    add fancy main menu here!
-    '''
 
     startbutton = ObjectProperty(None)
     tutorialbutton = ObjectProperty(None)

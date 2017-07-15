@@ -19,4 +19,11 @@ Requirements:
 ####### Packaging #######
 #########################
 
-Can be built into apk for android using buildozer, for windows using pyinstaller.
+Can be built into apk for android using buildozer, for windows (EXE-file) using
+pyinstaller.
+
+buildozer.spec is part of this repository and must be slightly altered to work
+on your system. See comments in buildozer.spec for more detail.
+
+Windows build has been tested using pyinstaller installed into a wine environment.
+main.spec can be altered and used with pyinstaller to build EXE-files.

@@ -19,13 +19,13 @@ from realbutton import RealButton
 from realbutton import RealToggleButton
 from realbutton import RealMenuToggleButton
 
+'''
+menupanel shown on the left side of the screen in mainscreen
+contains main buttons to control the game
+'''
+
 
 class MenuPanel(FloatLayout):
-
-    '''
-    menupanel shown on the left side of the screen in mainscreen
-    contains main buttons to control the game
-    '''
 
     # toggle buttons
     add_planet_button = ObjectProperty(None)
@@ -56,10 +56,8 @@ class MenuPanel(FloatLayout):
     def __init__(self, iconsize, iconratio, **kwargs):
         super(MenuPanel, self).__init__(**kwargs)
         self.logic = App.get_running_app().logic
-
         self.iconsize = iconsize
         self.iconratio = iconratio
-
         self.build_interface()
 
         # keywords to press buttons from other modules

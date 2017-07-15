@@ -21,6 +21,11 @@ from tutorial_label import Tutorial_Label
 from infobox import Infobox
 from seltoggles import Seltoggles
 
+'''
+Screen shown when the game is played. Contains gamezone and control widgets.
+Divides touch events for control widgets and gamezone and hands them down.
+'''
+
 
 class MainScreen(Screen):
     '''
@@ -103,16 +108,20 @@ class MainScreen(Screen):
             self.logic.tutorial_mode = False
 
     def allign_gamezone(self):
+        # center gamezone widget so simulation starts in the middle
         self.gamezone.center_x = self.center_x
         self.gamezone.center_y = self.center_y
 
-    # hand down touch events, hand to gamezone if nothing else matches
     def on_touch_down(self, touch):
+        # hand down touch events, hand to gamezone if nothing else matches
         for widget in self.interface:
+            # dont check invisible widgets
             if widget not in self.children:
                 continue
+            # gamezone is last
             if widget == self.gamezone:
                 continue
+            # check for collision
             if widget.collide_point(touch.x, touch.y):
                 widget.on_touch_down(touch)
                 return
@@ -164,6 +173,7 @@ class MainScreen(Screen):
         )
 
         self.gamezone = Gamezone(
+            # zooming stuff
             # do_rotation=False,
             # do_translation_y=False,
             # do_translation_x=False,
@@ -200,17 +210,19 @@ class MainScreen(Screen):
         )
 
         self.value_slider.bind(value=self.value_slider_change)
-
         self.tutorial_label.register_menupanel(self.menupanel)
         self.add_widget(self.menupanel)
-        # self.add_widget(self.label)
 
     def value_slider_change(self, instance, value):
+        # check current mode and update value in logic module
         if self.logic.cur_guimode == self.logic.mode_map['zoom']:
             self.logic.tick_ratio = value
         else:
             self.logic.slider_value = value
-        self.label.text = self.logic.cur_guimode.slider_label + ':' + str(value)
+        # update label
+        self.label.text = ':'.join(
+            [self.logic.cur_guimode.slider_label, str(value)]
+        )
 
     def add_value_slider(self, mode):
         if self.value_slider not in self.children:
