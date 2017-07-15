@@ -20,7 +20,7 @@ tutorial from here.
 class MenuScreen(Screen):
 
     startbutton = ObjectProperty(None)
-    tutorialbutton = ObjectProperty(None)
+    creditsbutton = ObjectProperty(None)
     settingsbutton = ObjectProperty(None)
     savegamebutton = ObjectProperty(None)
     mainlayout = ObjectProperty(None)
@@ -43,11 +43,9 @@ class MenuScreen(Screen):
         self.manager.transition = FadeTransition()
         self.manager.current = 'savegames'
 
-    def switchto_tutorial(self, instance):
-        self.logic.tutorial_mode = True
-        self.logic.reset_planets(self)
+    def switchto_credits(self, instance):
         self.manager.transition = FadeTransition()
-        self.manager.current = 'main'
+        self.manager.current = 'credits'
 
     def build_interface(self):
         self.mainlayout = FloatLayout()
@@ -56,8 +54,8 @@ class MenuScreen(Screen):
             './media/buttons/play.png',
             './media/buttons/play_pressed.png',
             self.switchto_main,
-            size_hint=(0.4, 0.4),
-            pos_hint={'x': 0.6, 'y': 0.3},
+            size_hint=(0.4, 0.3),
+            pos_hint={'x': 0, 'y': 0.6},
             source='./media/buttons/play.png',
             always_release=True
         )
@@ -66,8 +64,8 @@ class MenuScreen(Screen):
             './media/buttons/settings.png',
             './media/buttons/settings_pressed.png',
             self.switchto_settings,
-            size_hint=(0.2, 0.2),
-            pos_hint={'x': 0.32, 'y': 0.7},
+            size_hint=(0.4, 0.3),
+            pos_hint={'x': 0.6, 'y': 0.6},
             source='./media/buttons/settings.png',
             always_release=True
         )
@@ -76,24 +74,24 @@ class MenuScreen(Screen):
             './media/buttons/saves.png',
             './media/buttons/saves_pressed.png',
             self.switchto_savegames,
-            size_hint=(0.2, 0.2),
-            pos_hint={'x': 0.07, 'y': 0.4},
+            size_hint=(0.4, 0.3),
+            pos_hint={'x': 0, 'y': 0.1},
             source='./media/buttons/saves.png',
             always_release=True
         )
 
-        self.tutorialbutton = RealButton(
-            './media/buttons/tutorial.png',
-            './media/buttons/tutorial_pressed.png',
-            self.switchto_tutorial,
-            size_hint=(0.2, 0.2),
-            pos_hint={'x': 0.57, 'y': 0.06},
-            source='./media/buttons/tutorial.png',
+        self.creditsbutton = RealButton(
+            './media/buttons/credits.png',
+            './media/buttons/credits_pressed.png',
+            self.switchto_credits,
+            size_hint=(0.4, 0.3),
+            pos_hint={'x': 0.6, 'y': 0.1},
+            source='./media/buttons/credits.png',
             always_release=True
         )
 
         self.mainlayout.add_widget(self.startbutton)
-        self.mainlayout.add_widget(self.tutorialbutton)
+        self.mainlayout.add_widget(self.creditsbutton)
         self.mainlayout.add_widget(self.settingsbutton)
         self.mainlayout.add_widget(self.savegamebutton)
         self.add_widget(self.mainlayout)

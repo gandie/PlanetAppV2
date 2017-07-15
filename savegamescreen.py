@@ -68,13 +68,13 @@ class SavegameScreen(Screen):
         self.mainlayout.add_widget(self.buttonlayout)
 
         self.menubutton = RealButton(
-            './media/icons/menu.png',
-            './media/icons/menu_pressed.png',
+            './media/icons/arrowleft.png',
+            './media/icons/arrowleft_pressed.png',
             self.switchto_menu,
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             pos_hint={'x': 0, 'y': 0},
-            source='./media/icons/menu.png',
+            source='./media/icons/arrowleft.png',
             always_release=True
         )
 

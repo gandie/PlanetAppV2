@@ -109,15 +109,15 @@ class SettingsSlot(GridLayout):
             self.changer = Slider(
                 min=self.setting_min,
                 max=self.setting_max,
-                value=self.setting_value,
+                value=self.setting_value
             )
             self.changer.bind(value=self.change_value)
         elif self.setting_type == 'bool':
             self.changer = RealToggleButton(
-                './media/icons/settings.png',
-                './media/icons/settings_pressed.png',
+                './media/icons/delete.png',
+                './media/icons/check.png',
                 self.change_value,
-                source='./media/icons/settings.png',
+                source='./media/icons/delete.png',
                 always_release=True
             )
 

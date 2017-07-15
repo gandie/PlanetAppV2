@@ -82,8 +82,14 @@ class MainScreen(Screen):
 
         if not self.menupanel.paused:
             self.logic.start_game()
-        if self.logic.tutorial_mode:
-            self.add_widget(self.tutorial_label)
+
+        # check tutorial setting
+        if self.logic.settings['show_tutorial'] is True:
+            if self.tutorial_label not in self.children:
+                self.add_widget(self.tutorial_label)
+        else:
+            if self.tutorial_label in self.children:
+                self.remove_widget(self.tutorial_label)
 
     def add_seltoggles(self):
         if self.seltoggles not in self.children:
@@ -178,9 +184,9 @@ class MainScreen(Screen):
             # do_translation_y=False,
             # do_translation_x=False,
             auto_bring_to_front=False,
-            scale_min=0.01,
-            scale_max=50,
-            size_hint=(100, 100)
+            scale_min=0.15,
+            scale_max=10,
+            size_hint=(25, 25)
         )
         self.add_widget(self.gamezone)
 

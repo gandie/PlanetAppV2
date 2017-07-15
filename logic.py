@@ -41,11 +41,11 @@ class Logic(Screen):
     selplanet_index = NumericProperty(None, allownone=True)
 
     # this is called when app is built!
-    def __init__(self):
+    def __init__(self, settings):
 
         # set up dicts to be filled
         self.planets = {}
-        self.settings = {}
+        self.settings = settings
 
         # initialize planetkeeper
         self.keeper = CPlanetKeeper()
@@ -55,58 +55,47 @@ class Logic(Screen):
 
         # time per time ratio
         self.tick_ratio = 1.0
-
         self.slider_value = 10
 
-        # load textures for body-categories
-        self.moon_textures = self.load_textures('./media/textures/moons/')
-        self.planet_textures = self.load_textures('./media/textures/planets/')
-        self.gasgiant_textures = self.load_textures('./media/textures/gasgiants/')
-        self.sun_textures = self.load_textures('./media/textures/suns/')
-        self.bigsun_textures = self.load_textures('./media/textures/bigsuns/')
-        self.giantsun_textures = self.load_textures('./media/textures/giantsuns/')
-        self.blackhole_textures = self.load_textures('./media/textures/blackholes/')
+        self.texture_mapping = {
+            'moon': self.load_textures('./media/textures/moons/'),
+            'planet': self.load_textures('./media/textures/planets/'),
+            'gasgiant': self.load_textures('./media/textures/gasgiants/'),
+            'sun': self.load_textures('./media/textures/suns/'),
+            'bigsun': self.load_textures('./media/textures/bigsuns/'),
+            'giantsun': self.load_textures('./media/textures/giantsuns/'),
+            'blackhole': self.load_textures('./media/textures/blackholes/'),
+        }
 
         # observe selplanet
         self.bind(selplanet=self.on_selplanet)
 
-    # called after loading setting by app
-    def load_transitions(self):
+    def apply_settings(self):
         self.planet_transitions = {
             'moon': {'nextbody': 'planet',
                      'mass': self.settings['min_planet_mass'],
                      'density': self.settings['planet_density'],
-                     'textures': self.planet_textures},
+                     'textures': self.texture_mapping['planet']},
             'planet': {'nextbody': 'gasgiant',
                        'mass': self.settings['min_gasgiant_mass'],
                        'density': self.settings['gasgiant_density'],
-                       'textures': self.gasgiant_textures},
+                       'textures': self.texture_mapping['gasgiant']},
             'gasgiant': {'nextbody': 'sun',
                          'mass': self.settings['min_sun_mass'],
                          'density': self.settings['sun_density'],
-                         'textures': self.sun_textures},
+                         'textures': self.texture_mapping['sun']},
             'sun': {'nextbody': 'bigsun',
                     'mass': self.settings['min_bigsun_mass'],
                     'density': self.settings['bigsun_density'],
-                    'textures': self.bigsun_textures},
+                    'textures': self.texture_mapping['bigsun']},
             'bigsun': {'nextbody': 'giantsun',
                        'mass': self.settings['min_giantsun_mass'],
                        'density': self.settings['giantsun_density'],
-                       'textures': self.giantsun_textures},
+                       'textures': self.texture_mapping['giantsun']},
             'giantsun': {'nextbody': 'blackhole',
                          'mass': self.settings['min_blackhole_mass'],
                          'density': self.settings['blackhole_density'],
-                         'textures': self.blackhole_textures}
-        }
-
-        self.texture_mapping = {
-            'moon': self.moon_textures,
-            'planet': self.planet_textures,
-            'gasgiant': self.gasgiant_textures,
-            'sun': self.sun_textures,
-            'bigsun': self.bigsun_textures,
-            'giantsun': self.giantsun_textures,
-            'blackhole': self.blackhole_textures
+                         'textures': self.texture_mapping['blackhole']}
         }
 
         self.mode_setting = {
@@ -135,38 +124,45 @@ class Logic(Screen):
         self.mode_map = {
             'zoom': ZoomMode(
                 self.gamezone,
+                self.settings,
                 sizeable=True,
                 settings=self.mode_setting['zoom'],
                 slider_label='Time Ratio'
             ),
             'add_planet': AddBodyMode(
-                self.gamezone, body='planet',
+                self.gamezone,
+                self.settings,
+                body='planet',
                 draw_trajectory=True,
                 sizeable=True,
                 settings=self.mode_setting['add_planet'],
                 slider_label='Body Mass'
             ),
             'add_sun': AddBodyMode(
-                self.gamezone, body='sun',
+                self.gamezone,
+                self.settings,
+                body='sun',
                 draw_trajectory=True,
                 sizeable=True,
                 settings=self.mode_setting['add_sun'],
                 slider_label='Sun Mass'
             ),
             'multi': AddBodyMode_Multi(
-                self.gamezone, body='moon',
+                self.gamezone,
+                self.settings,
+                body='moon',
                 draw_trajectory=True,
                 sizeable=True,
                 settings=self.mode_setting['multi'],
                 slider_label='Body Count'
             ),
-            'del': DelMode(self.gamezone)
+            'del': DelMode(self.gamezone, self.settings)
         }
 
-        #if self.cur_guimode is None:
-        self.cur_guimode = self.mode_map['add_planet']
+        if self.cur_guimode is None:
+            self.cur_guimode = self.mode_map['add_planet']
+            self.mainscreen.add_value_slider(self.cur_guimode)
         self.bind(cur_guimode=self.on_cur_guimode)
-        self.mainscreen.add_value_slider(self.cur_guimode)
 
     def on_cur_guimode(self, instance, value):
         # ask mode wether slider values have to be set
@@ -205,7 +201,7 @@ class Logic(Screen):
         newplanet = Planet()
 
         # texture of new body, defaults to planet
-        texture_list = self.texture_mapping.get(body, self.planet_textures)
+        texture_list = self.texture_mapping[body]
         texture_index = texture_index or randint(0, len(texture_list) - 1)
         newplanet_texture = texture_list[texture_index]
         newplanet.set_base_image(newplanet_texture)
@@ -296,6 +292,14 @@ class Logic(Screen):
                 vel_x = self.keeper.get_planet_vel_x(index)
                 vel_y = self.keeper.get_planet_vel_y(index)
 
+                # cleanup garbage
+                if pos_x > self.gamezone.size[0] or pos_x < 0:
+                    del_indexes.append(index)
+                    continue
+                if pos_y > self.gamezone.size[1] or pos_y < 0:
+                    del_indexes.append(index)
+                    continue
+
                 # update physics data
                 self.planets[index]['position_x'] = pos_x
                 self.planets[index]['position_y'] = pos_y
@@ -327,7 +331,7 @@ class Logic(Screen):
         for index in del_indexes:
             self.delete_planet(index)
 
-        if self.selplanet_index != None and self.fixview_mode:
+        if self.selplanet_index is not None and self.fixview_mode:
             self.center_planet(self.selplanet_index)
 
     def load_textures(self, path):

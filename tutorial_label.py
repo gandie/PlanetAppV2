@@ -28,7 +28,7 @@ class Tutorial_Label(FloatLayout):
         self.build_interface()
         self.state_texts = {
             0: 'Welcome to tutorial of PocketCosmos!',
-            1: 'This tutorial will show the basic functions of this sandbox',
+            1: 'This tutorial will show the basic functions of this sandbox. It can be deactivated in the settings dialogue.',
             2: 'Lets start by adding some planets. Note, that the add-planet mode has already been selected from the left panel.',
             3: 'To add a planet to the simulation, wipe over the screen.',
             4: 'The line you draw wiping over the screen indicates the trajectory of the planet added.',

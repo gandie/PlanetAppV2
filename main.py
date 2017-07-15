@@ -41,7 +41,7 @@ class PlanetApp(App):
 
     def build(self):
         self.calc_iconsize()
-        self.logic = Logic()
+        self.logic = Logic(settings=self.load_settings())
         self.screenmanager = ScreenManager()
 
         self.mainscreen = MainScreen(
@@ -79,12 +79,13 @@ class PlanetApp(App):
         self.screenmanager.add_widget(self.settingsscreen)
         self.screenmanager.add_widget(self.savegamescreen)
         self.screenmanager.add_widget(self.creditsscreen)
+        self.logic.apply_settings()
 
         return self.screenmanager
 
     def on_start(self):
-        self.load_settings()
-        self.logic.load_transitions()
+        # self.load_settings()
+        # self.logic.load_transitions()
         self.load_game()
 
     def on_stop(self):
@@ -93,13 +94,12 @@ class PlanetApp(App):
 
     def load_settings(self):
         try:
-            f = open('settings.json', 'r')
-            json_d = f.readline()
-            D = json.loads(json_d)
-            f.close
-        except:
+            with open('settings.json', 'r') as settingsfile:
+                json_d = settingsfile.readline()
+            settings = json.loads(json_d)
+        except Exception:
             # default settings
-            D = {
+            settings = {
                 'min_moon_mass': 0,
                 'min_planet_mass': 30,
                 'min_gasgiant_mass': 2000,
@@ -117,11 +117,12 @@ class PlanetApp(App):
                 'blackhole_density': 20,
 
                 'background': True,
+                'show_tutorial': True,
 
                 'multi_shot_min': 10,
                 'multi_shot_max': 50,
             }
-        self.logic.settings = D
+        return settings
 
     def save_settings(self):
         f = open('settings.json', 'w')

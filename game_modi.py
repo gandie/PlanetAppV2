@@ -1,11 +1,14 @@
+# KIVY
 from kivy.uix.screenmanager import Screen
 from kivy.app import App
 from kivy.properties import *
 from kivy.vector import Vector
 from kivy.graphics import Line, Color
 
+# BUILTIN
 from random import randint
-import random
+
+# CUSTOM
 from gamezone import Gamezone
 
 '''
@@ -20,7 +23,7 @@ class GameMode(Screen):
 
     logic = ObjectProperty(None)
 
-    def __init__(self, gamezone, body='', draw_trajectory=False,
+    def __init__(self, gamezone, logic_settings, body='', draw_trajectory=False,
                  sizeable=False, slider_label='', **kwargs):
         super(GameMode, self).__init__(**kwargs)
         self.gamezone = gamezone

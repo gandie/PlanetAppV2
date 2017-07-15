@@ -24,7 +24,6 @@ class SettingsScreen(Screen):
     logic = ObjectProperty(None)
     mainlayout = ObjectProperty(None)
     menubutton = ObjectProperty(None)
-    creditsbutton = ObjectProperty(None)
     settingsbutton = ObjectProperty(None)
     settingsview = ObjectProperty(None)
 
@@ -56,6 +55,7 @@ class SettingsScreen(Screen):
         for key in logic_settings.keys():
             if key in self.setting_items:
                 logic_settings[key] = self.setting_items[key].value
+        self.logic.apply_settings()
 
     def build_interface(self):
         self.mainlayout = FloatLayout()
@@ -85,6 +85,17 @@ class SettingsScreen(Screen):
         )
         self.setting_items['background'] = self.background_toggle
         self.settingslayout.add_widget(self.background_toggle)
+
+        self.tutorial_toggle = SettingsSlot(
+            size_hint=(1, None),
+            setting_min=0.8,
+            setting_max=1.2,
+            setting_value=1,
+            setting_type='bool',
+            label_text='Tutorial'
+        )
+        self.setting_items['show_tutorial'] = self.tutorial_toggle
+        self.settingslayout.add_widget(self.tutorial_toggle)
 
         # create items and add to settingslayout
         self.multi_shot_min = SettingsSlot(
@@ -155,7 +166,6 @@ class SettingsScreen(Screen):
 
         self.giantsun_mass = SettingsSlot(
             size_hint=(1, None),
-            #height = 100,
             setting_min=500000,
             setting_max=1500000,
             setting_value=1000000,
@@ -167,9 +177,9 @@ class SettingsScreen(Screen):
 
         self.blackhole_mass = SettingsSlot(
             size_hint=(1, None),
-            setting_min=500000,
-            setting_max=1500000,
-            setting_value=1000000,
+            setting_min=1000000,
+            setting_max=3000000,
+            setting_value=2000000,
             setting_type='number',
             label_text='Min. Blackhole Mass'
         )
@@ -178,111 +188,102 @@ class SettingsScreen(Screen):
 
         self.moon_density = SettingsSlot(
             size_hint=(1, None),
-            setting_min=0.005,
-            setting_max=0.015,
-            setting_value=0.01,
+            setting_min=1,
+            setting_max=3,
+            setting_value=2,
             setting_type='number',
-            label_text='Moon sparsity'
+            label_text='Moon density'
         )
         self.setting_items['moon_density'] = self.moon_density
         self.settingslayout.add_widget(self.moon_density)
 
         self.planet_density = SettingsSlot(
             size_hint=(1, None),
-            setting_min=0.005,
-            setting_max=0.015,
-            setting_value=0.01,
+            setting_min=1,
+            setting_max=5,
+            setting_value=3,
             setting_type='number',
-            label_text='Planet sparsity'
+            label_text='Planet density'
         )
         self.setting_items['planet_density'] = self.planet_density
         self.settingslayout.add_widget(self.planet_density)
 
         self.gasgiant_density = SettingsSlot(
             size_hint=(1, None),
-            setting_min=0.004,
-            setting_max=0.012,
-            setting_value=0.008,
+            setting_min=1,
+            setting_max=5,
+            setting_value=3,
             setting_type='number',
-            label_text='Gasgiant sparsity'
+            label_text='Gasgiant density'
         )
         self.setting_items['gasgiant_density'] = self.gasgiant_density
         self.settingslayout.add_widget(self.gasgiant_density)
 
         self.sun_density = SettingsSlot(
             size_hint=(1, None),
-            setting_min=0.001,
-            setting_max=0.009,
-            setting_value=0.005,
+            setting_min=2,
+            setting_max=6,
+            setting_value=4,
             setting_type='number',
-            label_text='Sun sparsity'
+            label_text='Sun density'
         )
         self.setting_items['sun_density'] = self.sun_density
         self.settingslayout.add_widget(self.sun_density)
 
         self.bigsun_density = SettingsSlot(
             size_hint=(1, None),
-            setting_min=0.002,
-            setting_max=0.01,
-            setting_value=0.006,
+            setting_min=2,
+            setting_max=6,
+            setting_value=4,
             setting_type='number',
-            label_text='Bigsun sparsity'
+            label_text='Bigsun density'
         )
         self.setting_items['bigsun_density'] = self.bigsun_density
         self.settingslayout.add_widget(self.bigsun_density)
 
         self.giantsun_density = SettingsSlot(
             size_hint=(1, None),
-            setting_min=0.005,
-            setting_max=0.015,
-            setting_value=0.01,
+            setting_min=2,
+            setting_max=6,
+            setting_value=4,
             setting_type='number',
-            label_text='Giantsun sparsity'
+            label_text='Giantsun density'
         )
         self.setting_items['giantsun_density'] = self.giantsun_density
         self.settingslayout.add_widget(self.giantsun_density)
 
         self.blackhole_density = SettingsSlot(
             size_hint=(1, None),
-            setting_min=0.8,
-            setting_max=1.2,
-            setting_value=1,
+            setting_min=10,
+            setting_max=30,
+            setting_value=20,
             setting_type='number',
-            label_text='Blackhole sparsity'
+            label_text='Blackhole density'
         )
         self.setting_items['blackhole_density'] = self.blackhole_density
         self.settingslayout.add_widget(self.blackhole_density)
 
         self.menubutton = RealButton(
-            './media/icons/menu.png',
-            './media/icons/menu_pressed.png',
+            './media/icons/arrowleft.png',
+            './media/icons/arrowleft.png',
             self.switchto_menu,
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             pos_hint={'x': 0, 'y': 0},
-            source='./media/icons/menu.png',
+            source='./media/icons/arrowleft.png',
             always_release=True
-        )
-
-        self.creditsbutton = Button(
-            text='Credits',
-            size_hint=(0.2, 0.1),
-            pos_hint={'x': 0.8, 'y': 0},
-            on_press=self.switchto_credits
         )
 
         self.settingsbutton = Button(
             text='KivySettings',
-            size_hint=(0.2, 0.1),
-            pos_hint={'x': 0.6, 'y': 0},
+            size_hint=(1, None),
             on_press=self.switchto_kivysettings
         )
+        self.settingslayout.add_widget(self.settingsbutton)
 
         # add settingslayout to scrollview
         self.settingsview.add_widget(self.settingslayout)
         self.mainlayout.add_widget(self.menubutton)
-        self.mainlayout.add_widget(self.creditsbutton)
-        self.mainlayout.add_widget(self.settingsbutton)
         self.mainlayout.add_widget(self.settingsview)
         self.add_widget(self.mainlayout)
 
