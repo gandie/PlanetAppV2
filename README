@@ -1,0 +1,22 @@
+############################
+####### PocketCosmos #######
+############################
+
+A gravity simulation sandbox running on multiple platforms:
+
+Windows, Linux, Android
+
+Intended to run on mobile devices with touch screen.
+
+Requirements:
+-Python 2.7*
+-Kivy 1.10
+-buildozer (to build for android)
+-pyinstaller (to build for windows)
+
+
+#########################
+####### Packaging #######
+#########################
+
+Can be built into apk for android using buildozer, for windows using pyinstaller.
