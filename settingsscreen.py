@@ -49,13 +49,14 @@ class SettingsScreen(Screen):
 
     def on_leave(self):
         '''
-        write setting to logic
+        write setting to logic and save to file
         '''
         logic_settings = self.logic.settings
         for key in logic_settings.keys():
             if key in self.setting_items:
                 logic_settings[key] = self.setting_items[key].value
         self.logic.apply_settings()
+        App.get_running_app().save_settings()
 
     def build_interface(self):
         self.mainlayout = FloatLayout()

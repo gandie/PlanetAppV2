@@ -69,7 +69,7 @@ class GameMode(Screen):
         with self.gamezone.parent.canvas:
             ud['lines'] = [
                 Line(points=(touch.x, touch.y, touch.x + 1, touch.y + 1),
-                     width=1, group=ud['group'])]
+                     width=1, dash_offset=12, group=ud['group'])]
 
     def trajectory_complex(self, touch):
 

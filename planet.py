@@ -27,9 +27,9 @@ class Planet(FloatLayout):
         )
 
         self.select_overlay = Image(
-            size_hint=(None, None),
-            pos_hint={'x': -0.25, 'y': -0.25},
-            source='./media/textures/picked/picked.png',
+            size_hint=(1.25, 1.25),
+            pos_hint={'x': -0.125, 'y': -0.125},
+            source='./media/textures/picked/scope.png',
             allow_stretch=True
         )
 
@@ -39,13 +39,13 @@ class Planet(FloatLayout):
         if self.base_image:
             self.base_image.size = value
             if self.select_overlay:
-                newsize = (self.base_image.size[0] * 1.5, self.base_image.size[1] * 1.46)
+                newsize = (self.base_image.size[0] * 1.5, self.base_image.size[1] * 1.5)
                 self.select_overlay.size = newsize
                 self.select_overlay.center = self.center
 
     def select(self):
-        newsize = (self.base_image.size[0] * 1.5, self.base_image.size[1] * 1.46)
-        self.select_overlay.size = newsize
+        #newsize = (self.base_image.size[0] * 10, self.base_image.size[1] * 10)
+        #self.select_overlay.size = newsize
         self.select_overlay.center = self.center
         self.add_widget(self.select_overlay)
 

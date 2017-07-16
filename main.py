@@ -125,11 +125,10 @@ class PlanetApp(App):
         return settings
 
     def save_settings(self):
-        f = open('settings.json', 'w')
         D = copy.deepcopy(self.logic.settings)
         json_d = json.dumps(D)
-        f.write(json_d)
-        f.close()
+        with open('settings.json', 'w') as settingsfile:
+            settingsfile.write(json_d)
 
     def load_game(self, slot='current'):
         self.logic.reset_planets(self)

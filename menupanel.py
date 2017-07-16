@@ -128,13 +128,13 @@ class MenuPanel(FloatLayout):
         )
 
         self.add_sun_button = RealMenuToggleButton(
-            './media/icons/add_sun.png',
-            './media/icons/add_sun_pressed.png',
+            './media/icons/sunmode.png',
+            './media/icons/sunmode_pressed.png',
             'add_sun',
             pos_hint={'x': 0, 'y': self.iconratio * 4},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/add_sun.png',
+            source='./media/icons/sunmode.png',
             group='menu',
             allow_no_selection=False
         )
@@ -153,15 +153,15 @@ class MenuPanel(FloatLayout):
         )
 
         self.zoom_button = RealMenuToggleButton(
+            './media/icons/zoom.png',
             './media/icons/zoom_mode.png',
-            './media/icons/zoom_mode_pressed.png',
             'zoom',
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             pos_hint={'x': 0, 'y': self.iconratio * 6},
             group='menu',
             allow_no_selection=False,
-            source='./media/icons/zoom_mode.png'
+            source='./media/icons/zoom.png'
         )
 
         self.multi_button = RealMenuToggleButton(

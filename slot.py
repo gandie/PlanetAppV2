@@ -9,7 +9,7 @@ from kivy.uix.slider import Slider
 from kivy.uix.gridlayout import GridLayout
 
 # CUSTOM
-from realbutton import RealToggleButton
+from realbutton import RealToggleButton, RealButton
 
 '''
 Slot = widget to show savegame-slot
@@ -49,18 +49,25 @@ class Slot(FloatLayout):
             size_hint=(0.5, 1),
             pos_hint={'x': 0, 'y': 0}
         )
-        self.loadbutton = Button(
-            text='Load',
-            size_hint=(0.25, 1),
-            pos_hint={'x': 0.5, 'y': 0},
-            on_press=self.load
-        )
 
-        self.savebutton = Button(
-            text='Save',
+        self.loadbutton = RealButton(
+            './media/buttons/load.png',
+            './media/buttons/load.png',
+            self.load,
             size_hint=(0.25, 1),
             pos_hint={'x': 0.75, 'y': 0},
-            on_press=self.save
+            source='./media/buttons/load.png',
+            always_release=True
+        )
+
+        self.savebutton = RealButton(
+            './media/buttons/save.png',
+            './media/buttons/save.png',
+            self.save,
+            size_hint=(0.25, 1),
+            pos_hint={'x': 0.5, 'y': 0},
+            source='./media/buttons/save.png',
+            always_release=True
         )
 
         self.add_widget(self.label)

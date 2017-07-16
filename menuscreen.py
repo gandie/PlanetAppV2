@@ -54,8 +54,8 @@ class MenuScreen(Screen):
             './media/buttons/play.png',
             './media/buttons/play_pressed.png',
             self.switchto_main,
-            size_hint=(0.4, 0.3),
-            pos_hint={'x': 0, 'y': 0.6},
+            size_hint=(0.3, 0.2),
+            pos_hint={'x': 0, 'y': 0.7},
             source='./media/buttons/play.png',
             always_release=True
         )
@@ -64,8 +64,8 @@ class MenuScreen(Screen):
             './media/buttons/settings.png',
             './media/buttons/settings_pressed.png',
             self.switchto_settings,
-            size_hint=(0.4, 0.3),
-            pos_hint={'x': 0.6, 'y': 0.6},
+            size_hint=(0.3, 0.2),
+            pos_hint={'x': 0.7, 'y': 0.7},
             source='./media/buttons/settings.png',
             always_release=True
         )
@@ -74,7 +74,7 @@ class MenuScreen(Screen):
             './media/buttons/saves.png',
             './media/buttons/saves_pressed.png',
             self.switchto_savegames,
-            size_hint=(0.4, 0.3),
+            size_hint=(0.3, 0.2),
             pos_hint={'x': 0, 'y': 0.1},
             source='./media/buttons/saves.png',
             always_release=True
@@ -84,8 +84,8 @@ class MenuScreen(Screen):
             './media/buttons/credits.png',
             './media/buttons/credits_pressed.png',
             self.switchto_credits,
-            size_hint=(0.4, 0.3),
-            pos_hint={'x': 0.6, 'y': 0.1},
+            size_hint=(0.3, 0.2),
+            pos_hint={'x': 0.7, 'y': 0.1},
             source='./media/buttons/credits.png',
             always_release=True
         )
