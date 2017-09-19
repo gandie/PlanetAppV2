@@ -1,6 +1,11 @@
 from distutils.core import setup
 from distutils.extension import Extension
 
+'''
+# build cplanet library
+python setup.py build
+'''
+
 # Test if Cython is available
 try:
     from Cython.Distutils import build_ext

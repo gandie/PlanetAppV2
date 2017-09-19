@@ -21,7 +21,7 @@ PlanetKeeper* create_planetkeeper() {
 
   return planetkeeper;
 
-} 
+}
 
 void free_planetkeeper(PlanetKeeper *planetkeeper) {
   free(planetkeeper);
@@ -65,7 +65,7 @@ int create_planet(PlanetKeeper *planetkeeper, double pos_x, double pos_y, double
       return index;
     }
   }
-
+  // free memory?
   return -1;
 
 }
@@ -254,7 +254,7 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
       }
 
       planet->radius = radius;
- 
+
     }
   }
 }
