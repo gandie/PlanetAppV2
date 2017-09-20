@@ -23,6 +23,7 @@ main module of application. entry point when application is run. build-method
 is run first, on_start and on_stop fire when app is actually started or closed.
 
 also contains load/save mechanism for settings and savegames.
+new engine test running
 '''
 
 

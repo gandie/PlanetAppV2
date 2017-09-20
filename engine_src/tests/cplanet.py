@@ -78,6 +78,5 @@ class CPlanetTests(unittest.TestCase):
             self.keeper.tick(1)
 
 
-
 if __name__ == '__main__':
     unittest.main()
