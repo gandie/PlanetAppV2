@@ -7,6 +7,7 @@ from kivy.graphics import Line, Color
 
 # BUILTIN
 from random import randint
+import math
 
 # CUSTOM
 from gamezone import Gamezone
@@ -32,6 +33,7 @@ class GameMode(Screen):
         self.slider_label = slider_label
         self.draw_trajectory = draw_trajectory
 
+        self.radial_coordinates = list(gib2(6, 0, 0))
         self.distance = 0
 
         self.sizeable = sizeable
@@ -69,7 +71,7 @@ class GameMode(Screen):
         with self.gamezone.parent.canvas:
             ud['lines'] = [
                 Line(points=(touch.x, touch.y, touch.x + 1, touch.y + 1),
-                     width=1, dash_offset=12, group=ud['group'])]
+                     width=1, dash_offset=1, group=ud['group'])]
 
     def trajectory_complex(self, touch):
 
@@ -109,6 +111,22 @@ class GameMode(Screen):
 
     def touch_up(self, touch):
         pass
+
+
+def gib2(R, cx, cy):
+    '''
+    get coordinates radial from center for circle with radius R
+    '''
+    radius = int(R)
+    yielded = []
+    for radius_step in xrange(1, radius + 1):
+        for angle_index in xrange(2**(radius_step + 1)):
+            angle = angle_index * math.pi / (2 ** radius_step)
+            x = int(math.cos(angle) * radius_step)
+            y = int(math.sin(angle) * radius_step)
+            if (x, y) not in yielded:
+                yielded.append((x, y))
+                yield x+cx, y+cy
 
 
 class AddBodyMode(GameMode):
@@ -178,10 +196,17 @@ class AddBodyMode_Multi(AddBodyMode):
         body_count = int(self.logic.slider_value)
         random_pos = body_count * 2
 
-        for i in xrange(body_count):
-
+        #for i in xrange(body_count):
+        for x, y in self.radial_coordinates[:body_count]:
+            '''
             randpos = (ud['firstpos_local'][0] + randint(-random_pos, random_pos),
                        ud['firstpos_local'][1] + randint(-random_pos, random_pos))
+            '''
+            randpos = (
+                ud['firstpos_local'][0] + x*35,
+                ud['firstpos_local'][1] + y*35
+            )
+
             randvel = (velocity.x,  # + randint(-random_vel, random_vel),
                        velocity.y)  # + randint(-random_vel, random_vel))
             self.logic.add_body(
@@ -209,7 +234,6 @@ class ZoomMode(GameMode):
         for body in self.gamezone.children:
             if body.collide_point(touch.x, touch.y):
                 self.logic.select_planet(body)
-                return
         touch.pop()
         super(Gamezone, self.gamezone).on_touch_down(touch)
 

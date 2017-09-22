@@ -55,6 +55,7 @@ int create_planet(PlanetKeeper *planetkeeper, double pos_x, double pos_y, double
   planet->mass = mass;
   planet->density = density;
   planet->fixed = 0;
+  planet->mass_changed = 0;
 
   // calculate radius from mass and density
   double radius_3 = ((3 * planet->mass) / (4 * 3.14 * planet->density));
@@ -164,12 +165,23 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
       continue;
     }
 
+    // UPDATE POSITION
     if (planet1->fixed == 0) {
       planet1->pos_x = planet1->pos_x + planet1->vel_x * ratio;
       planet1->pos_y = planet1->pos_y + planet1->vel_y * ratio;
     }
 
-    int update_mass = 0;
+    // UPDATE RADIUS
+    if (planet1->mass_changed == 1) {
+      double radius_3 = ((3 * planet1->mass) / (4 * 3.14 * planet1->density));
+      double radius = radius_3;
+      int iterations2;
+      for (iterations2 = 0; iterations2 < 8; iterations2++) {
+        radius = ((2 * radius * radius * radius) + radius_3) / (3 * radius * radius);
+      }
+      planet1->radius = radius;
+      planet1->mass_changed = 0;
+    }
 
     for(index_2 = index_1 + 1; index_2 < planetkeeper->maxindex + 1; index_2++) {
 
@@ -177,7 +189,6 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
       if (planet1 == NULL) {
         break;
       }
-
 
       Planet *planet2 = planetkeeper->planets[index_2];
       if (planet2 == NULL) {
@@ -206,18 +217,18 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
         double impulse_x = planet1->vel_x * planet1->mass + planet2->vel_x * planet2->mass;
         double impulse_y = planet1->vel_y * planet1->mass + planet2->vel_y * planet2->mass;
 
-        update_mass = 1;
-
         if (planet1->mass <= planet2->mass) {
           planet2->mass += planet1->mass;
           planet2->vel_x = impulse_x / planet2->mass;
           planet2->vel_y = impulse_y / planet2->mass;
+          planet2->mass_changed = 1;
           double delete_index = planet1->index;
           delete_planet(planetkeeper, delete_index);
         } else {
           planet1->mass += planet2->mass;
           planet1->vel_x = impulse_x / planet1->mass;
           planet1->vel_y = impulse_y / planet1->mass;
+          planet1->mass_changed = 1;
           double delete_index = planet2->index;
           delete_planet(planetkeeper, delete_index);
         }
@@ -238,29 +249,6 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
       planet2->vel_y += force_y * ratio / planet2->mass;
 
     }
-
-    if (planet1 == NULL) {
-      continue;
-    }
-
-    if (update_mass == 0) {
-      continue;
-    }
-
-    double radius_3 = ((3 * planet1->mass) / (4 * 3.14 * planet1->density));
-    double radius = radius_3;
-    int iterations2;
-    for (iterations2 = 0; iterations2 < 8; iterations2++) {
-      radius = ((2 * radius * radius * radius) + radius_3) / (3 * radius * radius);
-    }
-    planet1->radius = radius;
-    /*
-    if (planet1->fixed == 0) {
-    planet1->pos_x = planet1->pos_x;// + planet1->vel_x;// * ratio;
-    planet1->pos_y = planet1->pos_y;// + planet1->vel_y;// * ratio;
-  }
-    */
-
   }
 }
 /*

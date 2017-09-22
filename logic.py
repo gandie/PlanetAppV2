@@ -177,8 +177,8 @@ class Logic(Screen):
 
         Clock.schedule_interval(self.update_game, 1.0 / 25.0)
         Clock.schedule_interval(self.tick_engine, 1.0 / 25.0)
-        Clock.schedule_interval(self.clone_engine, 1.0 / 25.0)
-        Clock.schedule_interval(self.collect_garbage, 1.0 / 10.0)
+        Clock.schedule_interval(self.clone_engine, 1.0)# / 25.0)
+        Clock.schedule_interval(self.collect_garbage, 1.0)# / 10.0)
 
     def stop_game(self):
 
@@ -274,7 +274,7 @@ class Logic(Screen):
     # TODO: collect bodies far away
     def collect_garbage(self, dt):
         for widget in self.gamezone.children:
-            if self.get_planet_index(widget) == None:
+            if self.get_planet_index(widget) is None:
                 self.gamezone.remove_widget(widget)
 
     def update_game(self, dt):

@@ -9,6 +9,7 @@
 typedef struct Planet {
   double pos_x, pos_y, vel_x, vel_y, mass, density, radius;
   int fixed;
+  int mass_changed;
   int index;
 } Planet;
 
