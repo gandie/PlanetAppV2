@@ -125,14 +125,12 @@ class Logic(Screen):
         self.mode_map = {
             'zoom': ZoomMode(
                 self.gamezone,
-                self.settings,
                 sizeable=True,
                 settings=self.mode_setting['zoom'],
                 slider_label='Time Ratio'
             ),
             'add_planet': AddBodyMode(
                 self.gamezone,
-                self.settings,
                 body='planet',
                 draw_trajectory=True,
                 sizeable=True,
@@ -141,7 +139,6 @@ class Logic(Screen):
             ),
             'add_sun': AddBodyMode(
                 self.gamezone,
-                self.settings,
                 body='sun',
                 draw_trajectory=True,
                 sizeable=True,
@@ -150,14 +147,13 @@ class Logic(Screen):
             ),
             'multi': AddBodyMode_Multi(
                 self.gamezone,
-                self.settings,
                 body='moon',
                 draw_trajectory=True,
                 sizeable=True,
                 settings=self.mode_setting['multi'],
                 slider_label='Body Count'
             ),
-            'del': DelMode(self.gamezone, self.settings)
+            'del': DelMode(self.gamezone)
         }
 
         if self.cur_guimode is None:
@@ -468,7 +464,7 @@ class Logic(Screen):
                 self.temp_keeper.fix_planet(temp_id)
 
     # calc trajectory of not-yet-existing body
-    def calc_trajectory(self, planet_d, ticks=100, ratio_multiplier=2):
+    def calc_trajectory(self, planet_d, ticks=1000, ratio_multiplier=2):
 
         # list of points for trajectory in keeper coord.-system
         temp_list = []

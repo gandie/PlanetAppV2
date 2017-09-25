@@ -225,6 +225,7 @@ class MainScreen(Screen):
             self.logic.tick_ratio = value
         else:
             self.logic.slider_value = value
+        self.logic.cur_guimode.slider_value = value
         # update label
         self.label.text = ':'.join(
             [self.logic.cur_guimode.slider_label, str(value)]

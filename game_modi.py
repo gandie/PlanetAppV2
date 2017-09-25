@@ -24,21 +24,21 @@ class GameMode(Screen):
 
     logic = ObjectProperty(None)
 
-    def __init__(self, gamezone, logic_settings, body='', draw_trajectory=False,
-                 sizeable=False, slider_label='', **kwargs):
+    def __init__(self, gamezone, body='', draw_trajectory=False, sizeable=False,
+                 slider_label='', **kwargs):
         super(GameMode, self).__init__(**kwargs)
         self.gamezone = gamezone
         self.body = body
         self.logic = App.get_running_app().logic
         self.slider_label = slider_label
         self.draw_trajectory = draw_trajectory
-
         self.radial_coordinates = list(self.circle_coords(6, 0, 0))
         self.distance = 0
 
         self.sizeable = sizeable
         if self.sizeable:
             self.settings = kwargs.get('settings')
+            self.slider_value = int(self.settings['max'] / self.settings['step']) / 2 * self.settings['step']
 
         if self.body != '':
             # stuff for trajectory calculation
@@ -55,16 +55,15 @@ class GameMode(Screen):
         ud = touch.ud
         # better use global coordinates. scaling to gamezone leads to very
         # high velocities when zooming out
+        '''
         touchdownv = Vector(ud['firstpos_local'])
         curpos_local = self.gamezone.to_local(touch.pos[0], touch.pos[1])
         touchupv = Vector(curpos_local)
-        velocity = (touchupv - touchdownv) / 25
+        velocity = (touchupv - touchdownv)
         '''
         touchdownv = Vector(ud['firstpos'])
-        curpos_local = touch.pos
-        touchupv = Vector(curpos_local)
+        touchupv = Vector(touch.pos)
         velocity = (touchupv - touchdownv) / 25
-        '''
 
         return velocity
 
@@ -173,7 +172,8 @@ class AddBodyMode(GameMode):
         ud = touch.ud
         velocity = self.calc_velocity(touch)
 
-        mass = self.logic.slider_value  # self.min_mass
+        # mass = self.logic.slider_value  # self.min_mass
+        mass = self.slider_value
 
         self.logic.add_body(
             body=self.body,
