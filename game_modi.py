@@ -33,7 +33,7 @@ class GameMode(Screen):
         self.slider_label = slider_label
         self.draw_trajectory = draw_trajectory
 
-        self.radial_coordinates = list(gib2(6, 0, 0))
+        self.radial_coordinates = list(self.circle_coords(6, 0, 0))
         self.distance = 0
 
         self.sizeable = sizeable
@@ -46,17 +46,25 @@ class GameMode(Screen):
             self.min_mass = self.logic.settings[min_mass_key]
             # stupid patch foor moon mass, fix this!
             if self.body == 'moon':
-                self.min_mass = 29
+                self.min_mass = 9
 
             density_key = '{}_density'.format(self.body)
             self.density = self.logic.settings[density_key]
 
     def calc_velocity(self, touch):
         ud = touch.ud
+        # better use global coordinates. scaling to gamezone leads to very
+        # high velocities when zooming out
         touchdownv = Vector(ud['firstpos_local'])
         curpos_local = self.gamezone.to_local(touch.pos[0], touch.pos[1])
         touchupv = Vector(curpos_local)
-        velocity = (touchupv - touchdownv) / 10
+        velocity = (touchupv - touchdownv) / 25
+        '''
+        touchdownv = Vector(ud['firstpos'])
+        curpos_local = touch.pos
+        touchupv = Vector(curpos_local)
+        velocity = (touchupv - touchdownv) / 25
+        '''
 
         return velocity
 
@@ -112,21 +120,20 @@ class GameMode(Screen):
     def touch_up(self, touch):
         pass
 
-
-def gib2(R, cx, cy):
-    '''
-    get coordinates radial from center for circle with radius R
-    '''
-    radius = int(R)
-    yielded = []
-    for radius_step in xrange(1, radius + 1):
-        for angle_index in xrange(2**(radius_step + 1)):
-            angle = angle_index * math.pi / (2 ** radius_step)
-            x = int(math.cos(angle) * radius_step)
-            y = int(math.sin(angle) * radius_step)
-            if (x, y) not in yielded:
-                yielded.append((x, y))
-                yield x+cx, y+cy
+    def circle_coords(self, R, cx, cy):
+        '''
+        get coordinates radial from center for circle with radius R
+        '''
+        radius = int(R)
+        yielded = []
+        for radius_step in xrange(1, radius + 1):
+            for angle_index in xrange(2**(radius_step + 1)):
+                angle = angle_index * math.pi / (2 ** radius_step)
+                x = int(math.cos(angle) * radius_step)
+                y = int(math.sin(angle) * radius_step)
+                if (x, y) not in yielded:
+                    yielded.append((x, y))
+                    yield x+cx, y+cy
 
 
 class AddBodyMode(GameMode):
@@ -195,20 +202,16 @@ class AddBodyMode_Multi(AddBodyMode):
         newmass = 5
         body_count = int(self.logic.slider_value)
         random_pos = body_count * 2
+        random_vel = 1
 
-        #for i in xrange(body_count):
         for x, y in self.radial_coordinates[:body_count]:
-            '''
-            randpos = (ud['firstpos_local'][0] + randint(-random_pos, random_pos),
-                       ud['firstpos_local'][1] + randint(-random_pos, random_pos))
-            '''
             randpos = (
                 ud['firstpos_local'][0] + x*35,
                 ud['firstpos_local'][1] + y*35
             )
 
-            randvel = (velocity.x,  # + randint(-random_vel, random_vel),
-                       velocity.y)  # + randint(-random_vel, random_vel))
+            randvel = (velocity.x + randint(-random_vel, random_vel),
+                       velocity.y + randint(-random_vel, random_vel))
             self.logic.add_body(
                 pos=randpos,
                 vel=randvel,

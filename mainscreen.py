@@ -235,7 +235,7 @@ class MainScreen(Screen):
             self.value_slider.min = mode.settings['min']
             self.value_slider.max = mode.settings['max']
             self.value_slider.step = mode.settings['step']
-            self.value_slider.value = mode.settings['max'] / 2
+            self.value_slider.value = mode.settings['min']
             self.label.text = mode.slider_label + ':' + str(self.value_slider.value)
             self.add_widget(self.value_slider)
             self.add_widget(self.label)

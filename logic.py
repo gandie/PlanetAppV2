@@ -14,6 +14,7 @@ from cplanet import CPlanetKeeper
 # BUILTIN
 from random import choice, randint
 from os import listdir
+import math
 
 from game_modi import AddBodyMode, AddBodyMode_Multi, ZoomMode, DelMode
 
@@ -177,8 +178,8 @@ class Logic(Screen):
 
         Clock.schedule_interval(self.update_game, 1.0 / 25.0)
         Clock.schedule_interval(self.tick_engine, 1.0 / 25.0)
-        Clock.schedule_interval(self.clone_engine, 1.0)# / 25.0)
-        Clock.schedule_interval(self.collect_garbage, 1.0)# / 10.0)
+        Clock.schedule_interval(self.clone_engine, 1.0 / 25.0)
+        Clock.schedule_interval(self.collect_garbage, 1.0)  # / 10.0)
 
     def stop_game(self):
 
@@ -288,7 +289,7 @@ class Logic(Screen):
                 pos_y = self.keeper.get_planet_pos_y(index)
                 mass = self.keeper.get_planet_mass(index)
                 radius = self.keeper.get_planet_radius(index)
-                density = self.keeper.get_planet_density(index)
+                #density = self.keeper.get_planet_density(index)
                 vel_x = self.keeper.get_planet_vel_x(index)
                 vel_y = self.keeper.get_planet_vel_y(index)
 
@@ -306,7 +307,7 @@ class Logic(Screen):
                 self.planets[index]['velocity_x'] = vel_x
                 self.planets[index]['velocity_y'] = vel_y
                 self.planets[index]['mass'] = mass
-                self.planets[index]['density'] = density
+                #self.planets[index]['density'] = density
 
                 # update planet widget
                 self.planets[index]['widget'].center_x = pos_x
@@ -370,12 +371,27 @@ class Logic(Screen):
             self.selplanet_index = self.get_planet_index(value)
             self.mainscreen.add_infobox()
             self.mainscreen.add_seltoggles()
-            Clock.schedule_interval(self.update_infobox, 1.0 / 10.0)
+            Clock.schedule_interval(self.update_infobox, 1.0)
             Clock.schedule_interval(self.update_seltoggles, 1.0 / 10.0)
 
     def update_infobox(self, dt):
         if self.selplanet_index is not None:
             planet_dict = self.planets[self.selplanet_index]
+            for comp_index in self.planets:
+                if comp_index == self.selplanet_index:
+                    continue
+                comp_planet_dict = self.planets[comp_index]
+                if comp_planet_dict['mass'] < planet_dict['mass'] * 10:
+                    continue
+                dist_x = comp_planet_dict['position_x'] - planet_dict['position_x']
+                dist_y = comp_planet_dict['position_y'] - planet_dict['position_y']
+                dist = math.sqrt(dist_x ** 2 + dist_y ** 2)
+                r_vel_x = planet_dict['velocity_x']
+                r_vel_y = planet_dict['velocity_y']
+                r_vel_sqrd = r_vel_x ** 2 + r_vel_y ** 2
+                gravity = (planet_dict['mass'] * comp_planet_dict['mass']) / dist
+                energy = 0.5 * planet_dict['mass'] * (r_vel_sqrd)
+                print 'dist, grav > energy', dist, gravity > energy
             self.mainscreen.infobox.update(**planet_dict)
 
     def update_seltoggles(self, dt):
@@ -452,7 +468,7 @@ class Logic(Screen):
                 self.temp_keeper.fix_planet(temp_id)
 
     # calc trajectory of not-yet-existing body
-    def calc_trajectory(self, planet_d, ticks=30, ratio_multiplier=4):
+    def calc_trajectory(self, planet_d, ticks=100, ratio_multiplier=2):
 
         # list of points for trajectory in keeper coord.-system
         temp_list = []

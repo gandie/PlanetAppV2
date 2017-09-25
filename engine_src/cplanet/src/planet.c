@@ -100,6 +100,7 @@ double get_planet_mass(PlanetKeeper *planetkeeper, int index) {
 void set_planet_mass(PlanetKeeper *planetkeeper, int index, double mass) {
   Planet *planet = planetkeeper->planets[index];
   planet->mass = mass;
+  planet->mass_changed = 1;
 }
 
 double get_planet_density(PlanetKeeper *planetkeeper, int index) {
@@ -237,7 +238,7 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
       }
 
       // CALCULATE FORCE
-      double force = (planet1->mass * planet2->mass) / (dist * dist);
+      double force = 2 * (planet1->mass * planet2->mass) / (dist * dist);
       double force_x = force * (dist_x / dist);
       double force_y = force * (dist_y / dist);
 
