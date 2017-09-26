@@ -36,9 +36,11 @@ int create_planet(PlanetKeeper *planetkeeper, double pos_x, double pos_y, double
   for(i = 0; i < 1000; i++) {
     if (planetkeeper->planets[i] == NULL) {
       index = i;
+      /*
       if (index > planetkeeper->maxindex) {
         planetkeeper->maxindex = index;
       }
+      */
       break;
     }
   }
@@ -159,7 +161,9 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
   int index_1;
   int index_2;
 
-  for(index_1 = 0; index_1 < planetkeeper->maxindex + 1; index_1++) {
+  //for(index_1 = 0; index_1 < planetkeeper->maxindex + 1; index_1++) {
+  for(index_1 = 0; index_1 < 1000; index_1++) {
+
 
     Planet *planet1 = planetkeeper->planets[index_1];
     if (planet1 == NULL) {
@@ -184,7 +188,8 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
       planet1->mass_changed = 0;
     }
 
-    for(index_2 = index_1 + 1; index_2 < planetkeeper->maxindex + 1; index_2++) {
+    //for(index_2 = index_1 + 1; index_2 < planetkeeper->maxindex + 1; index_2++) {
+    for(index_2 = index_1 + 1; index_2 < 1000; index_2++) {
 
 
       if (planet1 == NULL) {
@@ -238,7 +243,7 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
       }
 
       // CALCULATE FORCE
-      double force = 2 * (planet1->mass * planet2->mass) / (dist * dist);
+      double force = (planet1->mass * planet2->mass) / (dist * dist);
       double force_x = force * (dist_x / dist);
       double force_y = force * (dist_y / dist);
 

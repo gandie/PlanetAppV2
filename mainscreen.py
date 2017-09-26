@@ -220,11 +220,11 @@ class MainScreen(Screen):
         self.add_widget(self.menupanel)
 
     def value_slider_change(self, instance, value):
+        if self.no_callbacks:
+            return
         # check current mode and update value in logic module
         if self.logic.cur_guimode == self.logic.mode_map['zoom']:
             self.logic.tick_ratio = value
-        else:
-            self.logic.slider_value = value
         self.logic.cur_guimode.slider_value = value
         # update label
         self.label.text = ':'.join(
@@ -232,14 +232,16 @@ class MainScreen(Screen):
         )
 
     def add_value_slider(self, mode):
+        self.no_callbacks = True
         if self.value_slider not in self.children:
             self.value_slider.min = mode.settings['min']
             self.value_slider.max = mode.settings['max']
             self.value_slider.step = mode.settings['step']
-            self.value_slider.value = mode.settings['min']
+            self.value_slider.value = mode.slider_value  # mode.settings['min']
             self.label.text = mode.slider_label + ':' + str(self.value_slider.value)
             self.add_widget(self.value_slider)
             self.add_widget(self.label)
+        self.no_callbacks = False
 
     def remove_value_slider(self):
         if self.value_slider in self.children:

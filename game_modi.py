@@ -38,7 +38,8 @@ class GameMode(Screen):
         self.sizeable = sizeable
         if self.sizeable:
             self.settings = kwargs.get('settings')
-            self.slider_value = int(self.settings['max'] / self.settings['step']) / 2 * self.settings['step']
+            #self.slider_value = (self.settings['max'] + self.settings['min']) / 2
+            self.slider_value = self.settings['min'] + self.settings['step']*5
 
         if self.body != '':
             # stuff for trajectory calculation
@@ -53,17 +54,11 @@ class GameMode(Screen):
 
     def calc_velocity(self, touch):
         ud = touch.ud
-        # better use global coordinates. scaling to gamezone leads to very
-        # high velocities when zooming out
-        '''
         touchdownv = Vector(ud['firstpos_local'])
         curpos_local = self.gamezone.to_local(touch.pos[0], touch.pos[1])
         touchupv = Vector(curpos_local)
-        velocity = (touchupv - touchdownv)
-        '''
-        touchdownv = Vector(ud['firstpos'])
-        touchupv = Vector(touch.pos)
-        velocity = (touchupv - touchdownv) / 25
+        #velocity = (touchupv - touchdownv) / 25
+        velocity = (touchupv - touchdownv).normalize() * (touchupv - touchdownv).length() ** 0.5
 
         return velocity
 
@@ -200,7 +195,8 @@ class AddBodyMode_Multi(AddBodyMode):
         velocity = self.calc_velocity(touch)
 
         newmass = 5
-        body_count = int(self.logic.slider_value)
+        # body_count = int(self.logic.slider_value)
+        body_count = int(self.slider_value)
         random_pos = body_count * 2
         random_vel = 1
 

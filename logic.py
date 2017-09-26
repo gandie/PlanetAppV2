@@ -5,6 +5,9 @@ from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
 from kivy.core.window import Window
 
+from kivy.graphics import Line, Color
+
+
 # CUSTOM
 from planet import Planet
 
@@ -56,7 +59,6 @@ class Logic(Screen):
 
         # time per time ratio
         self.tick_ratio = 1.0
-        self.slider_value = 10
 
         self.texture_mapping = {
             'moon': self.load_textures('./media/textures/moons/'),
@@ -103,12 +105,14 @@ class Logic(Screen):
             'add_planet': {
                 'min': self.settings['min_planet_mass'],
                 'max': self.settings['min_gasgiant_mass'] * 0.9,
-                'step': self.settings['min_gasgiant_mass'] * 0.9 * 0.1
+                # 'step': self.settings['min_gasgiant_mass'] * 0.9 * 0.1
+                'step': (self.settings['min_gasgiant_mass'] * 0.9 - self.settings['min_planet_mass']) / 10
             },
             'add_sun': {
                 'min': self.settings['min_sun_mass'],
                 'max': self.settings['min_bigsun_mass'] * 0.9,
-                'step': self.settings['min_bigsun_mass'] * 0.9 * 0.1
+                #'step': self.settings['min_bigsun_mass'] * 0.9 * 0.1
+                'step': (self.settings['min_bigsun_mass'] * 0.9 - self.settings['min_sun_mass']) / 10
             },
             'multi': {
                 'min': int(self.settings['multi_shot_min']),
@@ -116,9 +120,9 @@ class Logic(Screen):
                 'step': int(0.1 * self.settings['multi_shot_max'])
             },
             'zoom': {
-                'min': 0.1,
+                'min': 0.0,
                 'max': 2,
-                'step': 0.1,
+                'step': 0.2,
             }
         }
 
@@ -164,7 +168,6 @@ class Logic(Screen):
     def on_cur_guimode(self, instance, value):
         # ask mode wether slider values have to be set
         # apply data from mode to slider...
-
         self.mainscreen.remove_value_slider()
         if value.sizeable:
             # value is a mode here!
@@ -177,12 +180,36 @@ class Logic(Screen):
         Clock.schedule_interval(self.clone_engine, 1.0 / 25.0)
         Clock.schedule_interval(self.collect_garbage, 1.0)  # / 10.0)
 
+        # self.lines = []
+        # Clock.schedule_interval(self.zirkus, 1.0 / 25.0)  # / 10.0)
+
     def stop_game(self):
 
+        # self.gamezone.canvas.clear()
+        # self.gamezone.canvas.remove_group('nein')
         Clock.unschedule(self.update_game)
         Clock.unschedule(self.tick_engine)
         Clock.unschedule(self.clone_engine)
         Clock.unschedule(self.collect_garbage)
+
+    def zirkus(self, dt):
+        for index, planet_d in self.planets.items():
+            with self.gamezone.canvas:
+                self.lines.append(
+                    (Color(1, 1, 1),
+                    Line(
+                        circle=(planet_d['position_x'], planet_d['position_y'], 1),
+                        group='nein'
+                        ))
+                )
+            for color, line in self.lines:
+                if color.a > 0:
+                    color.a -= 0.01
+                else:
+                    self.gamezone.canvas.remove(line)
+                    self.gamezone.canvas.remove(color)
+                    self.lines.remove((color, line))
+                    print 'removing...'
 
     def register_gamezone(self, gamezone):
         self.gamezone = gamezone
@@ -370,24 +397,27 @@ class Logic(Screen):
             Clock.schedule_interval(self.update_infobox, 1.0)
             Clock.schedule_interval(self.update_seltoggles, 1.0 / 10.0)
 
+    def calc_energy(self):
+        # prototype to calculate if body orbits another
+        for comp_index in self.planets:
+            if comp_index == self.selplanet_index:
+                continue
+            comp_planet_dict = self.planets[comp_index]
+            if comp_planet_dict['mass'] < planet_dict['mass'] * 10:
+                continue
+            dist_x = comp_planet_dict['position_x'] - planet_dict['position_x']
+            dist_y = comp_planet_dict['position_y'] - planet_dict['position_y']
+            dist = math.sqrt(dist_x ** 2 + dist_y ** 2)
+            r_vel_x = planet_dict['velocity_x']
+            r_vel_y = planet_dict['velocity_y']
+            r_vel_sqrd = r_vel_x ** 2 + r_vel_y ** 2
+            gravity = (planet_dict['mass'] * comp_planet_dict['mass']) / dist
+            energy = 0.5 * planet_dict['mass'] * (r_vel_sqrd)
+            print 'dist, grav > energy', dist, gravity > energy
+
     def update_infobox(self, dt):
         if self.selplanet_index is not None:
             planet_dict = self.planets[self.selplanet_index]
-            for comp_index in self.planets:
-                if comp_index == self.selplanet_index:
-                    continue
-                comp_planet_dict = self.planets[comp_index]
-                if comp_planet_dict['mass'] < planet_dict['mass'] * 10:
-                    continue
-                dist_x = comp_planet_dict['position_x'] - planet_dict['position_x']
-                dist_y = comp_planet_dict['position_y'] - planet_dict['position_y']
-                dist = math.sqrt(dist_x ** 2 + dist_y ** 2)
-                r_vel_x = planet_dict['velocity_x']
-                r_vel_y = planet_dict['velocity_y']
-                r_vel_sqrd = r_vel_x ** 2 + r_vel_y ** 2
-                gravity = (planet_dict['mass'] * comp_planet_dict['mass']) / dist
-                energy = 0.5 * planet_dict['mass'] * (r_vel_sqrd)
-                print 'dist, grav > energy', dist, gravity > energy
             self.mainscreen.infobox.update(**planet_dict)
 
     def update_seltoggles(self, dt):
@@ -464,7 +494,7 @@ class Logic(Screen):
                 self.temp_keeper.fix_planet(temp_id)
 
     # calc trajectory of not-yet-existing body
-    def calc_trajectory(self, planet_d, ticks=1000, ratio_multiplier=2):
+    def calc_trajectory(self, planet_d, ticks=1000, ratio_multiplier=1):
 
         # list of points for trajectory in keeper coord.-system
         temp_list = []
