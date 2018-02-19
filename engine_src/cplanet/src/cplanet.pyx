@@ -34,6 +34,9 @@ cdef extern from "planet.h":
     double get_planet_vel_x(PlanetKeeper *planetkeeper, int index)
     double get_planet_vel_y(PlanetKeeper *planetkeeper, int index)
 
+    double calc_third_root(PlanetKeeper *planetkeeper, double value)
+    double calc_root(PlanetKeeper *planetkeeper, double value)
+    double calc_force(PlanetKeeper *planetkeeper, int index1, int index2, double dist)
     void fix_planet(PlanetKeeper *planetkeeper, int index)
     void unfix_planet(PlanetKeeper *planetkeeper, int index)
 
@@ -86,6 +89,15 @@ cdef class CPlanetKeeper:
 
     def get_planet_vel_y(self, int index):
         return get_planet_vel_y(self.planetkeeper, index)
+
+    def calc_third_root(self, double value):
+        return calc_third_root(self.planetkeeper, value)
+
+    def calc_root(self, double value):
+        return calc_root(self.planetkeeper, value)
+
+    def calc_force(self, int index1, int index2, double dist):
+        return calc_force(self.planetkeeper, index1, index2, dist)
 
     def fix_planet(self, int index):
         fix_planet(self.planetkeeper, index)

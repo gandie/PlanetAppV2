@@ -252,6 +252,7 @@ class Logic(Screen):
             'velocity_y': vel[1],
             'density': density,
             'mass': mass,
+            'radius': radius,
             'fixed': fixed,
             'widget': newplanet,
             'texture_index': texture_index,
@@ -302,7 +303,6 @@ class Logic(Screen):
                 self.gamezone.remove_widget(widget)
 
     def update_game(self, dt):
-
         del_indexes = []
 
         for index in self.planets:
@@ -330,6 +330,8 @@ class Logic(Screen):
                 self.planets[index]['velocity_x'] = vel_x
                 self.planets[index]['velocity_y'] = vel_y
                 self.planets[index]['mass'] = mass
+                self.planets[index]['radius'] = radius
+
                 #self.planets[index]['density'] = density
 
                 # update planet widget
@@ -354,6 +356,9 @@ class Logic(Screen):
 
         for index in del_indexes:
             self.delete_planet(index)
+
+        if self.selplanet_index is not None:
+            self.calc_energy()
 
         if self.selplanet_index is not None and self.fixview_mode:
             self.center_planet(self.selplanet_index)
@@ -399,6 +404,7 @@ class Logic(Screen):
 
     def calc_energy(self):
         # prototype to calculate if body orbits another
+        planet_dict = self.planets[self.selplanet_index]
         for comp_index in self.planets:
             if comp_index == self.selplanet_index:
                 continue

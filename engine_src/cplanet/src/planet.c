@@ -61,13 +61,15 @@ int create_planet(PlanetKeeper *planetkeeper, double pos_x, double pos_y, double
 
   // calculate radius from mass and density
   double radius_3 = ((3 * planet->mass) / (4 * 3.14 * planet->density));
+  double radius = calc_third_root(planetkeeper, radius_3);
+  /*
   double radius = radius_3; // radius ** 3
 
   int iterations2;
   for (iterations2 = 0; iterations2 < 8; iterations2++) {
     radius = ((2 * radius * radius * radius) + radius_3) / (3 * radius * radius);
   }
-
+  */
   planet->radius = radius;
   planetkeeper->planets[i] = planet;
   planet->index = i;
@@ -145,6 +147,38 @@ double get_planet_vel_y(PlanetKeeper *planetkeeper, int index) {
   return planet->vel_y;
 }
 
+double calc_third_root(PlanetKeeper *planetkeeper, double value) {
+  double start_value = value / 4;
+
+  int iterations2;
+  for (iterations2 = 0; iterations2 < 10; iterations2++) {
+    start_value = ((2 * start_value * start_value * start_value) + value) / (3 * start_value * start_value);
+  }
+  return start_value;
+}
+
+double calc_root(PlanetKeeper *planetkeeper, double value) {
+
+  double start_value = value / 2;
+
+  int iterations;
+
+  for (iterations = 0; iterations < 8; iterations++) {
+    start_value = (start_value + value / start_value) * 0.5;
+  }
+  return start_value;
+
+}
+
+double calc_force(PlanetKeeper *planetkeeper, int index1, int index2, double dist) {
+  Planet *planet1 = planetkeeper->planets[index1];
+  Planet *planet2 = planetkeeper->planets[index2];
+  if ((planet1 != NULL) && (planet2 != NULL)) {
+    double force = (planet1->mass * planet2->mass) / (dist * dist);
+    return force;
+  }
+  return 0.0;
+}
 
 void fix_planet(PlanetKeeper *planetkeeper, int index) {
   Planet *planet = planetkeeper->planets[index];
@@ -154,6 +188,24 @@ void fix_planet(PlanetKeeper *planetkeeper, int index) {
 void unfix_planet(PlanetKeeper *planetkeeper, int index) {
   Planet *planet = planetkeeper->planets[index];
   planet->fixed = 0;
+}
+
+void update_position(PlanetKeeper *planetkeeper, int index, double ratio) {
+  Planet *planet = planetkeeper->planets[index];
+  if (planet->fixed == 0) {
+      planet->pos_x = planet->pos_x + planet->vel_x * ratio;
+      planet->pos_y = planet->pos_y + planet->vel_y * ratio;
+  }
+}
+
+void update_radius(PlanetKeeper *planetkeeper, int index) {
+  Planet *planet = planetkeeper->planets[index];
+  if (planet->mass_changed == 1) {
+    double radius_3 = ((3 * planet->mass) / (4 * 3.14 * planet->density));
+    double radius = calc_third_root(planetkeeper, radius_3);
+    planet->radius = radius;
+    planet->mass_changed = 0;
+  }
 }
 
 void tick(PlanetKeeper *planetkeeper, double ratio) {
@@ -166,37 +218,18 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
 
 
     Planet *planet1 = planetkeeper->planets[index_1];
+
     if (planet1 == NULL) {
       continue;
     }
 
-    // UPDATE POSITION
-    if (planet1->fixed == 0) {
-      planet1->pos_x = planet1->pos_x + planet1->vel_x * ratio;
-      planet1->pos_y = planet1->pos_y + planet1->vel_y * ratio;
-    }
+    update_position(planetkeeper, index_1, ratio);
+    update_radius(planetkeeper, index_1);
 
-    // UPDATE RADIUS
-    if (planet1->mass_changed == 1) {
-      double radius_3 = ((3 * planet1->mass) / (4 * 3.14 * planet1->density));
-      double radius = radius_3;
-      int iterations2;
-      for (iterations2 = 0; iterations2 < 8; iterations2++) {
-        radius = ((2 * radius * radius * radius) + radius_3) / (3 * radius * radius);
-      }
-      planet1->radius = radius;
-      planet1->mass_changed = 0;
-    }
-
-    //for(index_2 = index_1 + 1; index_2 < planetkeeper->maxindex + 1; index_2++) {
     for(index_2 = index_1 + 1; index_2 < 1000; index_2++) {
 
-
-      if (planet1 == NULL) {
-        break;
-      }
-
       Planet *planet2 = planetkeeper->planets[index_2];
+
       if (planet2 == NULL) {
         continue;
       }
@@ -206,16 +239,10 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
       double dist_sq = dist_x * dist_x + dist_y * dist_y;
 
       if (dist_sq == 0) {
-        dist_sq = 0.00000001;
+        dist_sq = 0.00001;
       }
 
-      double dist = dist_sq / 2;
-
-      int iterations;
-
-      for (iterations = 0; iterations < 8; iterations++) {
-        dist = (dist + dist_sq / dist) * 0.5;
-      }
+      double dist = calc_root(planetkeeper, dist_sq);
 
       // CHECK COLLISION
       if (dist < (planet1->radius + planet2->radius)) {
@@ -243,7 +270,8 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
       }
 
       // CALCULATE FORCE
-      double force = (planet1->mass * planet2->mass) / (dist * dist);
+      //double force = (planet1->mass * planet2->mass) / (dist * dist);
+      double force = calc_force(planetkeeper, index_1, index_2, dist);
       double force_x = force * (dist_x / dist);
       double force_y = force * (dist_y / dist);
 
@@ -253,7 +281,6 @@ void tick(PlanetKeeper *planetkeeper, double ratio) {
 
       planet2->vel_x += force_x * ratio / planet2->mass;
       planet2->vel_y += force_y * ratio / planet2->mass;
-
     }
   }
 }

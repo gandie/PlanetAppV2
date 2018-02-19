@@ -44,6 +44,11 @@ double get_planet_pos_y(PlanetKeeper *planetkeeper, int index);
 double get_planet_vel_x(PlanetKeeper *planetkeeper, int index);
 double get_planet_vel_y(PlanetKeeper *planetkeeper, int index);
 
+double calc_third_root(PlanetKeeper *planetkeeper, double value);
+double calc_root(PlanetKeeper *planetkeeper, double value);
+
+double calc_force(PlanetKeeper *planetkeeper, int index1, int index2, double dist);
+
 void fix_planet(PlanetKeeper *planetkeeper, int index);
 void unfix_planet(PlanetKeeper *planetkeeper, int index);
 
