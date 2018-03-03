@@ -13,6 +13,7 @@ from planet import Planet
 
 # ENGINE
 from cplanet import CPlanetKeeper
+from engine_rk4 import Engine
 
 # BUILTIN
 from random import choice, randint
@@ -52,10 +53,12 @@ class Logic(Screen):
         self.settings = settings
 
         # initialize planetkeeper
-        self.keeper = CPlanetKeeper()
+        # self.keeper = CPlanetKeeper()
+        self.keeper = Engine()
 
         # temporary keeper for trajectory calculation
-        self.temp_keeper = CPlanetKeeper()
+        # self.temp_keeper = CPlanetKeeper()
+        self.temp_keeper = Engine()
 
         # time per time ratio
         self.tick_ratio = 1.0
@@ -122,7 +125,7 @@ class Logic(Screen):
             'zoom': {
                 'min': 0.0,
                 'max': 2,
-                'step': 0.2,
+                'step': 0.01,
             }
         }
 
@@ -144,7 +147,7 @@ class Logic(Screen):
             'add_sun': AddBodyMode(
                 self.gamezone,
                 body='sun',
-                draw_trajectory=True,
+                draw_trajectory=False,
                 sizeable=True,
                 settings=self.mode_setting['add_sun'],
                 slider_label='Sun Mass'
@@ -152,7 +155,7 @@ class Logic(Screen):
             'multi': AddBodyMode_Multi(
                 self.gamezone,
                 body='moon',
-                draw_trajectory=True,
+                draw_trajectory=False,
                 sizeable=True,
                 settings=self.mode_setting['multi'],
                 slider_label='Body Count'
@@ -180,13 +183,15 @@ class Logic(Screen):
         Clock.schedule_interval(self.clone_engine, 1.0 / 25.0)
         Clock.schedule_interval(self.collect_garbage, 1.0)  # / 10.0)
 
-        # self.lines = []
-        # Clock.schedule_interval(self.zirkus, 1.0 / 25.0)  # / 10.0)
+        '''
+        self.lines = []
+        Clock.schedule_interval(self.zirkus, 1.0 / 25.0)  # / 10.0)
+        '''
 
     def stop_game(self):
 
         # self.gamezone.canvas.clear()
-        # self.gamezone.canvas.remove_group('nein')
+        self.gamezone.canvas.remove_group('nein')
         Clock.unschedule(self.update_game)
         Clock.unschedule(self.tick_engine)
         Clock.unschedule(self.clone_engine)
@@ -231,7 +236,17 @@ class Logic(Screen):
         newplanet.set_base_image(newplanet_texture)
 
         # inform the keeper
+        '''
         newindex = self.keeper.create_planet(
+            pos_x=pos[0],
+            pos_y=pos[1],
+            vel_x=vel[0],
+            vel_y=vel[1],
+            mass=mass,
+            density=density
+        )
+        '''
+        newindex = self.keeper.add_planet(
             pos_x=pos[0],
             pos_y=pos[1],
             vel_x=vel[0],
@@ -244,7 +259,8 @@ class Logic(Screen):
         if newindex == -1:
             return
 
-        radius = self.keeper.get_planet_radius(newindex)
+        # radius = self.keeper.get_planet_radius(newindex)
+        radius = self.keeper.planets[newindex].radius
         planet_d = {
             'position_x': pos[0],
             'position_y': pos[1],
@@ -260,8 +276,14 @@ class Logic(Screen):
         }
 
         # fix body in keeper if neccessary
+        '''
         if fixed:
             self.keeper.fix_planet(newindex)
+
+
+        if fixed:
+        '''
+        self.keeper.planets[newindex].fixed = fixed
 
         # write dict into planets-dict
         self.planets[newindex] = planet_d
@@ -284,7 +306,8 @@ class Logic(Screen):
         self.gamezone.remove_widget(widget)
         if widget == self.selplanet:
             self.selplanet = None
-        self.keeper.delete_planet(index)
+        # self.keeper.delete_planet(index)
+        self.keeper.remove_planet(index)
         self.planets.pop(index)
 
     def delete_planet_widget(self, widget):
@@ -293,7 +316,7 @@ class Logic(Screen):
 
     # let the keeper do its work
     def tick_engine(self, dt):
-        self.keeper.tick(self.tick_ratio)
+        self.keeper.tick(1)
 
     # collect orphaned widgets
     # TODO: collect bodies far away
@@ -304,10 +327,10 @@ class Logic(Screen):
 
     def update_game(self, dt):
         del_indexes = []
-
         for index in self.planets:
             if self.keeper.planet_exists(index):
                 # fetch data from keeper
+                '''
                 pos_x = self.keeper.get_planet_pos_x(index)
                 pos_y = self.keeper.get_planet_pos_y(index)
                 mass = self.keeper.get_planet_mass(index)
@@ -315,6 +338,12 @@ class Logic(Screen):
                 #density = self.keeper.get_planet_density(index)
                 vel_x = self.keeper.get_planet_vel_x(index)
                 vel_y = self.keeper.get_planet_vel_y(index)
+                '''
+                planet = self.keeper.planets[index]
+                pos_x, pos_y = planet.state.pos_x, planet.state.pos_y
+                vel_x, vel_y = planet.state.vel_x, planet.state.vel_y
+                mass = planet.mass
+                radius = planet.radius
 
                 # cleanup garbage
                 if pos_x > self.gamezone.size[0] or pos_x < 0:
@@ -345,7 +374,9 @@ class Logic(Screen):
                         self.planets[index]['body'] = transition['nextbody']
                         self.planets[index]['density'] = transition['density']
 
-                        self.keeper.set_planet_density(index, transition['density'])
+                        # self.keeper.set_planet_density(index, transition['density'])
+                        planet.density = transition['density']
+                        planet.calc_radius()
 
                         texture_index = randint(0, len(transition['textures']) - 1)
                         newplanet_texture = transition['textures'][texture_index]
@@ -440,6 +471,7 @@ class Logic(Screen):
 
     def fix_selected(self, instance):
         index = self.selplanet_index
+        '''
         if index is not None:
             if self.planets[index]['fixed']:
                 self.keeper.unfix_planet(index)
@@ -447,18 +479,32 @@ class Logic(Screen):
             else:
                 self.keeper.fix_planet(index)
                 self.planets[index]['fixed'] = True
+        '''
+        if index is not None:
+            if self.planets[index]['fixed']:
+                self.keeper.planets[index].fixed = False
+                self.planets[index]['fixed'] = False
+            else:
+                self.keeper.planets[index].fixed = True
+                self.planets[index]['fixed'] = True
+
 
     def addmass_selected(self, instance):
         index = self.selplanet_index
+        '''
         if index is not None:
             newmass = self.planets[index]['mass'] * 1.1
             self.keeper.set_planet_mass(index, newmass)
+        '''
+
 
     def submass_selected(self, instance):
         index = self.selplanet_index
+        '''
         if index is not None:
             newmass = self.planets[index]['mass'] * 0.9
             self.keeper.set_planet_mass(index, newmass)
+        '''
 
     def center_planet(self, index):
         pos_x = self.planets[index]['position_x']
@@ -480,10 +526,19 @@ class Logic(Screen):
     # reset temporary keeper
     def clone_engine(self, dt):
 
+        '''
         # clear temp-engine
         for index in xrange(1000):
             self.temp_keeper.delete_planet(index)
 
+
+
+        for index in self.temp_keeper.planets:
+            self.temp_keeper.remove_planet(index)
+        '''
+        self.temp_keeper.planets = {}
+
+        '''
         # populate temp engine
         for index in self.planets:
             planet_d = self.planets[index]
@@ -498,14 +553,28 @@ class Logic(Screen):
             # do not forget to also fix bodies for trajectory calc.
             if planet_d['fixed']:
                 self.temp_keeper.fix_planet(temp_id)
+        '''
+        for index in self.planets:
+            planet_d = self.planets[index]
+            temp_id = self.temp_keeper.add_planet(
+                pos_x=planet_d['position_x'],
+                pos_y=planet_d['position_y'],
+                vel_x=planet_d['velocity_x'],
+                vel_y=planet_d['velocity_y'],
+                mass=planet_d['mass'],
+                density=planet_d['density']
+            )
+            if planet_d['fixed']:
+                self.temp_keeper.planets[temp_id].fixed = True
 
     # calc trajectory of not-yet-existing body
-    def calc_trajectory(self, planet_d, ticks=1000, ratio_multiplier=1):
+    def calc_trajectory(self, planet_d, ticks=1000):
 
         # list of points for trajectory in keeper coord.-system
         temp_list = []
-
+        # return temp_list
         # create temporary body in temp keeper
+        '''
         temp_index = self.temp_keeper.create_planet(
             pos_x=planet_d['position_x'],
             pos_y=planet_d['position_y'],
@@ -514,7 +583,17 @@ class Logic(Screen):
             mass=planet_d['mass'],
             density=planet_d['density']
         )
+        '''
+        temp_index = self.temp_keeper.add_planet(
+            pos_x=planet_d['position_x'],
+            pos_y=planet_d['position_y'],
+            vel_x=planet_d['velocity_x'],
+            vel_y=planet_d['velocity_y'],
+            mass=planet_d['mass'],
+            density=planet_d['density']
+        )
 
+        '''
         # look into the future using the temp keeper
         for _ in xrange(ticks):
             self.temp_keeper.tick(self.tick_ratio * ratio_multiplier)
@@ -522,6 +601,15 @@ class Logic(Screen):
                 # fetch data from keeper, track position
                 pos_x = self.temp_keeper.get_planet_pos_x(temp_index)
                 pos_y = self.temp_keeper.get_planet_pos_y(temp_index)
+                pos = (pos_x, pos_y)
+                temp_list.append(pos)
+        '''
+        for _ in xrange(ticks):
+            self.temp_keeper.tick(1)
+            if self.temp_keeper.planet_exists(temp_index):
+                # fetch data from keeper, track position
+                planet = self.temp_keeper.planets[temp_index]
+                pos_x, pos_y = planet.state.pos_x, planet.state.pos_y
                 pos = (pos_x, pos_y)
                 temp_list.append(pos)
 

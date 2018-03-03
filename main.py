@@ -112,8 +112,8 @@ class PlanetApp(App):
                 'moon_density': 1,
                 'planet_density': 1,
                 'gasgiant_density': 1,
-                'sun_density': 1,
-                'bigsun_density': 2,
+                'sun_density': 6,
+                'bigsun_density': 7,
                 'giantsun_density': 10,
                 'blackhole_density': 1000,
 
