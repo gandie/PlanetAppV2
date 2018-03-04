@@ -122,6 +122,10 @@ class PlanetApp(App):
 
                 'multi_shot_min': 10,
                 'multi_shot_max': 50,
+
+                'use_rk4_engine': False,
+
+                'ticks_ahead': 100,
             }
         return settings
 
