@@ -134,10 +134,54 @@ class Engine(object):
         self.planets[self.cur_index] = new_planet
         return self.cur_index
 
+    def create_planet(self, *args, **kwargs):
+        '''
+        see Planet constructor for argument details
+        '''
+        self.cur_index += 1
+        new_planet = Planet(self, *args, **kwargs)
+        self.planets[self.cur_index] = new_planet
+        return self.cur_index
+
+    def get_planet_radius(self, index):
+        planet = self.planets.get(index)
+        if planet is not None:
+            return planet.radius
+
+    def fix_planet(self, index):
+        planet = self.planets.get(index)
+        if planet is not None:
+            planet.fixed = True
+
+    def unfix_planet(self, index):
+        planet = self.planets.get(index)
+        if planet is not None:
+            planet.fixed = False
+
     def remove_planet(self, index):
+        # OLD
         del_planet = self.planets.get(index)
         if del_planet is not None:
             del self.planets[index]
+
+    def delete_planet(self, index):
+        del_planet = self.planets.get(index)
+        if del_planet is not None:
+            del self.planets[index]
+
+    ''' GETTER NEEDED
+    pos_x = self.keeper.get_planet_pos_x(index)
+    pos_y = self.keeper.get_planet_pos_y(index)
+    mass = self.keeper.get_planet_mass(index)
+    radius = self.keeper.get_planet_radius(index)
+    vel_x = self.keeper.get_planet_vel_x(index)
+    vel_y = self.keeper.get_planet_vel_y(index)
+
+    SETTER
+    # self.keeper.set_planet_density(index, transition['density'])
+    self.keeper.set_planet_mass(index, newmass)
+    '''
+
 
     def check_collision(self, planet1, planet2):
         dist, delta_x, delta_y = planet1.calc_distance(planet1.state, planet2)
@@ -174,4 +218,4 @@ class Engine(object):
                 del_indexes.append(index2)
 
         for index in del_indexes:
-            self.remove_planet(index)
+            self.delete_planet(index)

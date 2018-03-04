@@ -568,7 +568,7 @@ class Logic(Screen):
                 self.temp_keeper.planets[temp_id].fixed = True
 
     # calc trajectory of not-yet-existing body
-    def calc_trajectory(self, planet_d, ticks=1000):
+    def calc_trajectory(self, planet_d, ticks=100):
 
         # list of points for trajectory in keeper coord.-system
         temp_list = []

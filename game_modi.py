@@ -57,7 +57,7 @@ class GameMode(Screen):
         touchdownv = Vector(ud['firstpos_local'])
         curpos_local = self.gamezone.to_local(touch.pos[0], touch.pos[1])
         touchupv = Vector(curpos_local)
-        #velocity = (touchupv - touchdownv) / 25
+        # velocity = (touchupv - touchdownv) / 25
         velocity = (touchupv - touchdownv).normalize() * (touchupv - touchdownv).length() ** 0.5
 
         return velocity
@@ -80,13 +80,15 @@ class GameMode(Screen):
         ud = touch.ud
 
         velocity = self.calc_velocity(touch)
+        mass = self.slider_value
         temp_planet_d = {
             'position_x': ud['firstpos_local'][0],
             'position_y': ud['firstpos_local'][1],
             'velocity_x': velocity.x,
             'velocity_y': velocity.y,
             'density': self.density,
-            'mass': self.min_mass,
+            # 'mass': self.min_mass,
+            'mass': mass
         }
 
         trajectory = self.logic.calc_trajectory(temp_planet_d)
