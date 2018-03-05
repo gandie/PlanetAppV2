@@ -104,7 +104,7 @@ class SettingsScreen(Screen):
             setting_max=1.2,
             setting_value=1,
             setting_type='bool',
-            label_text='Use RK4 engine (Restart required)'
+            label_text='Use precise engine (rk4)'
         )
         self.setting_items['use_rk4_engine'] = self.engine_toggle
         self.settingslayout.add_widget(self.engine_toggle)

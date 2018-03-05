@@ -52,6 +52,45 @@ class Logic(Screen):
         self.planets = {}
         self.settings = settings
 
+        '''
+        if self.settings['use_rk4_engine'] is True:
+            self.engine = 'rk4'
+        else:
+            self.engine = 'CPlanet'
+
+        self.engine_map = {
+            'rk4': Engine,
+            'CPlanet': CPlanetKeeper,
+        }
+        # initialize planetkeeper
+        # self.keeper = CPlanetKeeper()
+        # self.keeper = Engine()
+        self.keeper = self.engine_map[self.engine]()
+
+        # temporary keeper for trajectory calculation
+        # self.temp_keeper = CPlanetKeeper()
+        # self.temp_keeper = Engine()
+        self.temp_keeper = self.engine_map[self.engine]()
+        '''
+        self.init_engines()
+
+        # time per time ratio
+        self.tick_ratio = 1.0
+
+        self.texture_mapping = {
+            'moon': self.load_textures('./media/textures/moons/'),
+            'planet': self.load_textures('./media/textures/planets/'),
+            'gasgiant': self.load_textures('./media/textures/gasgiants/'),
+            'sun': self.load_textures('./media/textures/suns/'),
+            'bigsun': self.load_textures('./media/textures/bigsuns/'),
+            'giantsun': self.load_textures('./media/textures/giantsuns/'),
+            'blackhole': self.load_textures('./media/textures/blackholes/'),
+        }
+
+        # observe selplanet
+        self.bind(selplanet=self.on_selplanet)
+
+    def init_engines(self):
         if self.settings['use_rk4_engine'] is True:
             self.engine = 'rk4'
         else:
@@ -71,23 +110,10 @@ class Logic(Screen):
         # self.temp_keeper = Engine()
         self.temp_keeper = self.engine_map[self.engine]()
 
-        # time per time ratio
-        self.tick_ratio = 1.0
-
-        self.texture_mapping = {
-            'moon': self.load_textures('./media/textures/moons/'),
-            'planet': self.load_textures('./media/textures/planets/'),
-            'gasgiant': self.load_textures('./media/textures/gasgiants/'),
-            'sun': self.load_textures('./media/textures/suns/'),
-            'bigsun': self.load_textures('./media/textures/bigsuns/'),
-            'giantsun': self.load_textures('./media/textures/giantsuns/'),
-            'blackhole': self.load_textures('./media/textures/blackholes/'),
-        }
-
-        # observe selplanet
-        self.bind(selplanet=self.on_selplanet)
-
     def apply_settings(self):
+        if self.engine == 'CPlanet' and self.settings['use_rk4_engine'] is True or \
+           self.engine == 'rk4' and self.settings['use_rk4_engine'] is False:
+            self.init_engines()
         self.planet_transitions = {
             'moon': {'nextbody': 'planet',
                      'mass': self.settings['min_planet_mass'],
@@ -490,9 +516,9 @@ class Logic(Screen):
         else:
             self.fixview_mode = True
 
-    # reset temporary keeper
     def clone_engine(self, dt):
 
+        # reset temporary keeper
         if self.engine == 'CPlanet':
             for index in xrange(1000):
                 self.temp_keeper.delete_planet(index)

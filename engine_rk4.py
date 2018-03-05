@@ -50,8 +50,8 @@ class Planet(object):
                 continue
             dist, delta_x, delta_y = self.calc_distance(state, other_planet)
             force = 0.01 * self.calc_force(other_planet, dist)
-            ax += force * delta_x / dist
-            ay += force * delta_y / dist
+            ax += (force * delta_x / dist) / self.mass
+            ay += (force * delta_y / dist) / self.mass
         return ax, ay
 
     def calc_distance(self, state, planet2):
