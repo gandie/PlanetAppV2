@@ -4,6 +4,7 @@ from kivy.properties import *
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
 from kivy.core.window import Window
+from kivy.core.audio import SoundLoader
 
 from kivy.graphics import Line, Color
 
@@ -52,27 +53,9 @@ class Logic(Screen):
         self.planets = {}
         self.settings = settings
 
-        '''
-        if self.settings['use_rk4_engine'] is True:
-            self.engine = 'rk4'
-        else:
-            self.engine = 'CPlanet'
-
-        self.engine_map = {
-            'rk4': Engine,
-            'CPlanet': CPlanetKeeper,
-        }
-        # initialize planetkeeper
-        # self.keeper = CPlanetKeeper()
-        # self.keeper = Engine()
-        self.keeper = self.engine_map[self.engine]()
-
-        # temporary keeper for trajectory calculation
-        # self.temp_keeper = CPlanetKeeper()
-        # self.temp_keeper = Engine()
-        self.temp_keeper = self.engine_map[self.engine]()
-        '''
         self.init_engines()
+
+        self.sound_map = {'piano': SoundLoader.load('media/sound/piano.wav')}
 
         # time per time ratio
         self.tick_ratio = 1.0
