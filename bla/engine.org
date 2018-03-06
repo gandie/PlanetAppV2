@@ -10,7 +10,7 @@
 * TODO UI Ingame
 ** Weniger ist mehr
 *** Menü links toggle
-
+*** Infobox toggle
 * TODO [#B] Planeten-Texturen
 ** DONE [#A] Texturen für HD-Screens
 ** TODO [#B] Noch eine Textur um Glow abzubilden
