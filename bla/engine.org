@@ -1,0 +1,97 @@
+* TODO [#A] Sound
+** TODO [#A] Musik
+** TODO [#A] Effekte
+* TODO Icon
+** DONE [#A] Besseres Icon?
+** ShowOrbit Icon
+** Show/Hide Toggle
+** Info Icon
+** Gewicht Plus/Minus
+* TODO UI Ingame
+** Weniger ist mehr
+*** Menü links toggle
+
+* TODO [#B] Planeten-Texturen
+** DONE [#A] Texturen für HD-Screens
+** TODO [#B] Noch eine Textur um Glow abzubilden
+** TODO [#B] Schatten evtl. über sich drehendes Overlay (2 Texturen)
+** TODO [#B] Drehung/Rotation von Planeten
+** TODO [#B] Schatten
+
+** TODO [#C] Evtl. mit Particle Panda Atmosphäre bauen
+* TODO [#B] Logic
+** TODO [#C] Sichtfeld prüfen?!
+** TODO [#B] Hillbody-Berechnung?
+** DONE Gravity - Händeschütteln!
+*** DONE Entfernungsberechnung - einheitlich machen, an einer Stelle!
+** DONE Trajectory-Vorhersage?
+** DONE Modes
+*** DONE PlanetSelector mit Modes?
+** DONE Licht-Berechnung
+*** TODO [#C] Temperatur
+** DONE Planeten-Übergägnge
+*** DONE Planet->Sonne, Sonne->BlackHole??
+** DONE Garbage-Cleaner
+*** DONE Forces untersuchen, Körper löschen
+*** verworfen --> Kosten / Nutzen ??
+** DONE Architektur? Evtl. Unterklassen?
+* TODO [#B] Tutorial
+** DONE Textfelder mit Anweisungen
+** TODO [#B] Auswertung von Ereignissen??
+*** Auswertung der Distanz --> Orbits
+*** Zählen von Kollisionen
+** TODO [#B] Auswertung der Trajekorie TUTORIAL
+* TODO [#C] Particle Effekte
+** TODO [#C] Panda gängig machen
+** TODO [#C] Particle System einhängen
+*** C-Integration? Verbesserungen
+** TODO [#C] Aufschlag-Effekt (Kollision von Planeten)
+* TODO [#C] Online Saves
+** TODO [#B] Screen für Up-/Download
+** TODO [#C] Preview? Description? Daten für Savegame?
+* DONE [#A] RK4Engine: Engine Chooser
+** DONE [#A] API von RK4 engine anpassen
+** DONE [#A] Zwischen Engine switchen via Settings
+* DONE Custom Content Schnittstelle
+** TODO [#B] FileExplorer
+* DONE Name = Pocket Cosmos!
+** DONE Pocket Cosmos
+* DONE Engine
+** DONE [#C] Performance-Verbesserungen
+*** DONE Merken, wleches der höchste genutzt Index im Array ist, dann Loops bis dahin!
+* DONE Refactoring
+** DONE [#A] Sinnlose Imports löschen
+** DONE [#A] Menupanel
+** DONE [#B] Settings-System
+*** irgendwie kompliziert implementiert?!
+** DONE [#B] Gamezone Modi-Handling bei Touches
+* DONE Settings-Screen
+** DONE Settings abholen und in logic schreiben
+** DONE Settings-Michel bauen
+*** DONE Boolean-Michel
+*** DONE Knopf für Kivy-Setttings
+** DONE Slider-Michel
+** DONE Checkboxen
+** DONE Multishot.Anzahl
+* DONE Code
+** DONE [#A] Settings-Mechanik + App-Start
+*** Überprüfen --> es sollte kein Neustart erforderlich sein
+** DONE [#A] Code-Struktur
+*** Aufteilen nach Screens, Widgets, logic?
+*** ABGELEHNT, geht vermutlich nicht ohn PATH-Manipulation
+** DONE [#A] Engine-Review
+*** Tick-Loop vereinfachen --> geht nicht größe muss nachher bestimmt werden!
+*** Dynamische Array-Größe? (Desktop-Builds?)
+* DONE Darstellung Trajektorie
+** Gepunktete Linie
+* DONE Menü
+** DONE [#A] Schriftart?! Stil passt nicht zum Mainscreen?!
+* DONE BUGS
+** DONE [#A] Setting-Speichern checken!
+** DONE [#B] View-Fokus klappt auf dem Telefon nicht immer
+*** Bei Sonnen kann es sein, dass der Fokus nicht geht
+** DONE [#B] Select-Textur zuckt bei naher Zoomstufe
+*** Skalierung überdenken?
+** DONE [#A] Planeten-Leichen
+*** Es können verwaiste Widgets entstehen!
+*** children scannen und planet-widgets, die nicht im planet dict stehen löschen

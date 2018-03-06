@@ -49,7 +49,7 @@ class Planet(object):
             if other_planet == self:
                 continue
             dist, delta_x, delta_y = self.calc_distance(state, other_planet)
-            force = 0.01 * self.calc_force(other_planet, dist)
+            force = 0.1 * self.calc_force(other_planet, dist)
             ax += (force * delta_x / dist) / self.mass
             ay += (force * delta_y / dist) / self.mass
         return ax, ay
