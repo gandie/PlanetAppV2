@@ -76,6 +76,16 @@ class SettingsScreen(Screen):
         # magic binding
         self.settingslayout.bind(minimum_height=self.settingslayout.setter('height'))
 
+        self.engine_select = SettingsSlot(
+            size_hint=(1, None),
+            setting_type='select',
+            label_text='Engine',
+            items=['cplanet', 'pythonrk4']
+            # items=['cplanet', 'crk4engine', 'pythonrk4']
+        )
+        self.setting_items['engine'] = self.engine_select
+        self.settingslayout.add_widget(self.engine_select)
+
         self.background_toggle = SettingsSlot(
             size_hint=(1, None),
             setting_min=0.8,

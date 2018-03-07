@@ -6,15 +6,6 @@
 #ifndef RK4ENGINE_H_
 #define RK4ENGINE_H_
 
-/*
-typedef struct State {
-  double ;
-}
-
-typedef struct Derivative {
-  double dx, dy, dvx, dvy;
-}
-*/
 typedef struct Planet {
   double mass, density, radius;
   double pos_x, pos_y, vel_x, vel_y;
@@ -26,7 +17,7 @@ typedef struct Planet {
 typedef struct Acceleration {
   double ax;
   double ay;
-}
+} Acceleration;
 
 typedef struct Rk4Engine {
   Planet* planets[1000];
@@ -58,16 +49,8 @@ double get_planet_vel_y(Rk4Engine *rk4engine, int index);
 void fix_planet(Rk4Engine *rk4engine, int index);
 void unfix_planet(Rk4Engine *rk4engine, int index);
 
-//double calc_force(Rk4Engine *rk4engine, int index1, int index2, double dist);
-struct Acceleration calc_acceleration(Rk4Engine *rk4engine, int myindex, double mypos_x, double mypos_y, double mymass);
-
-
 void tick(Rk4Engine *rk4engine, double ratio);
 
 int planet_exists(Rk4Engine *rk4engine, int index);
-
-double calc_third_root(double value);
-double calc_root(double value);
-
 
 #endif /* RK4ENGINE_H_ */

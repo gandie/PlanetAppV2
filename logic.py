@@ -12,9 +12,10 @@ from kivy.graphics import Line, Color
 # CUSTOM
 from planet import Planet
 
-# ENGINE
+# ENGINES
 from cplanet import CPlanetKeeper
 from engine_rk4 import Engine
+# from crk4engine import CRk4Engine
 
 # BUILTIN
 from random import choice, randint
@@ -53,7 +54,13 @@ class Logic(Screen):
         self.planets = {}
         self.settings = settings
 
-        self.init_engines()
+        self.engine_map = {
+            'cplanet': CPlanetKeeper,
+            #'crk4engine': CRk4Engine,
+            'pythonrk4': Engine,
+        }
+
+        self.init_engines(self.settings['engine'])
 
         self.sound_map = {'piano': SoundLoader.load('media/sound/piano.wav')}
 
@@ -73,16 +80,16 @@ class Logic(Screen):
         # observe selplanet
         self.bind(selplanet=self.on_selplanet)
 
-    def init_engines(self):
+    def init_engines(self, engine):
+        '''
         if self.settings['use_rk4_engine'] is True:
             self.engine = 'rk4'
         else:
             self.engine = 'CPlanet'
+        '''
 
-        self.engine_map = {
-            'rk4': Engine,
-            'CPlanet': CPlanetKeeper,
-        }
+        assert engine in self.engine_map, 'Unknown engine!'
+        self.engine = engine
         # initialize planetkeeper
         # self.keeper = CPlanetKeeper()
         # self.keeper = Engine()
@@ -94,9 +101,13 @@ class Logic(Screen):
         self.temp_keeper = self.engine_map[self.engine]()
 
     def apply_settings(self):
+        '''
         if self.engine == 'CPlanet' and self.settings['use_rk4_engine'] is True or \
            self.engine == 'rk4' and self.settings['use_rk4_engine'] is False:
             self.init_engines()
+        '''
+        if self.engine != self.settings['engine']:
+            self.init_engines(self.settings['engine'])
         self.planet_transitions = {
             'moon': {'nextbody': 'planet',
                      'mass': self.settings['min_planet_mass'],
@@ -128,13 +139,11 @@ class Logic(Screen):
             'add_planet': {
                 'min': self.settings['min_planet_mass'],
                 'max': self.settings['min_gasgiant_mass'] * 0.9,
-                # 'step': self.settings['min_gasgiant_mass'] * 0.9 * 0.1
                 'step': (self.settings['min_gasgiant_mass'] * 0.9 - self.settings['min_planet_mass']) / 10
             },
             'add_sun': {
                 'min': self.settings['min_sun_mass'],
                 'max': self.settings['min_bigsun_mass'] * 0.9,
-                #'step': self.settings['min_bigsun_mass'] * 0.9 * 0.1
                 'step': (self.settings['min_bigsun_mass'] * 0.9 - self.settings['min_sun_mass']) / 10
             },
             'multi': {
@@ -310,7 +319,6 @@ class Logic(Screen):
         if widget == self.selplanet:
             self.selplanet = None
         self.keeper.delete_planet(index)
-        # self.keeper.remove_planet(index)
         self.planets.pop(index)
 
     def delete_planet_widget(self, widget):
@@ -502,7 +510,7 @@ class Logic(Screen):
     def clone_engine(self, dt):
 
         # reset temporary keeper
-        if self.engine == 'CPlanet':
+        if self.engine in ['cplanet', 'crk4engine']:
             for index in xrange(1000):
                 self.temp_keeper.delete_planet(index)
         else:

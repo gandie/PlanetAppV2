@@ -8,6 +8,9 @@ from kivy.uix.screenmanager import FadeTransition
 from kivy.uix.slider import Slider
 from kivy.uix.gridlayout import GridLayout
 
+from kivy.uix.spinner import Spinner
+from kivy.uix.button import Button
+
 # CUSTOM
 from realbutton import RealToggleButton, RealButton
 
@@ -90,6 +93,7 @@ class SettingsSlot(GridLayout):
         self.setting_max = kwargs.get('setting_max')
         self.setting_type = kwargs.get('setting_type')
         self.label_text = kwargs.get('label_text')
+        self.items = kwargs.get('items', [])
         self.rows = 1
 
         self.build_interface()
@@ -106,6 +110,8 @@ class SettingsSlot(GridLayout):
             else:
                 self.changer.source = self.changer.realtexture_pressed
                 self.changer.reload()
+        elif self.setting_type == 'select':
+            self.changer.text = value
 
     def build_interface(self):
         self.label = Label(
@@ -127,6 +133,12 @@ class SettingsSlot(GridLayout):
                 source='./media/icons/delete.png',
                 always_release=True
             )
+        elif self.setting_type == 'select':
+            self.changer = Spinner(
+                text='Something',
+                values=self.items
+            )
+            self.changer.bind(text=self.change_value)
 
         self.add_widget(self.label)
         self.add_widget(self.changer)
@@ -136,3 +148,6 @@ class SettingsSlot(GridLayout):
             self.value = value
         elif self.setting_type == 'bool':
             self.value = not self.changer.pressed
+        elif self.setting_type == 'select':
+            self.value = value
+            self.changer.text = value

@@ -104,28 +104,27 @@ class PlanetApp(App):
                 'min_moon_mass': 0,
                 'min_planet_mass': 10,
                 'min_gasgiant_mass': 50,
-                'min_sun_mass': 25000,
-                'min_bigsun_mass': 50000,
+                'min_sun_mass': 50000,
+                'min_bigsun_mass': 100000,
                 'min_giantsun_mass': 250000,
                 'min_blackhole_mass': 500000,
 
                 'moon_density': 1,
                 'planet_density': 1,
                 'gasgiant_density': 1,
-                'sun_density': 6,
-                'bigsun_density': 7,
-                'giantsun_density': 10,
+                'sun_density': 2,
+                'bigsun_density': 5,
+                'giantsun_density': 7,
                 'blackhole_density': 1000,
 
-                'background': True,
-                'show_tutorial': True,
+                'background': False,
+                'show_tutorial': False,
 
                 'multi_shot_min': 10,
                 'multi_shot_max': 50,
 
-                'use_rk4_engine': False,
-
-                'ticks_ahead': 100,
+                'engine': 'cplanet',
+                'ticks_ahead': 1000,
             }
         return settings
 
