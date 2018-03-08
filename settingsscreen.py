@@ -80,8 +80,8 @@ class SettingsScreen(Screen):
             size_hint=(1, None),
             setting_type='select',
             label_text='Engine',
-            items=['cplanet', 'pythonrk4']
-            # items=['cplanet', 'crk4engine', 'pythonrk4']
+            items=['cplanet', 'crk4engine', 'pythonrk4']
+            # items=['cplanet', 'pythonrk4']
         )
         self.setting_items['engine'] = self.engine_select
         self.settingslayout.add_widget(self.engine_select)

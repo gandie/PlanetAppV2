@@ -15,7 +15,7 @@ from planet import Planet
 # ENGINES
 from cplanet import CPlanetKeeper
 from engine_rk4 import Engine
-# from crk4engine import CRk4Engine
+from crk4engine import CRk4Engine
 
 # BUILTIN
 from random import choice, randint
@@ -56,7 +56,7 @@ class Logic(Screen):
 
         self.engine_map = {
             'cplanet': CPlanetKeeper,
-            #'crk4engine': CRk4Engine,
+            'crk4engine': CRk4Engine,
             'pythonrk4': Engine,
         }
 
