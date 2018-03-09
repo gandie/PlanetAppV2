@@ -14,11 +14,6 @@ typedef struct Planet {
   int index;
 } Planet;
 
-typedef struct Acceleration {
-  double ax;
-  double ay;
-} Acceleration;
-
 typedef struct Rk4Engine {
   Planet* planets[1000];
 } Rk4Engine;

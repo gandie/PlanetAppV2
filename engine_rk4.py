@@ -49,6 +49,8 @@ class Planet(object):
             if other_planet == self:
                 continue
             dist, delta_x, delta_y = self.calc_distance(state, other_planet)
+            if dist == 0:
+                dist = 0.00001
             force = 0.1 * self.calc_force(other_planet, dist)
             ax += (force * delta_x / dist) / self.mass
             ay += (force * delta_y / dist) / self.mass
@@ -61,6 +63,8 @@ class Planet(object):
         return dist, delta_x, delta_y
 
     def calc_force(self, planet2, dist):
+        if dist == 0:
+            dist = 0.001
         force = (self.mass * planet2.mass) / (dist ** 2)
         return force
 
@@ -129,6 +133,8 @@ class Engine(object):
         '''
         see Planet constructor for argument details
         '''
+        if len(self.planets) > 1000:
+            return -1
         self.cur_index += 1
         new_planet = Planet(self, *args, **kwargs)
         self.planets[self.cur_index] = new_planet

@@ -27,7 +27,7 @@ double calc_root(double value) {
 
   int iterations;
 
-  for (iterations = 0; iterations < 15; iterations++) {
+  for (iterations = 0; iterations < 10; iterations++) {
     start_value = (start_value + value / start_value) * 0.5;
   }
   return start_value;
@@ -159,6 +159,8 @@ void calc_acceleration(Rk4Engine *rk4engine, double* in_ax, double* in_ay, int m
     ay = ay + (force_y / mymass);
   }
 
+  // this does NOT work! app crashes on import of crk4engine saying something
+  // like file is not a valid ELF format
   //Acceleration a = { ax, ay };
   //return a;
 
@@ -172,15 +174,9 @@ void update_planet(Rk4Engine *rk4engine, int index, double dt) {
   double initial_state_pos_x = planet->pos_x;
   double initial_state_pos_y = planet->pos_y;
 
-  //Rk4Engine *rk4engine, int myindex, double mypos_x, double mypos_y, double mymass
-
-  /*
-  struct Acceleration initial_A = calc_acceleration(rk4engine, index, planet->pos_x, planet->pos_y, planet->mass);
-
   // INITIAL DERIVATIVE
-  double initial_ax = initial_A.ax;
-  double initial_ay = initial_A.ay;
-  */
+  // create variables to be filled here, then pass pointers via &var to function
+  // tested function returning struct, which did not work for unknown reasosns
   double initial_ax, initial_ay;
   calc_acceleration(rk4engine, &initial_ax, &initial_ay, index, planet->pos_x, planet->pos_y, planet->mass);
 
@@ -191,13 +187,7 @@ void update_planet(Rk4Engine *rk4engine, int index, double dt) {
   double second_state_pos_x = initial_state_pos_x + initial_vx * (dt * 0.5);
   double second_state_pos_y = initial_state_pos_y + initial_vy * (dt * 0.5);
 
-  /*
-  struct Acceleration second_A = calc_acceleration(rk4engine, index, second_state_pos_x, second_state_pos_y, planet->mass);
-
   // SECOND DERIVATIVE
-  double second_ax = second_A.ax;
-  double second_ay = second_A.ay;
-  */
   double second_ax, second_ay;
   calc_acceleration(rk4engine, &second_ax, &second_ay, index, second_state_pos_x, second_state_pos_y, planet->mass);
 
@@ -208,13 +198,7 @@ void update_planet(Rk4Engine *rk4engine, int index, double dt) {
   double third_state_pos_x = initial_state_pos_x + second_vx * (dt * 0.5);
   double third_state_pos_y = initial_state_pos_y + second_vy * (dt * 0.5);
 
-  /*
-  struct Acceleration third_A = calc_acceleration(rk4engine, index, third_state_pos_x, third_state_pos_y, planet->mass);
-
   // THIRD DERIVATIVE
-  double third_ax = third_A.ax;
-  double third_ay = third_A.ay;
-  */
   double third_ax, third_ay;
   calc_acceleration(rk4engine, &third_ax, &third_ay, index, third_state_pos_x, third_state_pos_y, planet->mass);
 
@@ -225,13 +209,8 @@ void update_planet(Rk4Engine *rk4engine, int index, double dt) {
   double fourth_state_pos_x = initial_state_pos_x + third_vx * dt;
   double fourth_state_pos_y = initial_state_pos_y + third_vy * dt;
 
-  /*
-  struct Acceleration fourth_A = calc_acceleration(rk4engine, index, fourth_state_pos_x, fourth_state_pos_y, planet->mass);
 
   // FOURTH DERIVATIVE
-  double fourth_ax = fourth_A.ax;
-  double fourth_ay = fourth_A.ay;
-  */
   double fourth_ax, fourth_ay;
   calc_acceleration(rk4engine, &fourth_ax, &fourth_ay, index, fourth_state_pos_x, fourth_state_pos_y, planet->mass);
 

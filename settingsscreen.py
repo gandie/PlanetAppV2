@@ -108,17 +108,6 @@ class SettingsScreen(Screen):
         self.setting_items['show_tutorial'] = self.tutorial_toggle
         self.settingslayout.add_widget(self.tutorial_toggle)
 
-        self.engine_toggle = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=0.8,
-            setting_max=1.2,
-            setting_value=1,
-            setting_type='bool',
-            label_text='Use precise engine (rk4)'
-        )
-        self.setting_items['use_rk4_engine'] = self.engine_toggle
-        self.settingslayout.add_widget(self.engine_toggle)
-
         self.ticks_ahead = SettingsSlot(
             size_hint=(1, None),
             setting_min=100,

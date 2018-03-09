@@ -8,9 +8,11 @@
 ** Info Icon
 ** Gewicht Plus/Minus
 * TODO UI Ingame
-** Weniger ist mehr
+** Zeit / Ticks ahead zusammen immer wählbar --> Neues Widget @ Mainscreen
+** Weniger ist mehr --> Toggle Widgets @ Mainscreen
 *** Menü links toggle
 *** Infobox toggle
+** ShowOrbit Button @ seltoggles
 * TODO [#B] Planeten-Texturen
 ** DONE [#A] Texturen für HD-Screens
 ** TODO [#B] Noch eine Textur um Glow abzubilden

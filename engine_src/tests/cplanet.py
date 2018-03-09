@@ -1,6 +1,7 @@
 # requires cplanet build in this directory
 from cplanet import CPlanetKeeper
 import unittest
+import time
 
 
 class CPlanetTests(unittest.TestCase):
@@ -63,19 +64,18 @@ class CPlanetTests(unittest.TestCase):
         '''
         for _ in xrange(100):
             for index in xrange(1000):
-                pos = (index, index)
-                vel = (index, index)
-                mass = index
-                density = index
                 newindex = self.keeper.create_planet(
-                    pos_x=pos[0],
-                    pos_y=pos[1],
-                    vel_x=vel[0],
-                    vel_y=vel[1],
-                    mass=mass,
-                    density=density
+                    pos_x=index,
+                    pos_y=index,
+                    vel_x=index,
+                    vel_y=index,
+                    mass=index + 1,
+                    density=index + 1
                 )
+            tick_start = time.time()
             self.keeper.tick(1)
+            tick_took = time.time() - tick_start
+            print('Tick %s/100 took %s seconds' % (_ + 1, round(tick_took, 3)))
 
     def test_calc_third_root(self):
         number = 8
