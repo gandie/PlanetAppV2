@@ -41,6 +41,7 @@ class Logic(Screen):
     # MODI-FLAGS
     tutorial_mode = BooleanProperty(None)
     fixview_mode = BooleanProperty(None)
+    show_orbit_mode = BooleanProperty(None)
     cur_guimode = ObjectProperty(None)
 
     # SELECTED PLANET
@@ -387,11 +388,16 @@ class Logic(Screen):
         for index in del_indexes:
             self.delete_planet(index)
 
+        '''
         if self.selplanet_index is not None:
             self.calc_energy()
+        '''
 
         if self.selplanet_index is not None and self.fixview_mode:
             self.center_planet(self.selplanet_index)
+
+        if self.selplanet_index is not None and self.show_orbit_mode:
+            self.calc_trajectory_selplanet()
 
     def load_textures(self, path):
         texture_list = []
@@ -425,6 +431,8 @@ class Logic(Screen):
             Clock.unschedule(self.update_infobox)
             Clock.unschedule(self.update_seltoggles)
             self.fixview_mode = False
+            self.show_orbit_mode = False
+            self.gamezone.canvas.remove_group('trajectory_selplanet')
         else:
             self.selplanet_index = self.get_planet_index(value)
             self.mainscreen.add_infobox()
@@ -461,6 +469,7 @@ class Logic(Screen):
             planet_dict = self.planets[self.selplanet_index]
             # add fixview attribute to dict to update fixedview (eye-icon)
             planet_dict['fixview'] = self.fixview_mode
+            planet_dict['show_orbit'] = self.show_orbit_mode
             self.mainscreen.seltoggles.update(**planet_dict)
 
     def delete_selected(self, instance):
@@ -506,6 +515,13 @@ class Logic(Screen):
             self.fixview_mode = False
         else:
             self.fixview_mode = True
+
+    def show_orbit_selected(self, instance):
+        if self.show_orbit_mode:
+            self.show_orbit_mode = False
+            self.gamezone.canvas.remove_group('trajectory_selplanet')
+        else:
+            self.show_orbit_mode = True
 
     def clone_engine(self, dt):
 
@@ -560,3 +576,29 @@ class Logic(Screen):
                 temp_list.append(pos)
 
         return temp_list
+
+    def calc_trajectory_selplanet(self):
+        self.gamezone.canvas.remove_group('trajectory_selplanet')
+
+        planet = self.planets.get(self.selplanet_index)
+
+        if planet is None:
+            return
+        ticks = int(self.settings['ticks_ahead'])
+
+        trajectory_points = tuple()
+        # look into the future using the temp keeper
+        for _ in xrange(ticks):
+            self.temp_keeper.tick(self.tick_ratio)
+            if self.temp_keeper.planet_exists(self.selplanet_index):
+                # fetch data from keeper, track position
+                pos_x = self.temp_keeper.get_planet_pos_x(self.selplanet_index)
+                pos_y = self.temp_keeper.get_planet_pos_y(self.selplanet_index)
+                pos = (pos_x, pos_y)
+                # HERE
+                trajectory_points += pos
+
+        with self.gamezone.canvas:
+            trajectory_line = [
+                Line(points=trajectory_points,
+                     width=1, dash_offset=1, group='trajectory_selplanet')]

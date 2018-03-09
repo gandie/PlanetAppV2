@@ -61,7 +61,7 @@ class Seltoggles(FloatLayout):
             './media/icons/delete.png',
             './media/icons/delete_pressed.png',
             self.logic.delete_selected,
-            pos_hint={'x': 0.2, 'y': 0},
+            pos_hint={'x': 1.0 / 6, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/delete.png',
@@ -72,7 +72,7 @@ class Seltoggles(FloatLayout):
             './media/icons/addsize.png',
             './media/icons/addsize_pressed.png',
             self.logic.addmass_selected,
-            pos_hint={'x': 0.4, 'y': 0},
+            pos_hint={'x': 2.0 / 6, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/addsize.png',
@@ -83,7 +83,7 @@ class Seltoggles(FloatLayout):
             './media/icons/subsize.png',
             './media/icons/subsize_pressed.png',
             self.logic.submass_selected,
-            pos_hint={'x': 0.6, 'y': 0},
+            pos_hint={'x': 3.0 / 6, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/subsize.png',
@@ -94,7 +94,18 @@ class Seltoggles(FloatLayout):
             './media/icons/view.png',
             './media/icons/view_pressed.png',
             self.logic.fixview_selected,
-            pos_hint={'x': 0.8, 'y': 0},
+            pos_hint={'x': 4.0 / 6, 'y': 0},
+            size_hint=(None, None),
+            size=(self.iconsize, self.iconsize),
+            source='./media/icons/settings.png',
+            always_release=True
+        )
+
+        self.show_orbit_button = RealToggleButton(
+            './media/icons/settings.png',
+            './media/icons/settings_pressed.png',
+            self.logic.show_orbit_selected,
+            pos_hint={'x': 5.0 / 6, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/settings.png',
@@ -106,14 +117,17 @@ class Seltoggles(FloatLayout):
         self.add_widget(self.planet_addmass_button)
         self.add_widget(self.planet_submass_button)
         self.add_widget(self.planet_fixview_button)
+        self.add_widget(self.show_orbit_button)
 
     def update(self, **kwargs):
         # update buttons depending in planet selected. kwargs contain
         # complete planet dictionary and fixview flag from logic
         fixed = kwargs.get('fixed', False)
         fixview = kwargs.get('fixview', False)
+        show_orbit = kwargs.get('show_orbit', False)
         fixbutton = self.planet_fix_button
         fixview_button = self.planet_fixview_button
+        show_orbit_button = self.show_orbit_button
         if fixbutton:
             if fixed:
                 fixbutton.pressed = True
@@ -132,3 +146,12 @@ class Seltoggles(FloatLayout):
                 fixview_button.pressed = False
                 fixview_button.source = fixview_button.realtexture
                 fixview_button.reload()
+        if show_orbit_button:
+            if show_orbit:
+                show_orbit_button.pressed = True
+                show_orbit_button.source = show_orbit_button.realtexture_pressed
+                show_orbit_button.reload()
+            else:
+                show_orbit_button.pressed = False
+                show_orbit_button.source = show_orbit_button.realtexture
+                show_orbit_button.reload()

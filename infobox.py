@@ -66,7 +66,6 @@ class Infobox(ScrollView):
 
     def update(self, **kwargs):
         # write smarter stuff here!!
-        print kwargs.get('position_x'), kwargs.get('position_y')
         mass = kwargs.get('mass', 0)
         body = kwargs.get('body', '<None>')
         fixed = kwargs.get('fixed', False)

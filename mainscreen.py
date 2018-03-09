@@ -174,8 +174,8 @@ class MainScreen(Screen):
             self.iconsize,
             self.iconratio_x,
             size_hint=(None, None),
-            size=(5 * self.iconsize, self.iconsize),
-            pos_hint={'x': 1 - 5 * self.iconratio_x, 'y': 0}
+            size=(6 * self.iconsize, self.iconsize),
+            pos_hint={'x': 1 - 6 * self.iconratio_x, 'y': 0}
         )
 
         self.gamezone = Gamezone(
@@ -204,14 +204,14 @@ class MainScreen(Screen):
             value=10,
             step=1,
             orientation='horizontal',
-            pos_hint={'x':  2 * self.iconratio_x, 'y': 0},
+            pos_hint={'x':  self.iconratio_x, 'y': 0},
             size_hint=(0.3, 0.1)
         )
 
         self.label = Label(
             text='Some value: 9999',
             size_hint=(0.1, 0.1),
-            pos_hint={'x': 3 * self.iconratio_x + 0.3, 'y': 0},
+            pos_hint={'x': 2 * self.iconratio_x + 0.3, 'y': 0},
             halign='left'
         )
 
