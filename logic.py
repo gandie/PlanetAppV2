@@ -47,6 +47,7 @@ class Logic(Screen):
     # SELECTED PLANET
     selplanet = ObjectProperty(None, allownone=True)
     selplanet_index = NumericProperty(None, allownone=True)
+    selplanet_index_temp = NumericProperty(None, allownone=True)
 
     # this is called when app is built!
     def __init__(self, settings):
@@ -63,7 +64,10 @@ class Logic(Screen):
 
         self.init_engines(self.settings['engine'])
 
-        self.sound_map = {'piano': SoundLoader.load('media/sound/piano.wav')}
+        self.sound_map = {
+            'piano': SoundLoader.load('media/sound/piano.wav'),
+            'music': SoundLoader.load('media/sound/planets.wav')
+        }
 
         # time per time ratio
         self.tick_ratio = 1.0
@@ -102,11 +106,10 @@ class Logic(Screen):
         self.temp_keeper = self.engine_map[self.engine]()
 
     def apply_settings(self):
-        '''
-        if self.engine == 'CPlanet' and self.settings['use_rk4_engine'] is True or \
-           self.engine == 'rk4' and self.settings['use_rk4_engine'] is False:
-            self.init_engines()
-        '''
+
+        self.sound_map['music'].loop = True
+        self.sound_map['music'].volume = self.settings['music_volume']
+
         if self.engine != self.settings['engine']:
             self.init_engines(self.settings['engine'])
         self.planet_transitions = {
@@ -208,6 +211,8 @@ class Logic(Screen):
 
     def start_game(self):
 
+        self.sound_map['music'].play()
+
         Clock.schedule_interval(self.update_game, 1.0 / 25.0)
         Clock.schedule_interval(self.tick_engine, 1.0 / 25.0)
         Clock.schedule_interval(self.clone_engine, 1.0 / 25.0)
@@ -226,6 +231,7 @@ class Logic(Screen):
         Clock.unschedule(self.tick_engine)
         Clock.unschedule(self.clone_engine)
         Clock.unschedule(self.collect_garbage)
+        self.sound_map['music'].stop()
 
     def zirkus(self, dt):
         for index, planet_d in self.planets.items():
@@ -510,18 +516,13 @@ class Logic(Screen):
 
         self.gamezone.center = new_center
 
-    def fixview_selected(self, instance):
-        if self.fixview_mode:
-            self.fixview_mode = False
-        else:
-            self.fixview_mode = True
+    def fixview_selected(self, value):
+        self.fixview_mode = value
 
-    def show_orbit_selected(self, instance):
-        if self.show_orbit_mode:
-            self.show_orbit_mode = False
+    def show_orbit_selected(self, value):
+        self.show_orbit_mode = value
+        if not value:
             self.gamezone.canvas.remove_group('trajectory_selplanet')
-        else:
-            self.show_orbit_mode = True
 
     def clone_engine(self, dt):
 
@@ -543,6 +544,8 @@ class Logic(Screen):
                 mass=planet_d['mass'],
                 density=planet_d['density']
             )
+            if index == self.selplanet_index:
+                self.selplanet_index_temp = temp_id
             # do not forget to also fix bodies for trajectory calc.
             if planet_d['fixed']:
                 self.temp_keeper.fix_planet(temp_id)
@@ -581,21 +584,23 @@ class Logic(Screen):
         self.gamezone.canvas.remove_group('trajectory_selplanet')
 
         planet = self.planets.get(self.selplanet_index)
-
         if planet is None:
             return
+
+        # selpannet index might differ from index in temp_keeper
+        # see clone engine
+        index = self.selplanet_index_temp
         ticks = int(self.settings['ticks_ahead'])
 
         trajectory_points = tuple()
         # look into the future using the temp keeper
         for _ in xrange(ticks):
             self.temp_keeper.tick(self.tick_ratio)
-            if self.temp_keeper.planet_exists(self.selplanet_index):
+            if self.temp_keeper.planet_exists(index):
                 # fetch data from keeper, track position
-                pos_x = self.temp_keeper.get_planet_pos_x(self.selplanet_index)
-                pos_y = self.temp_keeper.get_planet_pos_y(self.selplanet_index)
+                pos_x = self.temp_keeper.get_planet_pos_x(index)
+                pos_y = self.temp_keeper.get_planet_pos_y(index)
                 pos = (pos_x, pos_y)
-                # HERE
                 trajectory_points += pos
 
         with self.gamezone.canvas:

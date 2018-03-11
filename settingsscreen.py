@@ -119,6 +119,17 @@ class SettingsScreen(Screen):
         self.setting_items['ticks_ahead'] = self.ticks_ahead
         self.settingslayout.add_widget(self.ticks_ahead)
 
+        self.music_volume = SettingsSlot(
+            size_hint=(1, None),
+            setting_min=0,
+            setting_max=1,
+            setting_value=0.0,
+            setting_type='number',
+            label_text='Music volume'
+        )
+        self.setting_items['music_volume'] = self.music_volume
+        self.settingslayout.add_widget(self.music_volume)
+
         # create items and add to settingslayout
         self.multi_shot_min = SettingsSlot(
             size_hint=(1, None),

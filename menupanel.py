@@ -188,10 +188,9 @@ class MenuPanel(FloatLayout):
     def goto_menu(self, instance):
         self.parent.manager.current = 'menu'
 
-    def pause_game(self, instance):
-        if not self.paused:
+    def pause_game(self, value):
+        if value:
             self.logic.stop_game()
-            self.paused = True
         else:
             self.logic.start_game()
-            self.paused = False
+        self.paused = value

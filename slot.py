@@ -147,7 +147,7 @@ class SettingsSlot(GridLayout):
         if self.setting_type == 'number':
             self.value = value
         elif self.setting_type == 'bool':
-            self.value = not self.changer.pressed
+            self.value = instance  # not self.changer.pressed
         elif self.setting_type == 'select':
             self.value = value
             self.changer.text = value

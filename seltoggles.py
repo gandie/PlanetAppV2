@@ -97,18 +97,18 @@ class Seltoggles(FloatLayout):
             pos_hint={'x': 4.0 / 6, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/settings.png',
+            source='./media/icons/view.png',
             always_release=True
         )
 
         self.show_orbit_button = RealToggleButton(
-            './media/icons/settings.png',
-            './media/icons/settings_pressed.png',
+            './media/icons/showorbit.png',
+            './media/icons/showorbit_pressed.png',
             self.logic.show_orbit_selected,
             pos_hint={'x': 5.0 / 6, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/settings.png',
+            source='./media/icons/showorbit.png',
             always_release=True
         )
 

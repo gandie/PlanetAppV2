@@ -125,6 +125,8 @@ class PlanetApp(App):
 
                 'engine': 'cplanet',
                 'ticks_ahead': 1000,
+
+                'music_volume': 0.0,
             }
         return settings
 

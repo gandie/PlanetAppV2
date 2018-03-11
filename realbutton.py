@@ -61,19 +61,22 @@ class RealToggleButton(ButtonBehavior, Image):
         if self.pressed:
             self.source = self.realtexture
             self.reload()
-            self.function(self)
             self.pressed = False
         else:
             self.source = self.realtexture_pressed
             self.reload()
-            self.function(self)
             self.pressed = True
+        self.function(self.pressed)
 
     def on_release(self):
         pass
 
 
 class RealMenuToggleButton(ToggleButtonBehavior, Image):
+
+    '''
+    This needs rework!
+    '''
 
     def __init__(self, realtexture, realtexture_pressed, keyword, **kwargs):
         super(RealMenuToggleButton, self).__init__(**kwargs)
@@ -83,7 +86,7 @@ class RealMenuToggleButton(ToggleButtonBehavior, Image):
 
     def on_state(self, widget, value):
         # i hate this code, togglebuttons are strange
-        if self.parent != None:
+        if self.parent is not None:
             if value == 'down':
                 self.parent.cur_mode = self.keyword
                 # update textures
