@@ -6,16 +6,17 @@ from kivy.uix.label import Label
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.slider import Slider
 from kivy.uix.screenmanager import Screen
-from kivy.animation import Animation
 from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
 from kivy.app import App
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.clock import Clock
 from kivy.core.window import Window
+from kivy.animation import Animation
+
 
 # CUSTOM
-from menupanel import MenuPanel
+from menupanel import MenuPanel, AddMenuPanel
 from gamezone import Gamezone
 from tutorial_label import Tutorial_Label
 from infobox import Infobox
@@ -35,6 +36,7 @@ class MainScreen(Screen):
     # GUI
     menupanel = ObjectProperty(None)
     gamezone = ObjectProperty(None)
+    add_menupanel = ObjectProperty(None)
 
     # label for tutorial texts
     tutorial_label = ObjectProperty(None)
@@ -51,7 +53,7 @@ class MainScreen(Screen):
     # add touchable widgets to interface for touch-handling
     interface = ReferenceListProperty(
         menupanel, gamezone, tutorial_label, infobox,
-        seltoggles, value_slider
+        seltoggles, value_slider, add_menupanel
     )
 
     # LOGIC
@@ -127,10 +129,20 @@ class MainScreen(Screen):
             # gamezone is last
             if widget == self.gamezone:
                 continue
+
             # check for collision
+            ''' deactivated, replaced by by loop below
             if widget.collide_point(touch.x, touch.y):
                 widget.on_touch_down(touch)
                 return
+            '''
+            # also check if widgets have children outside their own border
+            # show / hide toggle
+            for child in widget.children:
+                if child.collide_point(touch.x, touch.y):
+                    child.on_touch_down(touch)
+                    return
+
         self.gamezone.on_touch_down(touch)
 
     def on_touch_move(self, touch):
@@ -166,16 +178,16 @@ class MainScreen(Screen):
         )
 
         self.infobox = Infobox(
-            size_hint=(0.2, 0.5),
-            pos_hint={'x': 0.8, 'y': 0.5}
+            size_hint=(0.2, 0.2),
+            pos_hint={'x': 0.8, 'y': 0.8}
         )
 
         self.seltoggles = Seltoggles(
             self.iconsize,
             self.iconratio_x,
             size_hint=(None, None),
-            size=(6 * self.iconsize, self.iconsize),
-            pos_hint={'x': 1 - 6 * self.iconratio_x, 'y': 0}
+            size=(7 * self.iconsize, self.iconsize),
+            pos_hint={'x': 1 - 7 * self.iconratio_x, 'y': 0}
         )
 
         self.gamezone = Gamezone(
@@ -194,56 +206,19 @@ class MainScreen(Screen):
             self.iconsize,
             self.iconratio_y,
             size_hint=(None, None),
-            size=(self.iconsize, Window.height),
+            size=(self.iconsize, 3.0 * (Window.height / 8)),
             pos_hint={'x': 0, 'y': 0}
         )
 
-        self.value_slider = Slider(
-            min=5,
-            max=50,
-            value=10,
-            step=1,
-            orientation='horizontal',
-            pos_hint={'x':  self.iconratio_x, 'y': 0},
-            size_hint=(0.3, 0.1)
-        )
-
-        self.label = Label(
-            text='Some value: 9999',
-            size_hint=(0.1, 0.1),
-            pos_hint={'x': 2 * self.iconratio_x + 0.3, 'y': 0},
-            halign='left'
-        )
-
-        self.value_slider.bind(value=self.value_slider_change)
         self.tutorial_label.register_menupanel(self.menupanel)
         self.add_widget(self.menupanel)
 
-    def value_slider_change(self, instance, value):
-        if self.no_callbacks:
-            return
-        # check current mode and update value in logic module
-        if self.logic.cur_guimode == self.logic.mode_map['zoom']:
-            self.logic.tick_ratio = value
-        self.logic.cur_guimode.slider_value = value
-        # update label
-        self.label.text = ':'.join(
-            [self.logic.cur_guimode.slider_label, str(value)]
+        self.add_menupanel = AddMenuPanel(
+            self.iconsize,
+            self.iconratio_y,
+            size_hint=(None, None),
+            size=(self.iconsize * 4, self.iconsize),
+            pos_hint={'x': 0, 'y': 7 * self.iconratio_y}
         )
 
-    def add_value_slider(self, mode):
-        self.no_callbacks = True
-        if self.value_slider not in self.children:
-            self.value_slider.min = mode.settings['min']
-            self.value_slider.max = mode.settings['max']
-            self.value_slider.step = mode.settings['step']
-            self.value_slider.value = mode.slider_value  # mode.settings['min']
-            self.label.text = mode.slider_label + ':' + str(self.value_slider.value)
-            self.add_widget(self.value_slider)
-            self.add_widget(self.label)
-        self.no_callbacks = False
-
-    def remove_value_slider(self):
-        if self.value_slider in self.children:
-            self.remove_widget(self.value_slider)
-            self.remove_widget(self.label)
+        self.add_widget(self.add_menupanel)

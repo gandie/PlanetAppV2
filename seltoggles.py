@@ -4,13 +4,13 @@ from kivy.properties import *
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.screenmanager import Screen
-from kivy.animation import Animation
 from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.togglebutton import ToggleButton
 from kivy.app import App
 from kivy.core.window import Window
+from kivy.animation import Animation
 
 # CUSTOM
 from logic import Logic
@@ -37,6 +37,8 @@ class Seltoggles(FloatLayout):
 
     planet_fixview_button = ObjectProperty(None)
 
+    visible = BooleanProperty(True)
+
     def __init__(self, iconsize, iconratio, **kwargs):
         super(Seltoggles, self).__init__(**kwargs)
         self.logic = App.get_running_app().logic
@@ -61,7 +63,7 @@ class Seltoggles(FloatLayout):
             './media/icons/delete.png',
             './media/icons/delete_pressed.png',
             self.logic.delete_selected,
-            pos_hint={'x': 1.0 / 6, 'y': 0},
+            pos_hint={'x': 1.0 / 7, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/delete.png',
@@ -69,24 +71,24 @@ class Seltoggles(FloatLayout):
         )
 
         self.planet_addmass_button = RealTimedButton(
-            './media/icons/addsize.png',
-            './media/icons/addsize_pressed.png',
+            './media/icons/weightplus.png',
+            './media/icons/weightplus_pressed.png',
             self.logic.addmass_selected,
-            pos_hint={'x': 2.0 / 6, 'y': 0},
+            pos_hint={'x': 2.0 / 7, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/addsize.png',
+            source='./media/icons/weightplus.png',
             always_release=True
         )
 
         self.planet_submass_button = RealTimedButton(
-            './media/icons/subsize.png',
-            './media/icons/subsize_pressed.png',
+            './media/icons/weightminus.png',
+            './media/icons/weightminus_pressed.png',
             self.logic.submass_selected,
-            pos_hint={'x': 3.0 / 6, 'y': 0},
+            pos_hint={'x': 3.0 / 7, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/subsize.png',
+            source='./media/icons/weightminus.png',
             always_release=True
         )
 
@@ -94,7 +96,7 @@ class Seltoggles(FloatLayout):
             './media/icons/view.png',
             './media/icons/view_pressed.png',
             self.logic.fixview_selected,
-            pos_hint={'x': 4.0 / 6, 'y': 0},
+            pos_hint={'x': 4.0 / 7, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/view.png',
@@ -105,12 +107,25 @@ class Seltoggles(FloatLayout):
             './media/icons/showorbit.png',
             './media/icons/showorbit_pressed.png',
             self.logic.show_orbit_selected,
-            pos_hint={'x': 5.0 / 6, 'y': 0},
+            pos_hint={'x': 5.0 / 7, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/showorbit.png',
             always_release=True
         )
+
+        self.show_hide_button = RealToggleButton(
+            './media/icons/down.png',
+            './media/icons/up.png',
+            self.show_hide,
+            pos_hint={'x': 6.0 / 7, 'y': 0},
+            size_hint=(None, None),
+            size=(self.iconsize, self.iconsize),
+            source='./media/icons/down.png',
+            always_release=True
+        )
+
+        self.add_widget(self.show_hide_button)
 
         self.add_widget(self.planet_fix_button)
         self.add_widget(self.planet_del_button)
@@ -118,6 +133,12 @@ class Seltoggles(FloatLayout):
         self.add_widget(self.planet_submass_button)
         self.add_widget(self.planet_fixview_button)
         self.add_widget(self.show_orbit_button)
+
+        self.hide_items = [
+            self.planet_fix_button, self.planet_del_button,
+            self.planet_addmass_button, self.planet_submass_button,
+            self.planet_fixview_button, self.show_orbit_button
+        ]
 
     def update(self, **kwargs):
         # update buttons depending in planet selected. kwargs contain
@@ -155,3 +176,27 @@ class Seltoggles(FloatLayout):
                 show_orbit_button.pressed = False
                 show_orbit_button.source = show_orbit_button.realtexture
                 show_orbit_button.reload()
+
+    def show_hide(self, instance):
+        if self.visible:
+            for item in self.hide_items:
+                scrolldown = Animation(
+                    pos_hint={
+                        'y': -1
+                    },
+                    duration=0.5,
+                    t='out_bounce'
+                )
+                scrolldown.start(item)
+            self.visible = False
+        else:
+            for item in self.hide_items:
+                scrolldown = Animation(
+                    pos_hint={
+                        'y': 0
+                    },
+                    duration=0.5,
+                    t='out_bounce'
+                )
+                scrolldown.start(item)
+            self.visible = True

@@ -58,7 +58,7 @@ class GameMode(Screen):
         curpos_local = self.gamezone.to_local(touch.pos[0], touch.pos[1])
         touchupv = Vector(curpos_local)
         # velocity = (touchupv - touchdownv) / 25
-        velocity = (touchupv - touchdownv).normalize() * (touchupv - touchdownv).length() ** 0.5
+        velocity = (touchupv - touchdownv).normalize() * (touchupv - touchdownv).length() ** 0.3
 
         return velocity
 
@@ -243,6 +243,11 @@ class ZoomMode(GameMode):
 
     def touch_up(self, touch):
         super(Gamezone, self.gamezone).on_touch_up(touch)
+        # mode may have switched so delete trajectory if group is found
+        ud = touch.ud
+        group = ud.get('group')
+        if group is not None:
+            self.gamezone.parent.canvas.remove_group(ud['group'])
 
 
 class DelMode(GameMode):

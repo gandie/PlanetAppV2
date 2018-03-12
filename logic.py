@@ -165,9 +165,7 @@ class Logic(Screen):
         self.mode_map = {
             'zoom': ZoomMode(
                 self.gamezone,
-                sizeable=True,
-                settings=self.mode_setting['zoom'],
-                slider_label='Time Ratio'
+                settings=self.mode_setting['zoom']
             ),
             'add_planet': AddBodyMode(
                 self.gamezone,
@@ -197,17 +195,17 @@ class Logic(Screen):
         }
 
         if self.cur_guimode is None:
-            self.cur_guimode = self.mode_map['add_planet']
-            self.mainscreen.add_value_slider(self.cur_guimode)
+            self.cur_guimode = self.mode_map['zoom']
+            # self.mainscreen.add_value_slider(self.cur_guimode)
         self.bind(cur_guimode=self.on_cur_guimode)
 
     def on_cur_guimode(self, instance, value):
         # ask mode wether slider values have to be set
         # apply data from mode to slider...
-        self.mainscreen.remove_value_slider()
+        self.mainscreen.add_menupanel.remove_value_slider()
         if value.sizeable:
             # value is a mode here!
-            self.mainscreen.add_value_slider(value)
+            self.mainscreen.add_menupanel.add_value_slider(value)
 
     def start_game(self):
 
@@ -431,19 +429,19 @@ class Logic(Screen):
 
     def on_selplanet(self, instance, value):
         if value is None:
-            self.mainscreen.remove_infobox()
+            # self.mainscreen.remove_infobox()
             self.mainscreen.remove_seltoggles()
             self.selplanet_index = None
-            Clock.unschedule(self.update_infobox)
+            # Clock.unschedule(self.update_infobox)
             Clock.unschedule(self.update_seltoggles)
             self.fixview_mode = False
             self.show_orbit_mode = False
             self.gamezone.canvas.remove_group('trajectory_selplanet')
         else:
             self.selplanet_index = self.get_planet_index(value)
-            self.mainscreen.add_infobox()
+            # self.mainscreen.add_infobox()
             self.mainscreen.add_seltoggles()
-            Clock.schedule_interval(self.update_infobox, 1.0)
+            # Clock.schedule_interval(self.update_infobox, 1.0)
             Clock.schedule_interval(self.update_seltoggles, 1.0 / 10.0)
 
     def calc_energy(self):
@@ -480,7 +478,7 @@ class Logic(Screen):
 
     def delete_selected(self, instance):
         index = self.selplanet_index
-        if index:
+        if index is not None:
             self.delete_planet(index)
 
     def fix_selected(self, instance):

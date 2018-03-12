@@ -74,10 +74,6 @@ class RealToggleButton(ButtonBehavior, Image):
 
 class RealMenuToggleButton(ToggleButtonBehavior, Image):
 
-    '''
-    This needs rework!
-    '''
-
     def __init__(self, realtexture, realtexture_pressed, keyword, **kwargs):
         super(RealMenuToggleButton, self).__init__(**kwargs)
         self.realtexture = realtexture
@@ -87,13 +83,12 @@ class RealMenuToggleButton(ToggleButtonBehavior, Image):
     def on_state(self, widget, value):
         # i hate this code, togglebuttons are strange
         if self.parent is not None:
+            # in_this_mode = self.parent.cur_mode == self.keyword
             if value == 'down':
                 self.parent.cur_mode = self.keyword
-                # update textures
-                for dude in self.parent.optionbuttons:
-                    if widget == dude:
-                        dude.source = dude.realtexture_pressed
-                        dude.reload()
-                    else:
-                        dude.source = dude.realtexture
-                        dude.reload()
+                self.source = self.realtexture_pressed
+                self.reload()
+            elif value == 'normal':
+                self.parent.cur_mode = 'zoom'
+                self.source = self.realtexture
+                self.reload()

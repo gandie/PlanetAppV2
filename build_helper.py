@@ -22,12 +22,15 @@ After succesful tests put another copy of each engine to root folder for
 testing in app
 
 
-
 TASK THREE:
 If testing with new engines in app was succesful, put engines from engine_src
 folder to python for android recipes folder
 
 --> this should also trigger task one to be done!
+
+
+TASK FOUR:
+Get fresh copies of all png assets from raw images, scaled down to X
 '''
 
 import shutil
