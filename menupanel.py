@@ -21,27 +21,15 @@ from realbutton import RealToggleButton
 from realbutton import RealMenuToggleButton
 
 '''
-menupanel shown on the left side of the screen in mainscreen
-contains main buttons to control the game
+MenuPanel shown on the left side of the screen in mainscreen
+contains buttons to control the game: menu, pause, reset
+
+AddMenuPanel show on the top left of the mainscreen contains buttons
+to switch to different add-modes. if no mode is chosen, zoom is default
 '''
 
 
 class MenuPanel(FloatLayout):
-
-    # toggle buttons
-    add_planet_button = ObjectProperty(None)
-    zoom_button = ObjectProperty(None)
-    add_sun_button = ObjectProperty(None)
-    del_button = ObjectProperty(None)
-    multi_button = ObjectProperty(None)
-
-    optionbuttons = ReferenceListProperty(
-        add_planet_button,
-        zoom_button,
-        add_sun_button,
-        del_button,
-        multi_button
-    )
 
     # normal button
     menubutton = ObjectProperty(None)
@@ -61,25 +49,8 @@ class MenuPanel(FloatLayout):
         self.iconratio = iconratio
         self.build_interface()
 
-        # keywords to press buttons from other modules
-        self.keyword_map = {
-            'add_planet': self.add_planet_button,
-            'add_sun': self.add_sun_button,
-            'del': self.del_button,
-            'zoom': self.zoom_button,
-            'multi': self.multi_button
-        }
-
     def on_cur_mode(self, instance, value):
         self.logic.cur_guimode = self.logic.mode_map[value]
-
-    def press_button(self, keyword):
-        button = self.keyword_map[keyword]
-        for otherbutton in self.optionbuttons:
-            if otherbutton == button:
-                continue
-            otherbutton.state = 'normal'
-        button.state = 'down'
 
     def build_interface(self):
 
@@ -115,76 +86,6 @@ class MenuPanel(FloatLayout):
             source='./media/icons/reset.png',
             always_release=True
         )
-
-        '''
-        self.del_button = RealMenuToggleButton(
-            './media/icons/delete.png',
-            './media/icons/delete_pressed.png',
-            'del',
-            pos_hint={'x': 0, 'y': self.iconratio * 3},
-            size_hint=(None, None),
-            size=(self.iconsize, self.iconsize),
-            source='./media/icons/delete.png',
-            group='menu',
-            allow_no_selection=False
-        )
-
-        self.add_sun_button = RealMenuToggleButton(
-            './media/icons/sunmode.png',
-            './media/icons/sunmode_pressed.png',
-            'add_sun',
-            pos_hint={'x': 0, 'y': self.iconratio * 4},
-            size_hint=(None, None),
-            size=(self.iconsize, self.iconsize),
-            source='./media/icons/sunmode.png',
-            group='menu',
-            allow_no_selection=False
-        )
-
-        self.add_planet_button = RealMenuToggleButton(
-            './media/icons/add_planet.png',
-            './media/icons/add_planet_pressed.png',
-            'add_planet',
-            size_hint=(None, None),
-            size=(self.iconsize, self.iconsize),
-            pos_hint={'x': 0, 'y': self.iconratio * 5},
-            group='menu',
-            state='down',
-            allow_no_selection=False,
-            source='./media/icons/add_planet_pressed.png'
-        )
-
-        self.zoom_button = RealMenuToggleButton(
-            './media/icons/zoom.png',
-            './media/icons/zoom_mode.png',
-            'zoom',
-            size_hint=(None, None),
-            size=(self.iconsize, self.iconsize),
-            pos_hint={'x': 0, 'y': self.iconratio * 6},
-            group='menu',
-            allow_no_selection=False,
-            source='./media/icons/zoom.png'
-        )
-
-        self.multi_button = RealMenuToggleButton(
-            './media/icons/multipass.png',
-            './media/icons/multipass_pressed.png',
-            'multi',
-            size_hint=(None, None),
-            size=(self.iconsize, self.iconsize),
-            pos_hint={'x': 0, 'y': self.iconratio * 7},
-            group='menu',
-            allow_no_selection=False,
-            source='./media/icons/multipass.png'
-        )
-
-
-        self.add_widget(self.add_planet_button)
-        self.add_widget(self.zoom_button)
-        self.add_widget(self.add_sun_button)
-        self.add_widget(self.del_button)
-        self.add_widget(self.multi_button)
-        '''
 
         self.add_widget(self.menubutton)
         self.add_widget(self.pausebutton)
@@ -226,13 +127,6 @@ class AddMenuPanel(FloatLayout):
         self.iconsize = iconsize
         self.iconratio = iconratio
 
-        # keywords to press buttons from other modules
-        self.keyword_map = {
-            'add_planet': self.add_planet_button,
-            'add_sun': self.add_sun_button,
-            'multi': self.multi_button
-        }
-
         self.build_interface()
 
     def on_cur_mode(self, instance, value):
@@ -273,8 +167,6 @@ class AddMenuPanel(FloatLayout):
             group='menu',
             source='./media/icons/add_planet.png',
             allow_no_selection=True
-
-            # allow_no_selection=False,
         )
 
         self.multi_button = RealMenuToggleButton(
@@ -287,7 +179,6 @@ class AddMenuPanel(FloatLayout):
             group='menu',
             source='./media/icons/multipass.png',
             allow_no_selection=True
-            # allow_no_selection=False,
         )
 
         self.add_widget(self.add_planet_button)
@@ -312,8 +203,6 @@ class AddMenuPanel(FloatLayout):
             halign='left'
         )
 
-        # self.add_widget(self.value_slider)
-        # self.add_widget(self.value_label)
         self.value_slider.bind(value=self.value_slider_change)
 
         self.hide_items = [
@@ -374,4 +263,136 @@ class AddMenuPanel(FloatLayout):
             for item in self.hide_items:
                 scrolldown.start(item)
             # scrolldown.start(self.seltoggles)
+            self.visible = True
+
+
+class SliderPanel(FloatLayout):
+
+    visible = BooleanProperty(False)
+
+    def __init__(self, iconsize, iconratio, **kwargs):
+        super(SliderPanel, self).__init__(**kwargs)
+        self.logic = App.get_running_app().logic
+
+        self.iconsize = iconsize
+        self.iconratio = iconratio
+
+        self.build_interface()
+
+    def build_interface(self):
+
+        self.ticks_ahead_label = Label(
+            text='Ticks ahead',
+            size_hint=(0.5, 1),
+            pos_hint={'x': 1, 'y': 0},
+            halign='left'
+        )
+
+        self.ticks_ahead_slider = Slider(
+            min=100,
+            max=1000,
+            value=self.logic.settings['ticks_ahead'],
+            step=1,
+            orientation='horizontal',
+            pos_hint={'x':  1.5, 'y': 0},
+            size_hint=(0.5, 1)
+        )
+
+        self.timeratio_label = Label(
+            text='Timeratio',
+            size_hint=(0.5, 1),
+            pos_hint={'x': 1, 'y': 1},
+            halign='left'
+        )
+
+        self.timeratio_slider = Slider(
+            min=0,
+            max=2,
+            value=self.logic.tick_ratio,
+            step=.1,
+            orientation='horizontal',
+            pos_hint={'x':  1.5, 'y': 1},
+            size_hint=(0.5, 1)
+        )
+
+        self.show_hide_button = RealToggleButton(
+            './media/icons/timer_panel.png',
+            './media/icons/timer_panel.png',
+            self.show_hide,
+            pos_hint={'x': 4.0/5, 'y': -1},
+            size_hint=(None, None),
+            size=(self.iconsize, self.iconsize),
+            source='./media/icons/timer_panel.png',
+            always_release=True
+        )
+
+        self.add_widget(self.show_hide_button)
+
+        self.ticks_ahead_slider.bind(value=self.ticks_ahead_change)
+        self.timeratio_slider.bind(value=self.timeratio_change)
+
+        self.add_widget(self.ticks_ahead_label)
+        self.add_widget(self.ticks_ahead_slider)
+
+        self.add_widget(self.timeratio_label)
+        self.add_widget(self.timeratio_slider)
+
+        self.hide_labels = [
+             self.ticks_ahead_slider,
+             self.timeratio_slider,
+        ]
+
+        self.hide_sliders = [
+            self.timeratio_label,
+            self.ticks_ahead_label,
+        ]
+
+    def ticks_ahead_change(self, instance, value):
+        self.logic.settings['ticks_ahead'] = int(value)
+
+    def timeratio_change(self, instance, value):
+        self.logic.tick_ratio = value
+
+    def show_hide(self, value):
+        if self.visible:
+            scroll_label = Animation(
+                pos_hint={
+                    'x': 1
+                },
+                duration=0.5,
+                t='out_bounce'
+            )
+            scroll_slider = Animation(
+                pos_hint={
+                    'x': 1.5
+                },
+                duration=0.5,
+                t='out_bounce'
+            )
+
+            for item in self.hide_labels:
+                scroll_label.start(item)
+            for item in self.hide_sliders:
+                scroll_slider.start(item)
+            self.visible = False
+        else:
+            scroll_label = Animation(
+                pos_hint={
+                    'x': 0
+                },
+                duration=0.5,
+                t='out_bounce'
+            )
+            scroll_slider = Animation(
+                pos_hint={
+                    'x': 0.5
+                },
+                duration=0.5,
+                t='out_bounce'
+            )
+
+            for item in self.hide_labels:
+                scroll_label.start(item)
+            for item in self.hide_sliders:
+                scroll_slider.start(item)
             self.visible = True

@@ -81,14 +81,11 @@ class RealMenuToggleButton(ToggleButtonBehavior, Image):
         self.keyword = keyword
 
     def on_state(self, widget, value):
-        # i hate this code, togglebuttons are strange
         if self.parent is not None:
-            # in_this_mode = self.parent.cur_mode == self.keyword
             if value == 'down':
                 self.parent.cur_mode = self.keyword
                 self.source = self.realtexture_pressed
-                self.reload()
             elif value == 'normal':
                 self.parent.cur_mode = 'zoom'
                 self.source = self.realtexture
-                self.reload()
+            self.reload()

@@ -19,6 +19,7 @@ class Planet(FloatLayout):
     def __init__(self, **kwargs):
         super(Planet, self).__init__(**kwargs)
         self.size = (100, 100)
+        # TODO: better way to acquire default textures paths
         self.base_image = Image(
             size_hint=(1, 1),
             pos_hint={'x': 0, 'y': 0},

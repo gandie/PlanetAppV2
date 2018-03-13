@@ -103,7 +103,7 @@ class SettingsScreen(Screen):
             setting_max=1.2,
             setting_value=1,
             setting_type='bool',
-            label_text='Tutorial'
+            label_text='Tutorial (broken!)'
         )
         self.setting_items['show_tutorial'] = self.tutorial_toggle
         self.settingslayout.add_widget(self.tutorial_toggle)

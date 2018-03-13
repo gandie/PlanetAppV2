@@ -16,7 +16,7 @@ from kivy.animation import Animation
 
 
 # CUSTOM
-from menupanel import MenuPanel, AddMenuPanel
+from menupanel import MenuPanel, AddMenuPanel, SliderPanel
 from gamezone import Gamezone
 from tutorial_label import Tutorial_Label
 from infobox import Infobox
@@ -47,13 +47,13 @@ class MainScreen(Screen):
     # buttons for selected planet
     seltoggles = ObjectProperty(None)
 
-    # context slider for gui modes
-    value_slider = ObjectProperty(None)
+    # ticks ahead and time sliders
+    slider_panel = ObjectProperty(None)
 
     # add touchable widgets to interface for touch-handling
     interface = ReferenceListProperty(
         menupanel, gamezone, tutorial_label, infobox,
-        seltoggles, value_slider, add_menupanel
+        seltoggles, add_menupanel, slider_panel
     )
 
     # LOGIC
@@ -222,3 +222,13 @@ class MainScreen(Screen):
         )
 
         self.add_widget(self.add_menupanel)
+
+        self.slider_panel = SliderPanel(
+            self.iconsize,
+            self.iconratio_y,
+            size_hint=(None, None),
+            size=(self.iconsize * 5, self.iconsize),
+            pos_hint={'x': 1-self.iconratio_x * 5, 'y': 0.5}
+        )
+
+        self.add_widget(self.slider_panel)
