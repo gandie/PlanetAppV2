@@ -2,6 +2,7 @@
 from kivy.uix.image import Image
 from kivy.properties import *
 from kivy.uix.floatlayout import FloatLayout
+from kivy.app import App
 
 '''
 this widget is used to show planets in the gamezone
@@ -16,8 +17,12 @@ class Planet(FloatLayout):
     # TODO: complete this!?
     shadow_overlay = ObjectProperty(None)
 
+    # LOGIC
+    logic = ObjectProperty(None)
+
     def __init__(self, **kwargs):
         super(Planet, self).__init__(**kwargs)
+        self.logic = App.get_running_app().logic
         self.size = (100, 100)
         # TODO: better way to acquire default textures paths
         self.base_image = Image(
@@ -45,8 +50,6 @@ class Planet(FloatLayout):
                 self.select_overlay.center = self.center
 
     def select(self):
-        #newsize = (self.base_image.size[0] * 10, self.base_image.size[1] * 10)
-        #self.select_overlay.size = newsize
         self.select_overlay.center = self.center
         self.add_widget(self.select_overlay)
 

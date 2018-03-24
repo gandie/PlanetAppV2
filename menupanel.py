@@ -159,7 +159,7 @@ class AddMenuPanel(FloatLayout):
 
         self.add_planet_button = RealMenuToggleButton(
             './media/icons/add_planet.png',
-            './media/icons/add_planet_pressed.png',
+            './media/icons/addplanet_pressed.png',
             'add_planet',
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),

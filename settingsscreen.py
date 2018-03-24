@@ -97,6 +97,7 @@ class SettingsScreen(Screen):
         self.setting_items['background'] = self.background_toggle
         self.settingslayout.add_widget(self.background_toggle)
 
+        '''
         self.tutorial_toggle = SettingsSlot(
             size_hint=(1, None),
             setting_min=0.8,
@@ -107,6 +108,7 @@ class SettingsScreen(Screen):
         )
         self.setting_items['show_tutorial'] = self.tutorial_toggle
         self.settingslayout.add_widget(self.tutorial_toggle)
+        '''
 
         self.ticks_ahead = SettingsSlot(
             size_hint=(1, None),

@@ -50,7 +50,7 @@ class Slot(FloatLayout):
         self.label = Label(
             text='Slot: {}'.format(self.number),
             size_hint=(0.5, 1),
-            pos_hint={'x': 0, 'y': 0}
+            pos_hint={'x': 0.25, 'y': 0}
         )
 
         self.loadbutton = RealButton(
@@ -58,7 +58,7 @@ class Slot(FloatLayout):
             './media/buttons/load.png',
             self.load,
             size_hint=(0.25, 1),
-            pos_hint={'x': 0.75, 'y': 0},
+            pos_hint={'x': 0.0, 'y': 0},
             source='./media/buttons/load.png',
             always_release=True
         )
@@ -68,7 +68,7 @@ class Slot(FloatLayout):
             './media/buttons/save.png',
             self.save,
             size_hint=(0.25, 1),
-            pos_hint={'x': 0.5, 'y': 0},
+            pos_hint={'x': 0.75, 'y': 0},
             source='./media/buttons/save.png',
             always_release=True
         )

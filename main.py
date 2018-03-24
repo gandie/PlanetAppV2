@@ -23,7 +23,6 @@ main module of application. entry point when application is run. build-method
 is run first, on_start and on_stop fire when app is actually started or closed.
 
 also contains load/save mechanism for settings and savegames.
-new engine test running
 '''
 
 
@@ -37,7 +36,6 @@ class PlanetApp(App):
     savegamescreen = ObjectProperty(None)
     creditsscreen = ObjectProperty(None)
 
-    # MAIN LOGIC
     logic = ObjectProperty(None)
 
     def build(self):
@@ -137,45 +135,45 @@ class PlanetApp(App):
             settingsfile.write(json_d)
 
     def load_game(self, slot='current'):
-        self.logic.reset_planets(self)
-        # this try-block is needed to make first start of app work
-        try:
-            f = open('save_{}.json'.format(slot), 'r')
-            json_d = f.readline()
-            D = json.loads(json_d)
-            for index in D:
-                pos = (D[index]['position_x'], D[index]['position_y'])
-                vel = (D[index]['velocity_x'], D[index]['velocity_y'])
-                self.logic.add_body(pos=pos, vel=vel, **D[index])
-            f.close()
-        except:
-            print 'no savegame found'
+        save_name = 'save_{slot}.json'.format(slot=slot)
+        save_exists = os.path.exists(save_name)
+        if save_exists:
+            self.logic.reset_planets(self)
+            with open(save_name, 'r') as save_file:
+                json_d = save_file.readline()
+                planets_d = json.loads(json_d)
+            for planet_d in planets_d.values():
+                # make tuples from pos and vel
+                pos = (planet_d['position_x'], planet_d['position_y'])
+                vel = (planet_d['velocity_x'], planet_d['velocity_y'])
+                self.logic.add_body(pos=pos, vel=vel, **planet_d)
 
     def save_game(self, slot='current'):
-        f = open('save_{}.json'.format(slot), 'w')
         # make deepcopy to avoid deleting widget ref from logic.planets
-        D = copy.deepcopy(self.logic.planets)
+        planets_d = copy.deepcopy(self.logic.planets)
         # delete widget reference, it's not needed in savegames
-        for index in D:
-            D[index].pop('widget')
-        json_d = json.dumps(D)
-        f.write(json_d)
-        f.close()
+        for index in planets_d:
+            planets_d[index].pop('widget')
+
+        json_d = json.dumps(planets_d)
+        with open('save_{}.json'.format(slot), 'w') as save_file:
+            save_file.write(json_d)
 
     def scan_savegames(self):
         save_mtimes = {}
         for i in range(1, 6):
-            try:
+            save_name = 'save_{}.json'.format(i)
+            save_exists = os.path.exists(save_name)
+            if save_exists:
                 time_raw = os.path.getmtime('save_{}.json'.format(i))
                 time_save = time.ctime(time_raw)
                 save_mtimes[i] = str(time_save)
-            except Exception as e:
+            else:
                 save_mtimes[i] = '<Empty>'
 
         return save_mtimes
 
     def calc_iconsize(self):
-        # magic number here! this is how many icons will be shown in menupanel
         icon_count = 8
         window_height = Window.height
         window_width = Window.width

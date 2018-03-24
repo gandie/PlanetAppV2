@@ -1,18 +1,19 @@
+* TODO [#A] Particle Effekte
+** TODO [#A] Sonnen-Efekt: Transitions!
+*** TODO [#A] Unterschiedliche Farben/pex-files je nach body
+** TODO [#C] Panda gängig machen
+** DONE [#C] Particle System einhängen
+** TODO [#C] Aufschlag-Effekt (Kollision von Planeten)
 * TODO [#A] Sound
-** DONE [#A] Musik
+** TODO [#A] Musik
+*** Play/pause checken
 ** TODO [#A] Effekte
-* TODO Icon
-** DONE [#A] Besseres Icon?
+* TODO [#A] Icons
+** DONE Besseres Icon?
 ** DONE ShowOrbit Icon
 ** DONE Show/Hide Toggle
 ** Info Icon
 ** DONE Gewicht Plus/Minus
-* DONE UI Ingame
-** DONE Zeit / Ticks ahead zusammen immer wählbar --> Neues Widget @ Mainscreen
-** DONE Weniger ist mehr --> Toggle Widgets @ Mainscreen
-*** Menü links toggle
-*** Infobox toggle
-** DONE ShowOrbit Button @ seltoggles
 * TODO [#B] Planeten-Texturen
 ** DONE [#A] Texturen für HD-Screens
 ** TODO [#B] Noch eine Textur um Glow abzubilden
@@ -21,33 +22,12 @@
 ** TODO [#B] Schatten
 
 ** TODO [#C] Evtl. mit Particle Panda Atmosphäre bauen
-* TODO [#B] Logic
-** TODO [#C] Sichtfeld prüfen?!
-** TODO [#B] Hillbody-Berechnung?
-** DONE Gravity - Händeschütteln!
-*** DONE Entfernungsberechnung - einheitlich machen, an einer Stelle!
-** DONE Trajectory-Vorhersage?
-** DONE Modes
-*** DONE PlanetSelector mit Modes?
-** DONE Licht-Berechnung
-*** TODO [#C] Temperatur
-** DONE Planeten-Übergägnge
-*** DONE Planet->Sonne, Sonne->BlackHole??
-** DONE Garbage-Cleaner
-*** DONE Forces untersuchen, Körper löschen
-*** verworfen --> Kosten / Nutzen ??
-** DONE Architektur? Evtl. Unterklassen?
-* TODO [#B] Tutorial
-** DONE Textfelder mit Anweisungen
+* TODO [#B] Tutorial Rework
+** TODO [#B] Textfelder mit Anweisungen
 ** TODO [#B] Auswertung von Ereignissen??
 *** Auswertung der Distanz --> Orbits
 *** Zählen von Kollisionen
 ** TODO [#B] Auswertung der Trajekorie TUTORIAL
-* TODO [#C] Particle Effekte
-** TODO [#C] Panda gängig machen
-** TODO [#C] Particle System einhängen
-*** C-Integration? Verbesserungen
-** TODO [#C] Aufschlag-Effekt (Kollision von Planeten)
 * TODO [#C] Online Saves
 ** TODO [#B] Screen für Up-/Download
 ** TODO [#C] Preview? Description? Daten für Savegame?
@@ -97,3 +77,25 @@
 ** DONE [#A] Planeten-Leichen
 *** Es können verwaiste Widgets entstehen!
 *** children scannen und planet-widgets, die nicht im planet dict stehen löschen
+* DONE UI Ingame
+** DONE Zeit / Ticks ahead zusammen immer wählbar --> Neues Widget @ Mainscreen
+** DONE Weniger ist mehr --> Toggle Widgets @ Mainscreen
+*** Menü links toggle
+*** Infobox toggle
+** DONE ShowOrbit Button @ seltoggles
+* DONE Logic
+** DONE Sichtfeld prüfen?!
+** DONE Hillbody-Berechnung?
+** DONE Gravity - Händeschütteln!
+*** DONE Entfernungsberechnung - einheitlich machen, an einer Stelle!
+** DONE Trajectory-Vorhersage?
+** DONE Modes
+*** DONE PlanetSelector mit Modes?
+** DONE Licht-Berechnung
+*** TODO [#C] Temperatur
+** DONE Planeten-Übergägnge
+*** DONE Planet->Sonne, Sonne->BlackHole??
+** DONE Garbage-Cleaner
+*** DONE Forces untersuchen, Körper löschen
+*** verworfen --> Kosten / Nutzen ??
+** DONE Architektur? Evtl. Unterklassen?

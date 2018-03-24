@@ -86,23 +86,13 @@ class Logic(Screen):
         self.bind(selplanet=self.on_selplanet)
 
     def init_engines(self, engine):
-        '''
-        if self.settings['use_rk4_engine'] is True:
-            self.engine = 'rk4'
-        else:
-            self.engine = 'CPlanet'
-        '''
 
         assert engine in self.engine_map, 'Unknown engine!'
         self.engine = engine
         # initialize planetkeeper
-        # self.keeper = CPlanetKeeper()
-        # self.keeper = Engine()
         self.keeper = self.engine_map[self.engine]()
 
         # temporary keeper for trajectory calculation
-        # self.temp_keeper = CPlanetKeeper()
-        # self.temp_keeper = Engine()
         self.temp_keeper = self.engine_map[self.engine]()
 
     def apply_settings(self):
@@ -379,12 +369,11 @@ class Logic(Screen):
                     if self.planets[index]['mass'] > transition['mass']:
                         self.planets[index]['body'] = transition['nextbody']
                         self.planets[index]['density'] = transition['density']
-
                         self.keeper.set_planet_density(index, transition['density'])
-
                         texture_index = randint(0, len(transition['textures']) - 1)
                         newplanet_texture = transition['textures'][texture_index]
                         self.planets[index]['widget'].set_base_image(newplanet_texture)
+                        self.planets[index]['texture_index'] = texture_index
             else:
                 # collect planets to be deleted
                 del_indexes.append(index)

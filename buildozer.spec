@@ -13,7 +13,7 @@ package.domain = org.test
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,pyx,h,c,wav
+source.include_exts = py,png,jpg,kv,atlas,pyx,h,c,wav,pex
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
@@ -40,7 +40,7 @@ requirements = kivy,hostpython2,cplanet,crk4engine
 #requirements.source.kivy =
 
 # (list) Garden requirements
-#garden_requirements =
+# garden_requirements = particlesystem
 
 # (str) Presplash of the application
 presplash.filename = %(source.dir)s/media/splashscreen/splashscreen.jpg
