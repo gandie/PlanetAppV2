@@ -2,32 +2,30 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.screenmanager import FadeTransition
 from kivy.properties import *
-from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
 
 # CUSTOM
 from realbutton import RealButton
 
+'''
+simple screen to show some credits
+'''
+
 
 class CreditsScreen(Screen):
 
-    '''
-    simple screen to show some credits
-    '''
 
     logic = ObjectProperty(None)
     mainlayout = ObjectProperty(None)
 
-    def __init__(self, **kwargs):
+    def __init__(self, iconsize, **kwargs):
         super(CreditsScreen, self).__init__(**kwargs)
-        self.logic = App.get_running_app().logic
-        self.iconsize = kwargs.get('iconsize')
-        self.iconratio_x = kwargs.get('iconratio_x')
-        self.iconratio_y = kwargs.get('iconratio_y')
+
+        self.iconsize = iconsize
+
         self.build_interface()
 
     def build_interface(self):
@@ -43,7 +41,9 @@ class CreditsScreen(Screen):
             size_hint_y=None,
             spacing=10
         )
-        self.creditslayout.bind(minimum_height=self.creditslayout.setter('height'))
+        self.creditslayout.bind(
+            minimum_height=self.creditslayout.setter('height')
+        )
         self.creditsview.add_widget(self.creditslayout)
 
         for line in self.creditlines():
@@ -80,7 +80,7 @@ class CreditsScreen(Screen):
             'gandie -- main developer -- lars@bergmann82.de',
             '',
             '## Artists ##',
-            'dude -- layout, graphics',
+            'dude -- layout, graphics, music',
             '',
             '## Tester ##',
             'McStorm',

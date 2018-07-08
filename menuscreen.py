@@ -2,18 +2,14 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.screenmanager import FadeTransition
 from kivy.properties import *
-from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.button import Button
-from kivy.core.window import Window
 
 # CUSTOM
 from realbutton import RealButton
 
 '''
 Menuscreen shown when app has started. Access savegames, settings, credits and
-tutorial from here.
+the actual game from here.
 '''
 
 
@@ -28,7 +24,6 @@ class MenuScreen(Screen):
 
     def __init__(self, **kwargs):
         super(MenuScreen, self).__init__(**kwargs)
-        self.logic = App.get_running_app().logic
         self.build_interface()
 
     def switchto_main(self, instance):

@@ -1,18 +1,7 @@
 # KIVY
-from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import *
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.uix.togglebutton import ToggleButton
-from kivy.uix.slider import Slider
 from kivy.uix.screenmanager import Screen
-from kivy.uix.scatter import Scatter
-from kivy.uix.image import Image
-from kivy.app import App
-from kivy.uix.behaviors import ToggleButtonBehavior
-from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy.animation import Animation
 
 
 # CUSTOM
@@ -24,7 +13,8 @@ from seltoggles import Seltoggles
 
 '''
 Screen shown when the game is played. Contains gamezone and control widgets.
-Divides touch events for control widgets and gamezone and hands them down.
+Divides touch events between control widgets and gamezone and hands them down
+accordingly.
 '''
 
 
@@ -59,14 +49,16 @@ class MainScreen(Screen):
     # LOGIC
     logic = ObjectProperty(None)
 
-    def __init__(self, **kwargs):
+    def __init__(self, logic, iconsize, iconratio_x, iconratio_y, **kwargs):
+
         super(MainScreen, self).__init__(**kwargs)
-        self.logic = App.get_running_app().logic
+
+        self.logic = logic
         self.logic.register_mainscreen(self)
 
-        self.iconsize = kwargs.get('iconsize')
-        self.iconratio_x = kwargs.get('iconratio_x')
-        self.iconratio_y = kwargs.get('iconratio_y')
+        self.iconsize = iconsize
+        self.iconratio_x = iconratio_x
+        self.iconratio_y = iconratio_y
 
         self.build_interface()
 
@@ -76,12 +68,14 @@ class MainScreen(Screen):
     def on_enter(self):
         self.allign_gamezone()
 
+        # TODO: maybe avoid this "hacky" way to apply background setting?
         # check for background
         if self.logic.settings['background']:
             self.background.size = self.size
         else:
             self.background.size = (0, 0)
 
+        # TODO: why is paused saved in menupanel? put to logic?
         if not self.menupanel.paused:
             self.logic.start_game()
 
@@ -94,18 +88,22 @@ class MainScreen(Screen):
                 self.remove_widget(self.tutorial_label)
 
     def add_seltoggles(self):
+        '''called from logic when planet is selected'''
         if self.seltoggles not in self.children:
             self.add_widget(self.seltoggles)
 
     def remove_seltoggles(self):
+        '''called from logic when planet is UNselected'''
         if self.seltoggles in self.children:
             self.remove_widget(self.seltoggles)
 
     def add_infobox(self):
+        '''called from logic when planet is selected -- DEACTIVATED'''
         if self.infobox not in self.children:
             self.add_widget(self.infobox)
 
     def remove_infobox(self):
+        '''called from logic when planet is UNselected -- DEACTIVATED'''
         if self.infobox in self.children:
             self.remove_widget(self.infobox)
 
@@ -116,6 +114,8 @@ class MainScreen(Screen):
             self.logic.tutorial_mode = False
 
     def allign_gamezone(self):
+        # TODO: maybe check for pinned / heaviest body (if found) and align to
+        # it instead of center
         # center gamezone widget so simulation starts in the middle
         self.gamezone.center_x = self.center_x
         self.gamezone.center_y = self.center_y
@@ -130,14 +130,10 @@ class MainScreen(Screen):
             if widget == self.gamezone:
                 continue
 
-            # check for collision
-            ''' deactivated, replaced by by loop below
-            if widget.collide_point(touch.x, touch.y):
-                widget.on_touch_down(touch)
-                return
-            '''
-            # also check if widgets have children outside their own border
-            # show / hide toggle
+            # we check dynamic layouts for children here, these layouts can not
+            # be trusted to handle touch events correctly. This misbehaviour is
+            # caused by widgets having children outside their own border due to
+            # show / hide toggle mechanics
             for child in widget.children:
                 if child.collide_point(touch.x, touch.y):
                     child.on_touch_down(touch)
@@ -146,6 +142,7 @@ class MainScreen(Screen):
         self.gamezone.on_touch_down(touch)
 
     def on_touch_move(self, touch):
+        # hand down touch events, hand to gamezone if nothing else matches
         for widget in self.interface:
             if widget not in self.children:
                 continue
@@ -157,6 +154,7 @@ class MainScreen(Screen):
         self.gamezone.on_touch_move(touch)
 
     def on_touch_up(self, touch):
+        # hand down touch events, hand to gamezone if nothing else matches
         for widget in self.interface:
             if widget not in self.children:
                 continue
@@ -191,7 +189,7 @@ class MainScreen(Screen):
         )
 
         self.gamezone = Gamezone(
-            # zooming stuff
+            # zooming stuff can be deactivated:
             # do_rotation=False,
             # do_translation_y=False,
             # do_translation_x=False,

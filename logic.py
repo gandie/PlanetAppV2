@@ -65,7 +65,6 @@ class Logic(Screen):
         self.init_engines(self.settings['engine'])
 
         self.sound_map = {
-            'piano': SoundLoader.load('media/sound/piano.wav'),
             'music': SoundLoader.load('media/sound/planets.wav')
         }
 
@@ -103,30 +102,42 @@ class Logic(Screen):
         if self.engine != self.settings['engine']:
             self.init_engines(self.settings['engine'])
         self.planet_transitions = {
-            'moon': {'nextbody': 'planet',
-                     'mass': self.settings['min_planet_mass'],
-                     'density': self.settings['planet_density'],
-                     'textures': self.texture_mapping['planet']},
-            'planet': {'nextbody': 'gasgiant',
-                       'mass': self.settings['min_gasgiant_mass'],
-                       'density': self.settings['gasgiant_density'],
-                       'textures': self.texture_mapping['gasgiant']},
-            'gasgiant': {'nextbody': 'sun',
-                         'mass': self.settings['min_sun_mass'],
-                         'density': self.settings['sun_density'],
-                         'textures': self.texture_mapping['sun']},
-            'sun': {'nextbody': 'bigsun',
-                    'mass': self.settings['min_bigsun_mass'],
-                    'density': self.settings['bigsun_density'],
-                    'textures': self.texture_mapping['bigsun']},
-            'bigsun': {'nextbody': 'giantsun',
-                       'mass': self.settings['min_giantsun_mass'],
-                       'density': self.settings['giantsun_density'],
-                       'textures': self.texture_mapping['giantsun']},
-            'giantsun': {'nextbody': 'blackhole',
-                         'mass': self.settings['min_blackhole_mass'],
-                         'density': self.settings['blackhole_density'],
-                         'textures': self.texture_mapping['blackhole']}
+            'moon': {
+                'nextbody': 'planet',
+                'mass': self.settings['min_planet_mass'],
+                'density': self.settings['planet_density'],
+                'textures': self.texture_mapping['planet']
+            },
+            'planet': {
+                'nextbody': 'gasgiant',
+                'mass': self.settings['min_gasgiant_mass'],
+                'density': self.settings['gasgiant_density'],
+                'textures': self.texture_mapping['gasgiant']#
+            },
+            'gasgiant': {
+                'nextbody': 'sun',
+                'mass': self.settings['min_sun_mass'],
+                'density': self.settings['sun_density'],
+                'textures': self.texture_mapping['sun']
+            },
+            'sun': {
+                'nextbody': 'bigsun',
+                'mass': self.settings['min_bigsun_mass'],
+                'density': self.settings['bigsun_density'],
+                'textures': self.texture_mapping['bigsun']
+            },
+            'bigsun': {
+                'nextbody': 'giantsun',
+                'mass': self.settings['min_giantsun_mass'],
+                'density': self.settings['giantsun_density'],
+                'textures': self.texture_mapping['giantsun']
+            },
+            'giantsun': {
+                'nextbody': 'blackhole',
+                'mass': self.settings['min_blackhole_mass'],
+                'density': self.settings['blackhole_density'],
+                'textures': self.texture_mapping['blackhole']
+            }
         }
 
         self.mode_setting = {

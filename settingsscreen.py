@@ -6,7 +6,6 @@ from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
-from kivy.uix.slider import Slider
 from kivy.uix.scrollview import ScrollView
 
 # CUSTOM
@@ -19,6 +18,7 @@ also access kivy settings from here.
 '''
 
 
+# TODO: should be view part of mvc pattern (to be implemented)
 class SettingsScreen(Screen):
 
     logic = ObjectProperty(None)
@@ -27,12 +27,15 @@ class SettingsScreen(Screen):
     settingsbutton = ObjectProperty(None)
     settingsview = ObjectProperty(None)
 
-    def __init__(self, **kwargs):
+    def __init__(self, logic, iconsize, iconratio_x, iconratio_y, **kwargs):
+
         super(SettingsScreen, self).__init__(**kwargs)
-        self.logic = App.get_running_app().logic
-        self.iconsize = kwargs.get('iconsize')
-        self.iconratio_x = kwargs.get('iconratio_x')
-        self.iconratio_y = kwargs.get('iconratio_y')
+
+        self.logic = logic
+
+        self.iconsize = iconsize
+        self.iconratio_x = iconratio_x
+        self.iconratio_y = iconratio_y
 
         self.setting_items = {}
 
@@ -59,6 +62,7 @@ class SettingsScreen(Screen):
         App.get_running_app().save_settings()
 
     def build_interface(self):
+        # TODO: check min / max of settings against defaults!
         self.mainlayout = FloatLayout()
 
         self.settingsview = ScrollView(
@@ -74,7 +78,9 @@ class SettingsScreen(Screen):
         )
 
         # magic binding
-        self.settingslayout.bind(minimum_height=self.settingslayout.setter('height'))
+        self.settingslayout.bind(
+            minimum_height=self.settingslayout.setter('height')
+        )
 
         self.engine_select = SettingsSlot(
             size_hint=(1, None),
@@ -97,7 +103,7 @@ class SettingsScreen(Screen):
         self.setting_items['background'] = self.background_toggle
         self.settingslayout.add_widget(self.background_toggle)
 
-        '''
+        ''' DEACTIVATED, needs rework!
         self.tutorial_toggle = SettingsSlot(
             size_hint=(1, None),
             setting_min=0.8,

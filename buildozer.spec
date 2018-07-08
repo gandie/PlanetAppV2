@@ -29,7 +29,7 @@ source.include_exts = py,png,jpg,kv,atlas,pyx,h,c,wav,pex
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 0.6.0
+version = 0.7.0
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy

@@ -41,43 +41,48 @@ class PlanetApp(App):
     def build(self):
         self.calc_iconsize()
         self.logic = Logic(settings=self.load_settings())
+
         self.screenmanager = ScreenManager()
 
         self.mainscreen = MainScreen(
-            name='main',
+            logic=self.logic,
             iconsize=self.iconsize,
             iconratio_x=self.iconratio_x,
-            iconratio_y=self.iconratio_y
+            iconratio_y=self.iconratio_y,
+            name='main'
         )
 
+        # MenuScreen does not need logic
         self.menuscreen = MenuScreen(name='menu')
 
         self.settingsscreen = SettingsScreen(
-            name='settings',
+            logic=self.logic,
             iconsize=self.iconsize,
             iconratio_x=self.iconratio_x,
-            iconratio_y=self.iconratio_y
+            iconratio_y=self.iconratio_y,
+            name='settings'
         )
 
         self.savegamescreen = SavegameScreen(
-            name='savegames',
+            logic=self.logic,
             iconsize=self.iconsize,
             iconratio_x=self.iconratio_x,
-            iconratio_y=self.iconratio_y
+            iconratio_y=self.iconratio_y,
+            name='savegames'
         )
 
         self.creditsscreen = CreditsScreen(
-            name='credits',
             iconsize=self.iconsize,
-            iconratio_x=self.iconratio_x,
-            iconratio_y=self.iconratio_y
+            name='credits'
         )
 
+        # XXX: order adding here reflects which screen is shown first!
         self.screenmanager.add_widget(self.menuscreen)
         self.screenmanager.add_widget(self.mainscreen)
         self.screenmanager.add_widget(self.settingsscreen)
         self.screenmanager.add_widget(self.savegamescreen)
         self.screenmanager.add_widget(self.creditsscreen)
+
         self.logic.apply_settings()
 
         return self.screenmanager
@@ -97,6 +102,7 @@ class PlanetApp(App):
                 json_d = settingsfile.readline()
             settings = json.loads(json_d)
         except Exception:
+            # TODO: put defaults settings to file?
             # default settings
             settings = {
                 'min_moon_mass': 0,
@@ -129,6 +135,7 @@ class PlanetApp(App):
         return settings
 
     def save_settings(self):
+        # TODO: deepcopy here is not neccessary - we do not alter settings here!
         D = copy.deepcopy(self.logic.settings)
         json_d = json.dumps(D)
         with open('settings.json', 'w') as settingsfile:
@@ -149,7 +156,7 @@ class PlanetApp(App):
                 self.logic.add_body(pos=pos, vel=vel, **planet_d)
 
     def save_game(self, slot='current'):
-        # make deepcopy to avoid deleting widget ref from logic.planets
+        # make deepcopy to avoid deleting widget ref from actual logic.planets
         planets_d = copy.deepcopy(self.logic.planets)
         # delete widget reference, it's not needed in savegames
         for index in planets_d:
@@ -174,6 +181,7 @@ class PlanetApp(App):
         return save_mtimes
 
     def calc_iconsize(self):
+        # TODO: is this neccessary?
         icon_count = 8
         window_height = Window.height
         window_width = Window.width

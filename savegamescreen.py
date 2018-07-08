@@ -9,6 +9,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 
 # CUSTOM
+# TODO: rename this to reflect what kind of slot
 from slot import Slot
 from realbutton import RealButton
 
@@ -30,13 +31,15 @@ class SavegameScreen(Screen):
     menubutton = ObjectProperty(None)
     logic = ObjectProperty(None)
 
-    def __init__(self, **kwargs):
-        super(SavegameScreen, self).__init__(**kwargs)
-        self.logic = App.get_running_app().logic
+    def __init__(self, logic, iconsize, iconratio_x, iconratio_y, **kwargs):
 
-        self.iconsize = kwargs.get('iconsize')
-        self.iconratio_x = kwargs.get('iconratio_x')
-        self.iconratio_y = kwargs.get('iconratio_y')
+        super(SavegameScreen, self).__init__(**kwargs)
+
+        self.logic = logic
+
+        self.iconsize = iconsize
+        self.iconratio_x = iconratio_x
+        self.iconratio_y = iconratio_y
 
         self.build_interface()
 
