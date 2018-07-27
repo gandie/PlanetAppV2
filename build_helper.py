@@ -32,6 +32,19 @@ folder to python for android recipes folder
 TASK FOUR:
 Get fresh copies of all png assets from raw images, scaled down to X
 '''
+# TODO:
+'''
+TASK FIVE:
+Build Windows exe files and structure arround it usinng a virtualwine containing
+Python27, Kivy and pyInstaller in a windows-lie environment.
+Zip new dist/main folder into a file named "PocketCosmos-<VERSION>_win.zip".
+Fetch version from buildoer.spec
+
+wine C:/Python27/python.exe setup.py build --compiler=mingw32
+wine C:/Python27/python.exe setup.py install -f
+
+wine C:/Python27/python.exe -m PyInstaller main.spec
+'''
 
 import shutil
 import argparse
@@ -41,7 +54,7 @@ CUSTOM_ENGINES = ['cplanet', 'crk4engine']
 
 
 def parse_spec():
-    keys = ['p4a.source_dir', 'requirements']
+    keys = ['p4a.source_dir', 'requirements', 'version']
     with open('buildozer.spec', 'r') as specfile:
         lines = specfile.readlines()
     key_lines = dict(
@@ -158,11 +171,30 @@ def cleanup_engine_src():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-b', '--build', help='Build engines', action='store_true', default=False)
-    parser.add_argument('-p', '--p4a', help='Copy new engines to p4a recipes dir', action='store_true', default=False)
-    parser.add_argument('-c', '--clear', help='Clear build to force rebuilding app', action='store_true', default=False)
-    args_d = parser.parse_args().__dict__
+    parser.add_argument(
+        '-b',
+        '--build',
+        help='Build engines',
+        action='store_true',
+        default=False
+    )
+    parser.add_argument(
+        '-p',
+        '--p4a',
+        help='Copy new engines to p4a recipes dir',
+        action='store_true',
+        default=False
+    )
+    parser.add_argument(
+        '-c',
+        '--clear',
+        help='Clear build to force rebuilding app',
+        action='store_true',
+        default=False
+    )
+    args_d = parser.parse_args().__dict__  # i want a dict, not a namespace
     spec_data = parse_spec()
+
     if args_d['build']:
         build_engines()
         cleanup_engine_src()
@@ -170,6 +202,3 @@ if __name__ == '__main__':
         copy_engines(spec_data['p4a.source_dir'])
     if args_d['clear']:
         clear_build()
-    # print(args_d)
-    # clear_build()
-    # cleanup_engine_src()

@@ -105,7 +105,7 @@ class PlanetApp(App):
             # TODO: put defaults settings to file?
             # default settings
             settings = {
-                'min_moon_mass': 0,
+                'min_moon_mass': 9,
                 'min_planet_mass': 10,
                 'min_gasgiant_mass': 50,
                 'min_sun_mass': 50000,

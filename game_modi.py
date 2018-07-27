@@ -44,10 +44,12 @@ class GameMode(Screen):
         if self.body != '':
             # stuff for trajectory calculation
             min_mass_key = 'min_{}_mass'.format(self.body)
-            self.min_mass = self.logic.settings[min_mass_key]
-            # stupid patch foor moon mass, fix this!
+            '''
             if self.body == 'moon':
                 self.min_mass = 9
+            else:
+            '''
+            self.min_mass = self.logic.settings[min_mass_key]
 
             density_key = '{}_density'.format(self.body)
             self.density = self.logic.settings[density_key]

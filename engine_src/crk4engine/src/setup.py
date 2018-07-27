@@ -2,8 +2,14 @@ from distutils.core import setup
 from distutils.extension import Extension
 
 '''
-# build cplanet library
+# build crk4engine library
+
+Linux / Anroid
 python setup.py build
+
+Wine / Windows
+wine C:/Python27/python.exe setup.py build --compiler=mingw32
+wine C:/Python27/python.exe setup.py install -f
 '''
 
 # Test if Cython is available
