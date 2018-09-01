@@ -1,4 +1,8 @@
 '''
+Helper module to simplify build process for android and windows builds.
+Bascially types shell commands to build / install stuff and clears directories
+afterwads.
+
 THINGS TO DO:
 
 TASK ONE:
@@ -29,14 +33,15 @@ folder to python for android recipes folder
 --> this should also trigger task one to be done!
 
 
-TASK FOUR:
-Get fresh copies of all png assets from raw images, scaled down to X
 '''
 # TODO:
 '''
+TASK FOUR:
+Get fresh copies of all png assets from raw images, scaled down to X
+
 TASK FIVE:
 Build Windows exe files and structure arround it usinng a virtualwine containing
-Python27, Kivy and pyInstaller in a windows-lie environment.
+Python27, Kivy and pyInstaller in a windows-like environment.
 Zip new dist/main folder into a file named "PocketCosmos-<VERSION>_win.zip".
 Fetch version from buildoer.spec
 
@@ -51,6 +56,52 @@ import argparse
 import os
 
 CUSTOM_ENGINES = ['cplanet', 'crk4engine']
+
+HOME = os.getenv('HOME')
+
+WINE_BIN = HOME + '/Dev/KivyBuild/bin'
+WINE_PLANETAPPV2_SRC = HOME + '/Dev/KivyBuild/drive_c/PlanetAppV2'
+
+PATH = os.getenv('PATH')
+
+
+def build_wine_engines():
+    '''build and install engines into wine environment to be consmed by
+    pyInstaller later
+    - git pull from master in WINE_PLANETAPPV2_SRC
+    - build and install all engines from now up-to-date WINE_PLANETAPPV2_SRC
+      directory
+    ''''
+    activate_wine()
+
+    cd_command = 'cd %s;' % WINE_PLANETAPPV2_SRC
+
+    pull_command = cd_command + 'git pull origin master'
+
+    print('pulling from master branch in %s' % WINE_PLANETAPPV2_SRC)
+    os.system(pull_command)
+
+def activate_wine():
+    '''activate virtualwine instance by altering PATH environment variable'''
+
+    # add virtualwine bin folder containing the wine executable to be used
+    new_path = WINE_BIN + ':' + PATH
+
+    os.putenv('PATH', new_path)
+
+    print('activated. "which wine" output:')
+    test_call = 'which wine'
+    os.system(test_call)
+
+
+def deactivate_wine():
+    '''remove WINE_BIN from PATH environment variable'''
+
+    os.putenv('PATH', PATH)
+
+    print('deactivated. "which wine" output:')
+    test_call = 'which wine'
+    os.system(test_call)
 
 
 def parse_spec():

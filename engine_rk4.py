@@ -99,19 +99,49 @@ class Planet(object):
     def update(self, curtime, delta_time):
         if self.fixed:
             return
+
+        # calculate first derivative
         initial_D = self.initialDerivative(self.state, curtime)
-        second_D = self.nextDerivative(self.state, initial_D, curtime, delta_time * 0.5)
-        third_D = self.nextDerivative(self.state, second_D, curtime, delta_time * 0.5)
-        fourth_D = self.nextDerivative(self.state, third_D, curtime, delta_time)
-        delta_x_dt = 1.0 / 6.0 * (initial_D.dx + 2 * (second_D.dx + third_D.dx) + fourth_D.dx)
-        delta_y_dt = 1.0 / 6.0 * (initial_D.dy + 2 * (second_D.dy + third_D.dy) + fourth_D.dy)
-        delta_vx_dt = 1.0 / 6.0 * (initial_D.dvx + 2 * (second_D.dvx + third_D.dvx) + fourth_D.dvx)
-        delta_vy_dt = 1.0 / 6.0 * (initial_D.dvy + 2 * (second_D.dvy + third_D.dvy) + fourth_D.dvy)
+
+        # initialize deltas
+        delta_x_dt = 0
+        delta_y_dt = 0
+        delta_vx_dt = 0
+        delta_vy_dt = 0
+
+        # check initial derivative
+        if initial_D.dx != 0 and initial_D.dy != 0:
+
+            # calculate second derivative
+            second_D = self.nextDerivative(self.state, initial_D, curtime, delta_time * 0.5)
+
+            # calculate difference between first two steps and normalize
+            error_x = (second_D.dx - initial_D.dx)
+            error_y = (second_D.dy - initial_D.dy)
+            error_norm = (error_x ** 2 + error_y ** 2) ** 0.5
+
+            MAGIC_ERROR = 0.1
+            if error_norm < MAGIC_ERROR:
+                # rk 2
+                print('using rk2')
+                delta_x_dt = second_D.dx
+                delta_y_dt = second_D.dy
+                delta_vx_dt = second_D.dvx
+                delta_vy_dt = second_D.dvy
+            else:
+                # rk 4
+                print('using rk4')
+                third_D = self.nextDerivative(self.state, second_D, curtime, delta_time * 0.5)
+                fourth_D = self.nextDerivative(self.state, third_D, curtime, delta_time)
+                delta_x_dt = 1.0 / 6.0 * (initial_D.dx + 2 * (second_D.dx + third_D.dx) + fourth_D.dx)
+                delta_y_dt = 1.0 / 6.0 * (initial_D.dy + 2 * (second_D.dy + third_D.dy) + fourth_D.dy)
+                delta_vx_dt = 1.0 / 6.0 * (initial_D.dvx + 2 * (second_D.dvx + third_D.dvx) + fourth_D.dvx)
+                delta_vy_dt = 1.0 / 6.0 * (initial_D.dvy + 2 * (second_D.dvy + third_D.dvy) + fourth_D.dvy)
+
         self.state.pos_x += delta_x_dt * delta_time
         self.state.pos_y += delta_y_dt * delta_time
         self.state.vel_x += delta_vx_dt * delta_time
         self.state.vel_y += delta_vy_dt * delta_time
-        #print(self.state.pos_x, self.state.pos_y, self.radius)
 
 
 class Engine(object):
