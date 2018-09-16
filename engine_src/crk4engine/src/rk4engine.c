@@ -194,34 +194,53 @@ void update_planet(Rk4Engine *rk4engine, int index, double dt) {
   double second_vx = initial_vx + initial_ax * (dt * 0.5);
   double second_vy = initial_vy + initial_ay * (dt * 0.5);
 
-  // CALCULATE THIRD DERIVATIVE
-  double third_state_pos_x = initial_state_pos_x + second_vx * (dt * 0.5);
-  double third_state_pos_y = initial_state_pos_y + second_vy * (dt * 0.5);
+  // new error calculation
+  double error_x, error_y, error_sq, error_norm;
+  error_x = second_vx - initial_vx;
+  error_y = second_vy - initial_vy;
+  error_sq = error_x * error_x + error_y* error_y;
+  error_norm = calc_root(error_sq);
 
-  // THIRD DERIVATIVE
-  double third_ax, third_ay;
-  calc_acceleration(rk4engine, &third_ax, &third_ay, index, third_state_pos_x, third_state_pos_y, planet->mass);
+  double actual_vx = 0;
+  double actual_vy = 0;
+  double actual_ax = 0;
+  double actual_ay = 0;
 
-  double third_vx = initial_vx + second_ax * (dt * 0.5);
-  double third_vy = initial_vy + second_ay * (dt * 0.5);
+  if (error_norm < 0.1) {
+    actual_vx = second_vx;
+    actual_vy = second_vy;
+    actual_ax = second_ax;
+    actual_ay = second_ay;
+  } else {
+    // CALCULATE THIRD DERIVATIVE
+    double third_state_pos_x = initial_state_pos_x + second_vx * (dt * 0.5);
+    double third_state_pos_y = initial_state_pos_y + second_vy * (dt * 0.5);
 
-  // CALCULATE FOURTH DERIVATIVE
-  double fourth_state_pos_x = initial_state_pos_x + third_vx * dt;
-  double fourth_state_pos_y = initial_state_pos_y + third_vy * dt;
+    // THIRD DERIVATIVE
+    double third_ax, third_ay;
+    calc_acceleration(rk4engine, &third_ax, &third_ay, index, third_state_pos_x, third_state_pos_y, planet->mass);
+
+    double third_vx = initial_vx + second_ax * (dt * 0.5);
+    double third_vy = initial_vy + second_ay * (dt * 0.5);
+
+    // CALCULATE FOURTH DERIVATIVE
+    double fourth_state_pos_x = initial_state_pos_x + third_vx * dt;
+    double fourth_state_pos_y = initial_state_pos_y + third_vy * dt;
 
 
-  // FOURTH DERIVATIVE
-  double fourth_ax, fourth_ay;
-  calc_acceleration(rk4engine, &fourth_ax, &fourth_ay, index, fourth_state_pos_x, fourth_state_pos_y, planet->mass);
+    // FOURTH DERIVATIVE
+    double fourth_ax, fourth_ay;
+    calc_acceleration(rk4engine, &fourth_ax, &fourth_ay, index, fourth_state_pos_x, fourth_state_pos_y, planet->mass);
 
-  double fourth_vx = initial_vx + third_ax * dt;
-  double fourth_vy = initial_vy + third_ay * dt;
+    double fourth_vx = initial_vx + third_ax * dt;
+    double fourth_vy = initial_vy + third_ay * dt;
 
-  // NOW CALCULATE THE ACTUAL CHANGE USING RK4 MAGIC
-  double actual_vx = (1.0 / 6.0) * (initial_vx + 2 * (second_vx + third_vx) + fourth_vx);
-  double actual_vy = (1.0 / 6.0) * (initial_vy + 2 * (second_vy + third_vy) + fourth_vy);
-  double actual_ax = (1.0 / 6.0) * (initial_ax + 2 * (second_ax + third_ax) + fourth_ax);
-  double actual_ay = (1.0 / 6.0) * (initial_ay + 2 * (second_ay + third_ay) + fourth_ay);
+    // NOW CALCULATE THE ACTUAL CHANGE USING RK4 MAGIC
+    actual_vx = (1.0 / 6.0) * (initial_vx + 2 * (second_vx + third_vx) + fourth_vx);
+    actual_vy = (1.0 / 6.0) * (initial_vy + 2 * (second_vy + third_vy) + fourth_vy);
+    actual_ax = (1.0 / 6.0) * (initial_ax + 2 * (second_ax + third_ax) + fourth_ax);
+    actual_ay = (1.0 / 6.0) * (initial_ay + 2 * (second_ay + third_ay) + fourth_ay);
+  }
 
   // UPDATE PLANET
   planet->pos_x = planet->pos_x + actual_vx * dt;

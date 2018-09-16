@@ -166,36 +166,36 @@ class ConfigModel(object):
                 name='sun_density',
                 settings_type='number',
                 label='Sun density',
-                defaultvalue=1,
-                min_value=.5,
-                max_value=1.5,
+                defaultvalue=.5,
+                min_value=.2,
+                max_value=1,
                 seqnum=190
             ),
             'bigsun_density': ConfigType(
                 name='bigsun_density',
                 settings_type='number',
                 label='Big sun density',
-                defaultvalue=5,
-                min_value=3,
-                max_value=7,
+                defaultvalue=2,
+                min_value=1,
+                max_value=4,
                 seqnum=200
             ),
             'giantsun_density': ConfigType(
                 name='giantsun_density',
                 settings_type='number',
                 label='Giant sun density',
-                defaultvalue=10,
-                min_value=7,
-                max_value=12,
+                defaultvalue=4,
+                min_value=3,
+                max_value=6,
                 seqnum=210
             ),
             'blackhole_density': ConfigType(
                 name='blackhole_density',
                 settings_type='number',
                 label='Blackhole density',
-                defaultvalue=1000,
-                min_value=500,
-                max_value=1500,
+                defaultvalue=100,
+                min_value=50,
+                max_value=500,
                 seqnum=220
             ),
             # Density END
@@ -245,7 +245,7 @@ class ConfigModel(object):
                 name='ticks_ahead',
                 settings_type='number',
                 label='Ticks to calculate into future when showing orbits',
-                defaultvalue=200,
+                defaultvalue=500,
                 min_value=100,
                 max_value=1000,
                 seqnum=20
