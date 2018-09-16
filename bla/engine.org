@@ -1,13 +1,10 @@
-* TODO [#A] Particle Effekte
-** TODO [#A] Sonnen-Efekt: Transitions!
-*** TODO [#A] Unterschiedliche Farben/pex-files je nach body
-** TODO [#C] Panda gängig machen
-** DONE [#C] Particle System einhängen
-** TODO [#C] Aufschlag-Effekt (Kollision von Planeten)
-* TODO [#A] Sound
-** TODO [#A] Musik
+* TODO [#A] RK4-Engine: dynamisch, wie engine_rk4.py
+* TODO [#A] BuildHelper: Wine Windows Build
+* TODO [#B] Sound
+** DONE [#A] Musik
 *** Play/pause checken
-** TODO [#A] Effekte
+** TODO [#B] Effekte
+
 * TODO [#A] Icons
 ** DONE Besseres Icon?
 ** DONE ShowOrbit Icon
@@ -28,10 +25,10 @@
 *** Auswertung der Distanz --> Orbits
 *** Zählen von Kollisionen
 ** TODO [#B] Auswertung der Trajekorie TUTORIAL
-* TODO [#C] Online Saves
+* DONE Online Saves
 ** TODO [#B] Screen für Up-/Download
 ** TODO [#C] Preview? Description? Daten für Savegame?
-* DONE [#A] RK4Engine: Engine Chooser
+* DONE RK4Engine: Engine Chooser
 ** DONE [#A] API von RK4 engine anpassen
 ** DONE [#A] Zwischen Engine switchen via Settings
 * DONE Custom Content Schnittstelle
@@ -99,3 +96,10 @@
 *** DONE Forces untersuchen, Körper löschen
 *** verworfen --> Kosten / Nutzen ??
 ** DONE Architektur? Evtl. Unterklassen?
+* DONE Particle Effekte
+** DONE Abgebrochen, zu langsam
+** DONE [#A] Sonnen-Efekt: Transitions!
+*** TODO [#A] Unterschiedliche Farben/pex-files je nach body
+** DONE [#C] Panda gängig machen
+** DONE [#C] Particle System einhängen
+** DONE [#C] Aufschlag-Effekt (Kollision von Planeten)

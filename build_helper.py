@@ -32,13 +32,6 @@ folder to python for android recipes folder
 
 --> this should also trigger task one to be done!
 
-
-'''
-# TODO:
-'''
-TASK FOUR:
-Get fresh copies of all png assets from raw images, scaled down to X
-
 TASK FIVE:
 Build Windows exe files and structure arround it usinng a virtualwine containing
 Python27, Kivy and pyInstaller in a windows-like environment.
@@ -49,6 +42,11 @@ wine C:/Python27/python.exe setup.py build --compiler=mingw32
 wine C:/Python27/python.exe setup.py install -f
 
 wine C:/Python27/python.exe -m PyInstaller main.spec
+
+# TODO:
+TASK FOUR:
+Get fresh copies of all png assets from raw images, scaled down to X
+
 '''
 
 import shutil
@@ -65,23 +63,62 @@ WINE_PLANETAPPV2_SRC = HOME + '/Dev/KivyBuild/drive_c/PlanetAppV2'
 PATH = os.getenv('PATH')
 
 
-def build_wine_engines():
+def winebuild():
+    '''TASK FIVE
+    Use wine + pyinstaller to build windows EXE file (and assets required).
+    Build engines and install to wine-python first, then call pyinstaller to
+    create EXE file.
+    '''
+    wine_activate()
+
+    wine_build_engines()
+    wine_pyinstaller()
+
+    wine_deactivate()
+
+
+def wine_pyinstaller():
+    '''call wine-python pyinstaller on main.spec to create EXE file from
+    PocketCosmos app'''
+    cd_command = 'cd %s;' % WINE_PLANETAPPV2_SRC
+    build_command = 'wine C:/Python27/python.exe -m PyInstaller main.spec'
+
+    call = cd_command + build_command
+    print('Will now build EXE file using wine...: %s' % call)
+    os.system(call)
+
+
+def wine_build_engines():
     '''build and install engines into wine environment to be consmed by
     pyInstaller later
     - git pull from master in WINE_PLANETAPPV2_SRC
     - build and install all engines from now up-to-date WINE_PLANETAPPV2_SRC
       directory
-    ''''
-    activate_wine()
+    '''
+    # activate_wine()
 
     cd_command = 'cd %s;' % WINE_PLANETAPPV2_SRC
 
     pull_command = cd_command + 'git pull origin master'
 
-    print('pulling from master branch in %s' % WINE_PLANETAPPV2_SRC)
+    print('pulling from master branch: %s' % pull_command)
     os.system(pull_command)
 
-def activate_wine():
+    for engine in CUSTOM_ENGINES:
+        engine_path = '/'.join([WINE_PLANETAPPV2_SRC, 'engine_src', engine, 'src'])
+        build_path = engine_path + '/build'
+
+        change_dir_command = 'cd %s;' % engine_path
+        build_command = 'wine C:/Python27/python.exe setup.py build --compiler=mingw32;'
+        install_command = 'wine C:/Python27/python.exe setup.py install -f'
+
+        call = change_dir_command + build_command + install_command
+
+        print('Building and installing engine into wine...: %s' % call)
+        os.system(call)
+
+
+def wine_activate():
     '''activate virtualwine instance by altering PATH environment variable'''
 
     # add virtualwine bin folder containing the wine executable to be used
@@ -94,7 +131,7 @@ def activate_wine():
     os.system(test_call)
 
 
-def deactivate_wine():
+def wine_deactivate():
     '''remove WINE_BIN from PATH environment variable'''
 
     os.putenv('PATH', PATH)
@@ -243,6 +280,15 @@ if __name__ == '__main__':
         action='store_true',
         default=False
     )
+
+    parser.add_argument(
+        '-w',
+        '--winebuild',
+        help='Build windows release using wine.',
+        action='store_true',
+        default=False
+    )
+
     args_d = parser.parse_args().__dict__  # i want a dict, not a namespace
     spec_data = parse_spec()
 
@@ -253,3 +299,5 @@ if __name__ == '__main__':
         copy_engines(spec_data['p4a.source_dir'])
     if args_d['clear']:
         clear_build()
+    if args_d['winebuild']:
+        winebuild()
