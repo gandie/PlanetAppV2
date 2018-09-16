@@ -45,19 +45,21 @@ class SettingsScreen(Screen):
         '''
         get settings from logic
         '''
-        logic_settings = self.logic.settings
-        for key in logic_settings.keys():
+        # logic_settings = self.logic.settings
+        # for key in logic_settings.keys():
+        for key in self.logic.settings:
             if key in self.setting_items:
-                self.setting_items[key].value = logic_settings[key]
+                self.setting_items[key].value = self.logic.settings[key]
 
     def on_leave(self):
         '''
         write setting to logic and save to file
         '''
-        logic_settings = self.logic.settings
-        for key in logic_settings.keys():
+        # logic_settings = self.logic.settings
+        # for key in logic_settings.keys():
+        for key in self.logic.settings:
             if key in self.setting_items:
-                logic_settings[key] = self.setting_items[key].value
+                self.logic.settings[key] = self.setting_items[key].value
         self.logic.apply_settings()
         App.get_running_app().save_settings()
 
@@ -74,7 +76,7 @@ class SettingsScreen(Screen):
         self.settingslayout = GridLayout(
             cols=1,
             size_hint_y=None,
-            spacing=10
+            spacing=80
         )
 
         # magic binding
@@ -82,227 +84,55 @@ class SettingsScreen(Screen):
             minimum_height=self.settingslayout.setter('height')
         )
 
-        self.engine_select = SettingsSlot(
-            size_hint=(1, None),
-            setting_type='select',
-            label_text='Engine',
-            items=['cplanet', 'crk4engine', 'pythonrk4']
-            # items=['cplanet', 'pythonrk4']
-        )
-        self.setting_items['engine'] = self.engine_select
-        self.settingslayout.add_widget(self.engine_select)
+        controller = self.logic.settings
+        model = controller.model
 
-        self.background_toggle = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=0.8,
-            setting_max=1.2,
-            setting_value=1,
-            setting_type='bool',
-            label_text='Background'
-        )
-        self.setting_items['background'] = self.background_toggle
-        self.settingslayout.add_widget(self.background_toggle)
+        # sort items by seqnum
+        itemlist = [
+            item for item in sorted(model, key=lambda x: model[x].seqnum)
+        ]
 
-        ''' DEACTIVATED, needs rework!
-        self.tutorial_toggle = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=0.8,
-            setting_max=1.2,
-            setting_value=1,
-            setting_type='bool',
-            label_text='Tutorial (broken!)'
-        )
-        self.setting_items['show_tutorial'] = self.tutorial_toggle
-        self.settingslayout.add_widget(self.tutorial_toggle)
-        '''
+        for settings_item in itemlist:
+            item = model[settings_item]
+            if not item.show:
+                continue
+            settings_type = item.settings_type
+            widget = None
+            if settings_type == 'select':
+                widget = SettingsSlot(
+                    size_hint=(1, None),
+                    setting_type='select',
+                    label_text=item.label,
+                    items=item.values
+                )
+            elif settings_type == 'bool':
+                widget = SettingsSlot(
+                    size_hint=(1, None),
+                    setting_type='bool',
+                    label_text=item.label
+                )
+            elif settings_type == 'number':
+                widget = SettingsSlot(
+                    size_hint=(1, None),
+                    setting_type='number',
+                    label_text=item.label,
+                    setting_max=item.max_value,
+                    setting_min=item.min_value,
+                    setting_value=item.value
+                )
 
-        self.ticks_ahead = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=100,
-            setting_max=1000,
-            setting_value=100,
-            setting_type='number',
-            label_text='Ticks ahead'
-        )
-        self.setting_items['ticks_ahead'] = self.ticks_ahead
-        self.settingslayout.add_widget(self.ticks_ahead)
+            if not widget:
+                continue
 
-        self.music_volume = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=0,
-            setting_max=1,
-            setting_value=0.0,
-            setting_type='number',
-            label_text='Music volume'
-        )
-        self.setting_items['music_volume'] = self.music_volume
-        self.settingslayout.add_widget(self.music_volume)
+            self.setting_items[settings_item] = widget
+            self.settingslayout.add_widget(widget)
 
-        # create items and add to settingslayout
-        self.multi_shot_min = SettingsSlot(
+        self.settingsbutton = Button(
+            text='KivySettings',
             size_hint=(1, None),
-            setting_min=5,
-            setting_max=50,
-            setting_value=10,
-            setting_type='number',
-            label_text='Min Multi Shots'
+            on_press=self.switchto_kivysettings
         )
-        self.setting_items['multi_shot_min'] = self.multi_shot_min
-        self.settingslayout.add_widget(self.multi_shot_min)
-
-        self.multi_shot_max = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=50,
-            setting_max=100,
-            setting_value=75,
-            setting_type='number',
-            label_text='Max Multi Shots'
-        )
-        self.setting_items['multi_shot_max'] = self.multi_shot_max
-        self.settingslayout.add_widget(self.multi_shot_max)
-
-        self.planet_mass = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=10,
-            setting_max=50,
-            setting_value=30,
-            setting_type='number',
-            label_text='Min. Planet Mass'
-        )
-        self.setting_items['min_planet_mass'] = self.planet_mass
-        self.settingslayout.add_widget(self.planet_mass)
-
-        self.gasgiant_mass = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=500,
-            setting_max=3500,
-            setting_value=2000,
-            setting_type='number',
-            label_text='Min. Gasgiant Mass'
-        )
-        self.setting_items['min_gasgiant_mass'] = self.gasgiant_mass
-        self.settingslayout.add_widget(self.gasgiant_mass)
-
-        self.sun_mass = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=5000,
-            setting_max=95000,
-            setting_value=50000,
-            setting_type='number',
-            label_text='Min. Sun Mass'
-        )
-        self.setting_items['min_sun_mass'] = self.sun_mass
-        self.settingslayout.add_widget(self.sun_mass)
-
-        self.bigsun_mass = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=100000,
-            setting_max=900000,
-            setting_value=500000,
-            setting_type='number',
-            label_text='Min. Bigsun Mass'
-        )
-        self.setting_items['min_bigsun_mass'] = self.bigsun_mass
-        self.settingslayout.add_widget(self.bigsun_mass)
-
-        self.giantsun_mass = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=500000,
-            setting_max=1500000,
-            setting_value=1000000,
-            setting_type='number',
-            label_text='Min. Giantsun Mass'
-        )
-        self.setting_items['min_giantsun_mass'] = self.giantsun_mass
-        self.settingslayout.add_widget(self.giantsun_mass)
-
-        self.blackhole_mass = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=1000000,
-            setting_max=3000000,
-            setting_value=2000000,
-            setting_type='number',
-            label_text='Min. Blackhole Mass'
-        )
-        self.setting_items['min_blackhole_mass'] = self.blackhole_mass
-        self.settingslayout.add_widget(self.blackhole_mass)
-
-        self.moon_density = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=1,
-            setting_max=3,
-            setting_value=2,
-            setting_type='number',
-            label_text='Moon density'
-        )
-        self.setting_items['moon_density'] = self.moon_density
-        self.settingslayout.add_widget(self.moon_density)
-
-        self.planet_density = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=1,
-            setting_max=5,
-            setting_value=3,
-            setting_type='number',
-            label_text='Planet density'
-        )
-        self.setting_items['planet_density'] = self.planet_density
-        self.settingslayout.add_widget(self.planet_density)
-
-        self.gasgiant_density = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=1,
-            setting_max=5,
-            setting_value=3,
-            setting_type='number',
-            label_text='Gasgiant density'
-        )
-        self.setting_items['gasgiant_density'] = self.gasgiant_density
-        self.settingslayout.add_widget(self.gasgiant_density)
-
-        self.sun_density = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=2,
-            setting_max=6,
-            setting_value=4,
-            setting_type='number',
-            label_text='Sun density'
-        )
-        self.setting_items['sun_density'] = self.sun_density
-        self.settingslayout.add_widget(self.sun_density)
-
-        self.bigsun_density = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=2,
-            setting_max=6,
-            setting_value=4,
-            setting_type='number',
-            label_text='Bigsun density'
-        )
-        self.setting_items['bigsun_density'] = self.bigsun_density
-        self.settingslayout.add_widget(self.bigsun_density)
-
-        self.giantsun_density = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=2,
-            setting_max=6,
-            setting_value=4,
-            setting_type='number',
-            label_text='Giantsun density'
-        )
-        self.setting_items['giantsun_density'] = self.giantsun_density
-        self.settingslayout.add_widget(self.giantsun_density)
-
-        self.blackhole_density = SettingsSlot(
-            size_hint=(1, None),
-            setting_min=10,
-            setting_max=30,
-            setting_value=20,
-            setting_type='number',
-            label_text='Blackhole density'
-        )
-        self.setting_items['blackhole_density'] = self.blackhole_density
-        self.settingslayout.add_widget(self.blackhole_density)
+        self.settingslayout.add_widget(self.settingsbutton)
 
         self.menubutton = RealButton(
             './media/icons/arrowleft.png',
@@ -314,13 +144,6 @@ class SettingsScreen(Screen):
             source='./media/icons/arrowleft.png',
             always_release=True
         )
-
-        self.settingsbutton = Button(
-            text='KivySettings',
-            size_hint=(1, None),
-            on_press=self.switchto_kivysettings
-        )
-        self.settingslayout.add_widget(self.settingsbutton)
 
         # add settingslayout to scrollview
         self.settingsview.add_widget(self.settingslayout)

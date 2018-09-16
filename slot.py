@@ -116,6 +116,9 @@ class SettingsSlot(GridLayout):
     def build_interface(self):
         self.label = Label(
             text=self.label_text,
+            text_size=(self.width * 4, None),
+            halign='left',
+            valign='middle'
         )
 
         if self.setting_type == 'number':

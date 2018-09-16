@@ -11,6 +11,7 @@ from settingsscreen import SettingsScreen
 from savegamescreen import SavegameScreen
 from creditsscreen import CreditsScreen
 from logic import Logic
+from pc_config import ConfigController
 
 # BUILTIN
 import json
@@ -40,7 +41,8 @@ class PlanetApp(App):
 
     def build(self):
         self.calc_iconsize()
-        self.logic = Logic(settings=self.load_settings())
+        self.settings = ConfigController('settings.json')
+        self.logic = Logic(settings=self.settings)
 
         self.screenmanager = ScreenManager()
 
@@ -96,50 +98,8 @@ class PlanetApp(App):
         self.save_settings()
         self.save_game()
 
-    def load_settings(self):
-        try:
-            with open('settings.json', 'r') as settingsfile:
-                json_d = settingsfile.readline()
-            settings = json.loads(json_d)
-        except Exception:
-            # TODO: put defaults settings to file?
-            # default settings
-            settings = {
-                'min_moon_mass': 9,
-                'min_planet_mass': 10,
-                'min_gasgiant_mass': 50,
-                'min_sun_mass': 50000,
-                'min_bigsun_mass': 100000,
-                'min_giantsun_mass': 250000,
-                'min_blackhole_mass': 500000,
-
-                'moon_density': 1,
-                'planet_density': 1,
-                'gasgiant_density': 1,
-                'sun_density': 2,
-                'bigsun_density': 5,
-                'giantsun_density': 7,
-                'blackhole_density': 1000,
-
-                'background': False,
-                'show_tutorial': False,
-
-                'multi_shot_min': 10,
-                'multi_shot_max': 50,
-
-                'engine': 'cplanet',
-                'ticks_ahead': 1000,
-
-                'music_volume': 0.0,
-            }
-        return settings
-
     def save_settings(self):
-        # TODO: deepcopy here is not neccessary - we do not alter settings here!
-        D = copy.deepcopy(self.logic.settings)
-        json_d = json.dumps(D)
-        with open('settings.json', 'w') as settingsfile:
-            settingsfile.write(json_d)
+        self.settings.save()
 
     def load_game(self, slot='current'):
         save_name = 'save_{slot}.json'.format(slot=slot)
