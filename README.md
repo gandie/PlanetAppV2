@@ -1,6 +1,6 @@
-############################
-####### PocketCosmos #######
-############################
+![Pocket Cosmos Splashscreen](https://github.com/gandie/PlanetAppV2/blob/master/media/splashscreen/splashscreen.jpg)
+
+# PocketCosmos
 
 A gravity simulation sandbox running on multiple platforms:
 
@@ -14,10 +14,9 @@ Requirements:
 -buildozer (to build for android)
 -pyinstaller (to build for windows)
 
+See [Releases](https://github.com/gandie/PlanetAppV2/releases) for prebuilt versions.
 
-#########################
-####### Packaging #######
-#########################
+# Packaging
 
 Can be built into apk for android using buildozer, for windows (EXE-file) using
 pyinstaller.
