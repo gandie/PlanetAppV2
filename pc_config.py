@@ -9,6 +9,9 @@ SETTING_TYPES = ['bool', 'number', 'select']
 
 
 class ConfigType(object):
+    '''Each settings item in PocketCosmos is an instance of this class providing
+    a container to store settings information and do some (simple) validation.
+    '''
 
     def __init__(self, name, settings_type, label, defaultvalue, min_value=None,
                  max_value=None, values=None, show=True, seqnum=None):
@@ -44,7 +47,7 @@ class ConfigType(object):
         self.value = defaultvalue
 
     def validate(self, value):
-        '''simple input validation calld from model when value is set'''
+        '''simple input validation called from model when value is set'''
         if self.settings_type == 'number':
             assert value >= self.min_value, '%s lower than min in %s' % (value, self.name)
             assert value <= self.max_value, '%s higher than max %s' % (value, self.name)
@@ -56,6 +59,10 @@ class ConfigType(object):
 
 
 class ConfigModel(object):
+    '''container holding all settings items of PocketCosmos app, used by
+    ConfigController. Feels like a dict when used by implementing __setitem__,
+    __getitem__ and __iter__
+    '''
 
     def __init__(self):
         self.config = {
@@ -262,7 +269,7 @@ class ConfigModel(object):
         }
 
     def __iter__(self):
-        return self.config.__iter__()
+        return self.config.iterkeys()
 
     def __getitem__(self, key):
         return self.config[key]
@@ -277,7 +284,7 @@ class ConfigModel(object):
 
 
 class ConfigController(object):
-    '''app will talk to this
+    '''app will talk to this object, which feels like a dict when used
     '''
 
     def __init__(self, path):
@@ -304,6 +311,8 @@ class ConfigController(object):
                 self.model[key] = value
         except IOError:
             print('Unable to open settings file. Using defaults.')
+        except Exception:
+            raise
 
     def save(self):
         '''safe current model state into json file'''

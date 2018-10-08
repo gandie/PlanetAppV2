@@ -65,7 +65,8 @@ class Logic(Screen):
         self.init_engines(self.settings['engine'])
 
         self.sound_map = {
-            'music': SoundLoader.load('media/sound/planets.wav')
+            'music': SoundLoader.load('media/sound/planets.wav'),
+            'alpha': SoundLoader.load('media/sound/Alpha-1.ogg')
         }
 
         # time per time ratio
@@ -96,8 +97,8 @@ class Logic(Screen):
 
     def apply_settings(self):
 
-        self.sound_map['music'].loop = True
-        self.sound_map['music'].volume = self.settings['music_volume']
+        self.sound_map['alpha'].loop = True
+        self.sound_map['alpha'].volume = self.settings['music_volume']
 
         if self.engine != self.settings['engine']:
             self.init_engines(self.settings['engine'])
@@ -210,7 +211,7 @@ class Logic(Screen):
 
     def start_game(self):
 
-        self.sound_map['music'].play()
+        self.sound_map['alpha'].play()
 
         Clock.schedule_interval(self.update_game, 1.0 / 25.0)
         Clock.schedule_interval(self.tick_engine, 1.0 / 25.0)
@@ -230,7 +231,7 @@ class Logic(Screen):
         Clock.unschedule(self.tick_engine)
         Clock.unschedule(self.clone_engine)
         Clock.unschedule(self.collect_garbage)
-        self.sound_map['music'].stop()
+        self.sound_map['alpha'].stop()
 
     def zirkus(self, dt):
         for index, planet_d in self.planets.items():
