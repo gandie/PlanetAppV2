@@ -16,17 +16,12 @@ Requirements:
 
 See [Releases](https://github.com/gandie/PlanetAppV2/releases) for prebuilt versions.
 
-Links:
-* [Kivy Docs](https://kivy.org/doc/stable/)
-* [Buildozer Docs](https://buildozer.readthedocs.io/en/latest/)
-* [virtualwine](https://github.com/htgoebel/virtual-wine)
-
 Currently using versions:
 * Cython version 0.25.1
 * Kivy version 1.10.0
 * Buildozer version 0.34
 
-# Packaging
+# Installation / Packaging
 
 PocketCosmos can be built into an android app using buildozer (apk) and into
 a windows EXE-file using pyinstaller.
@@ -49,7 +44,7 @@ usage: build_helper.py [-h] [-b] [-p] [-c] [-w]
 
 optional arguments:
   -h, --help       show this help message and exit
-  -b, --build      Build engines
+  -b, --build      Build engines copy to current directory
   -p, --p4a        Copy new engines to p4a recipes dir
   -c, --clear      Clear build to force rebuilding app
   -w, --winebuild  Build windows release using wine.
@@ -57,10 +52,16 @@ optional arguments:
 
 ## Buildozer (APK)
 
-buildozer.spec is part of this repository and must be slightly altered to work
-on your system. See comments in buildozer.spec for more detail.
+`buildozer.spec` is part of this repository and must be slightly altered to work
+on your system. See comments for more detail.
 
 ## PyInstaller (EXE)
 
 Windows build has been tested using pyinstaller installed into a virtualwine
-environment. main.spec can be altered and used with pyinstaller to build EXE-files.
+environment. `main.spec` can be altered and used with pyinstaller to build EXE-files.
+
+# Links
+* [Kivy Docs](https://kivy.org/doc/stable/)
+* [Buildozer Docs](https://buildozer.readthedocs.io/en/latest/)
+* [python-for-android](https://github.com/kivy/python-for-android)
+* [virtualwine](https://github.com/htgoebel/virtual-wine)

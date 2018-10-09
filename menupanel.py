@@ -24,9 +24,13 @@ from realbutton import RealMenuToggleButton
 MenuPanel shown on the left side of the screen in mainscreen
 contains buttons to control the game: menu, pause, reset
 
-AddMenuPanel show on the top left of the mainscreen contains buttons
+AddMenuPanel shown on the top left of the mainscreen contains buttons
 to switch to different add-modes. if no mode is chosen, zoom is default
+
+SliderPanel contains sliders to contol ticks_ahead and tick_ratio
 '''
+
+assert False, 'This will die. See mainscreen_ui'
 
 
 class MenuPanel(FloatLayout):
@@ -246,7 +250,7 @@ class AddMenuPanel(FloatLayout):
                     'y': 1.05
                 },
                 duration=0.5,
-                t='out_bounce'
+                t='in_out_back'
             )
             for item in self.hide_items:
                 scrolldown.start(item)
@@ -258,7 +262,7 @@ class AddMenuPanel(FloatLayout):
                     'y': 0
                 },
                 duration=0.5,
-                t='out_bounce'
+                t='in_out_back'
             )
             for item in self.hide_items:
                 scrolldown.start(item)
@@ -360,14 +364,14 @@ class SliderPanel(FloatLayout):
                     'x': 1
                 },
                 duration=0.5,
-                t='out_bounce'
+                t='in_out_back'
             )
             scroll_slider = Animation(
                 pos_hint={
                     'x': 1.5
                 },
                 duration=0.5,
-                t='out_bounce'
+                t='in_out_back'
             )
 
             for item in self.hide_labels:
@@ -381,14 +385,14 @@ class SliderPanel(FloatLayout):
                     'x': 0
                 },
                 duration=0.5,
-                t='out_bounce'
+                t='in_out_back'
             )
             scroll_slider = Animation(
                 pos_hint={
                     'x': 0.5
                 },
                 duration=0.5,
-                t='out_bounce'
+                t='in_out_back'
             )
 
             for item in self.hide_labels:

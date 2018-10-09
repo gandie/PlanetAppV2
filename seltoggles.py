@@ -24,6 +24,8 @@ buttons shown on the right bottom when a planet is selected. needs to be
 updated depending on planet data (fixed) and logic fixview mode
 '''
 
+assert False, 'This will die. See mainscreen_ui'
+
 
 class Seltoggles(FloatLayout):
 
@@ -185,7 +187,7 @@ class Seltoggles(FloatLayout):
                         'y': -1
                     },
                     duration=0.5,
-                    t='out_bounce'
+                    t='in_out_back'
                 )
                 scrolldown.start(item)
             self.visible = False
@@ -196,7 +198,7 @@ class Seltoggles(FloatLayout):
                         'y': 0
                     },
                     duration=0.5,
-                    t='out_bounce'
+                    t='in_out_back'
                 )
                 scrolldown.start(item)
             self.visible = True

@@ -14,6 +14,8 @@ Planet dictionary in update method to display planet information in
 corresponding labels
 '''
 
+assert False, 'see mainscreen_ui.py'
+
 
 class Infobox(ScrollView):
 

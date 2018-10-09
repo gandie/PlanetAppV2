@@ -10,6 +10,8 @@ simple tutorial mechanics working with states mapped in two dictionaries
 state_texts and state_actions
 '''
 
+assert False, 'This will die.'
+
 
 class Tutorial_Label(FloatLayout):
 

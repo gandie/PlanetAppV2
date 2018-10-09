@@ -5,11 +5,14 @@ from kivy.core.window import Window
 
 
 # CUSTOM
+'''
 from menupanel import MenuPanel, AddMenuPanel, SliderPanel
 from gamezone import Gamezone
 from tutorial_label import Tutorial_Label
 from infobox import Infobox
 from seltoggles import Seltoggles
+'''
+import mainscreen_ui
 
 '''
 Screen shown when the game is played. Contains gamezone and control widgets.
@@ -54,6 +57,7 @@ class MainScreen(Screen):
         super(MainScreen, self).__init__(**kwargs)
 
         self.logic = logic
+        # TODO: check this method, its not neccessary, just set the attribute
         self.logic.register_mainscreen(self)
 
         self.iconsize = iconsize
@@ -80,12 +84,14 @@ class MainScreen(Screen):
             self.logic.start_game()
 
         # check tutorial setting
-        if self.logic.settings['show_tutorial'] is True:
+        '''
+        if self.logic.settings['show_tutorial']:
             if self.tutorial_label not in self.children:
                 self.add_widget(self.tutorial_label)
         else:
             if self.tutorial_label in self.children:
                 self.remove_widget(self.tutorial_label)
+        '''
 
     def add_seltoggles(self):
         '''called from logic when planet is selected'''
@@ -167,6 +173,7 @@ class MainScreen(Screen):
 
     def build_interface(self):
 
+        '''
         self.tutorial_label = Tutorial_Label(
             self.iconsize,
             self.iconratio_x,
@@ -179,8 +186,9 @@ class MainScreen(Screen):
             size_hint=(0.2, 0.2),
             pos_hint={'x': 0.8, 'y': 0.8}
         )
+        '''
 
-        self.seltoggles = Seltoggles(
+        self.seltoggles = mainscreen_ui.Seltoggles(
             self.iconsize,
             self.iconratio_x,
             size_hint=(None, None),
@@ -188,7 +196,7 @@ class MainScreen(Screen):
             pos_hint={'x': 1 - 7 * self.iconratio_x, 'y': 0}
         )
 
-        self.gamezone = Gamezone(
+        self.gamezone = mainscreen_ui.Gamezone(
             # zooming stuff can be deactivated:
             # do_rotation=False,
             # do_translation_y=False,
@@ -200,7 +208,7 @@ class MainScreen(Screen):
         )
         self.add_widget(self.gamezone)
 
-        self.menupanel = MenuPanel(
+        self.menupanel = mainscreen_ui.MenuPanel(
             self.iconsize,
             self.iconratio_y,
             size_hint=(None, None),
@@ -208,10 +216,10 @@ class MainScreen(Screen):
             pos_hint={'x': 0, 'y': 0}
         )
 
-        self.tutorial_label.register_menupanel(self.menupanel)
+        # self.tutorial_label.register_menupanel(self.menupanel)
         self.add_widget(self.menupanel)
 
-        self.add_menupanel = AddMenuPanel(
+        self.add_menupanel = mainscreen_ui.AddMenuPanel(
             self.iconsize,
             self.iconratio_y,
             size_hint=(None, None),
@@ -221,7 +229,7 @@ class MainScreen(Screen):
 
         self.add_widget(self.add_menupanel)
 
-        self.slider_panel = SliderPanel(
+        self.slider_panel = mainscreen_ui.SliderPanel(
             self.iconsize,
             self.iconratio_y,
             size_hint=(None, None),

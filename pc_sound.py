@@ -3,7 +3,6 @@ Sound handling module of PocketCosmos app.
 '''
 # KIVY
 from kivy.core.audio import SoundLoader
-from kivy.uix.floatlayout import FloatLayout
 
 # BUILTIN
 import os
@@ -14,14 +13,11 @@ class SoundManager(object):
     '''loads sound files from media directory and provides basic functions to
     play / stop tracks loaded while ingame'''
 
-    '''
-    self.sound_map['alpha'].volume = self.settings['music_volume']
-    '''
-
     def __init__(self, settings, path='./media/sound/music/', endings=None):
 
         self.settings = settings
         self.path = path
+        self.autoplay = True
 
         # default valid sound file endings
         if not endings:
@@ -54,7 +50,7 @@ class SoundManager(object):
         played'''
 
         # check if current track has finished, pick new track if so
-        if self.cursound.state == 'stop':
+        if self.cursound.state == 'stop' and self.autoplay:
             self.next()
             self.play()
 
@@ -71,7 +67,7 @@ class SoundManager(object):
 
 
 if __name__ == '__main__':
-    '''simple test
+    '''simple test using config module
     '''
     import pc_config
     c = pc_config.ConfigController('settings.json')

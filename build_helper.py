@@ -262,7 +262,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-b',
         '--build',
-        help='Build engines',
+        help='Build engines and copy to current directory',
         action='store_true',
         default=False
     )

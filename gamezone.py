@@ -15,6 +15,7 @@ Scatter widget can be zoomed, translated and rotated which is basically the
 zooming functionality. Hands down touch events to current mode.
 '''
 
+assert False, 'see mainscreen_ui.py'
 
 class Gamezone(Scatter):
 

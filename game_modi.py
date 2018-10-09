@@ -10,17 +10,22 @@ from random import randint
 import math
 
 # CUSTOM
-from gamezone import Gamezone
+# from gamezone import Gamezone
 
 '''
-Module for game mode controls.
+Module for game add-mode controls.
 Starts with abstract class GameMode nearly all specific modes inherit from.
+
+Each class inheriting from GameMode represents a mode selected from AddMenuPanel
+in MainScreen and implements a specific behaviour for touch-events we get from
+gamezone widget.
+
 Main purpose of this mpdule is to avoid code duplication for game modes adding
 bodies to the simulation.
 '''
 
-
-class GameMode(Screen):
+# TODO: this may be an object, property is not needed!
+class GameMode(Screen):  # not actually a screen, using this a dummy class
 
     logic = ObjectProperty(None)
 
