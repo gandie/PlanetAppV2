@@ -50,11 +50,12 @@ class Logic(Screen):
     selplanet_index_temp = NumericProperty(None, allownone=True)
 
     # this is called when app is built!
-    def __init__(self, settings):
+    def __init__(self, settings, sounds):
 
         # set up dicts to be filled
         self.planets = {}
         self.settings = settings
+        self.sound_manager = sounds
 
         self.engine_map = {
             'cplanet': CPlanetKeeper,
@@ -63,11 +64,6 @@ class Logic(Screen):
         }
 
         self.init_engines(self.settings['engine'])
-
-        self.sound_map = {
-            'music': SoundLoader.load('media/sound/planets.wav'),
-            'alpha': SoundLoader.load('media/sound/Alpha-1.ogg')
-        }
 
         # time per time ratio
         self.tick_ratio = 1.0
@@ -96,9 +92,6 @@ class Logic(Screen):
         self.temp_keeper = self.engine_map[self.engine]()
 
     def apply_settings(self):
-
-        self.sound_map['alpha'].loop = True
-        self.sound_map['alpha'].volume = self.settings['music_volume']
 
         if self.engine != self.settings['engine']:
             self.init_engines(self.settings['engine'])
@@ -211,12 +204,11 @@ class Logic(Screen):
 
     def start_game(self):
 
-        self.sound_map['alpha'].play()
-
         Clock.schedule_interval(self.update_game, 1.0 / 25.0)
         Clock.schedule_interval(self.tick_engine, 1.0 / 25.0)
         Clock.schedule_interval(self.clone_engine, 1.0 / 25.0)
-        Clock.schedule_interval(self.collect_garbage, 1.0)  # / 10.0)
+        Clock.schedule_interval(self.collect_garbage, 1.0)
+        Clock.schedule_interval(self.sound_manager.autoplay, 5.0)
 
         '''
         self.lines = []
@@ -231,7 +223,9 @@ class Logic(Screen):
         Clock.unschedule(self.tick_engine)
         Clock.unschedule(self.clone_engine)
         Clock.unschedule(self.collect_garbage)
-        self.sound_map['alpha'].stop()
+        Clock.unschedule(self.sound_manager.autoplay)
+
+        self.sound_manager.stop()
 
     def zirkus(self, dt):
         for index, planet_d in self.planets.items():

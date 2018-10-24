@@ -12,6 +12,7 @@ from savegamescreen import SavegameScreen
 from creditsscreen import CreditsScreen
 from logic import Logic
 from pc_config import ConfigController
+from pc_sound import SoundManager
 
 # BUILTIN
 import json
@@ -42,7 +43,10 @@ class PlanetApp(App):
     def build(self):
         self.calc_iconsize()
         self.settings = ConfigController('settings.json')
-        self.logic = Logic(settings=self.settings)
+
+        self.sounds = SoundManager(settings=self.settings)
+
+        self.logic = Logic(settings=self.settings, sounds=self.sounds)
 
         self.screenmanager = ScreenManager()
 

@@ -554,138 +554,6 @@ class ModPanel(FloatLayout):
             self.visible = True
 
 
-class SliderPanel(FloatLayout):
-
-    visible = BooleanProperty(False)
-
-    def __init__(self, iconsize, iconratio, **kwargs):
-        super(SliderPanel, self).__init__(**kwargs)
-        self.logic = App.get_running_app().logic
-
-        self.iconsize = iconsize
-        self.iconratio = iconratio
-
-        self.build_interface()
-
-    def build_interface(self):
-
-        self.ticks_ahead_label = Label(
-            text='Ticks ahead',
-            size_hint=(0.5, 1),
-            pos_hint={'x': 1, 'y': 0},
-            halign='left'
-        )
-
-        self.ticks_ahead_slider = Slider(
-            min=100,
-            max=1000,
-            value=self.logic.settings['ticks_ahead'],
-            step=1,
-            orientation='horizontal',
-            pos_hint={'x':  1.5, 'y': 0},
-            size_hint=(0.5, 1)
-        )
-
-        self.timeratio_label = Label(
-            text='Timeratio',
-            size_hint=(0.5, 1),
-            pos_hint={'x': 1, 'y': 1},
-            halign='left'
-        )
-
-        self.timeratio_slider = Slider(
-            min=0,
-            max=2,
-            value=self.logic.tick_ratio,
-            step=.1,
-            orientation='horizontal',
-            pos_hint={'x':  1.5, 'y': 1},
-            size_hint=(0.5, 1)
-        )
-
-        self.show_hide_button = RealToggleButton(
-            './media/icons/timer_panel.png',
-            './media/icons/timer_panel.png',
-            self.show_hide,
-            pos_hint={'x': 4.0/5, 'y': -1},
-            size_hint=(None, None),
-            size=(self.iconsize, self.iconsize),
-            source='./media/icons/timer_panel.png',
-            always_release=True
-        )
-
-        self.add_widget(self.show_hide_button)
-
-        self.ticks_ahead_slider.bind(value=self.ticks_ahead_change)
-        self.timeratio_slider.bind(value=self.timeratio_change)
-
-        self.add_widget(self.ticks_ahead_label)
-        self.add_widget(self.ticks_ahead_slider)
-
-        self.add_widget(self.timeratio_label)
-        self.add_widget(self.timeratio_slider)
-
-        self.hide_labels = [
-             self.ticks_ahead_slider,
-             self.timeratio_slider,
-        ]
-
-        self.hide_sliders = [
-            self.timeratio_label,
-            self.ticks_ahead_label,
-        ]
-
-    def ticks_ahead_change(self, instance, value):
-        self.logic.settings['ticks_ahead'] = int(value)
-
-    def timeratio_change(self, instance, value):
-        self.logic.tick_ratio = value
-
-    def show_hide(self, value):
-        if self.visible:
-            scroll_label = Animation(
-                pos_hint={
-                    'x': 1
-                },
-                duration=0.5,
-                t='in_out_back'
-            )
-            scroll_slider = Animation(
-                pos_hint={
-                    'x': 1.5
-                },
-                duration=0.5,
-                t='in_out_back'
-            )
-
-            for item in self.hide_labels:
-                scroll_label.start(item)
-            for item in self.hide_sliders:
-                scroll_slider.start(item)
-            self.visible = False
-        else:
-            scroll_label = Animation(
-                pos_hint={
-                    'x': 0
-                },
-                duration=0.5,
-                t='in_out_back'
-            )
-            scroll_slider = Animation(
-                pos_hint={
-                    'x': 0.5
-                },
-                duration=0.5,
-                t='in_out_back'
-            )
-
-            for item in self.hide_labels:
-                scroll_label.start(item)
-            for item in self.hide_sliders:
-                scroll_slider.start(item)
-            self.visible = True
-
-
 class SoundPanel(FloatLayout):
     '''Simple widget to show current track and start next one
     '''
@@ -736,7 +604,7 @@ class SoundPanel(FloatLayout):
 
         self.track_label = Label(
             text='very good music',
-            size_hint=(0.25, 1),
+            size_hint=(1, 1),
             pos_hint={'x': 2, 'y': 0},
             halign='left'
         )

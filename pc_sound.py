@@ -17,7 +17,6 @@ class SoundManager(object):
 
         self.settings = settings
         self.path = path
-        self.autoplay = True
 
         # default valid sound file endings
         if not endings:
@@ -37,20 +36,20 @@ class SoundManager(object):
             self.sound_map[sound_file] = sound
 
         # will crash if no sound files were found
-        self.curkey = random.choice(self.sound_map.keys())
-        self.cursound = self.sound_map[self.curkey]
+        self.next()
 
     def next(self):
         '''pick next track from sound_map'''
+
         self.curkey = random.choice(self.sound_map.keys())
         self.cursound = self.sound_map[self.curkey]
 
-    def autoplay(self):
+    def autoplay(self, dt):
         '''called periodically from logic to check if next track has to be
         played'''
 
         # check if current track has finished, pick new track if so
-        if self.cursound.state == 'stop' and self.autoplay:
+        if self.cursound.state == 'stop':
             self.next()
             self.play()
 
