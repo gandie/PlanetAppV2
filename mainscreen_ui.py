@@ -59,6 +59,8 @@ class MenuPanel(FloatLayout):
         self.iconratio = iconratio
         self.build_interface()
 
+        self.visible = False
+
     def on_cur_mode(self, instance, value):
         self.logic.cur_guimode = self.logic.mode_map[value]
 
@@ -97,7 +99,6 @@ class MenuPanel(FloatLayout):
             always_release=True
         )
 
-        '''
         self.show_hide_button = RealToggleButton(
             './media/icons/timer_panel.png',
             './media/icons/timer_panel.png',
@@ -108,12 +109,65 @@ class MenuPanel(FloatLayout):
             source='./media/icons/timer_panel.png',
             always_release=True
         )
-        '''
 
+        self.ticks_ahead_label = Label(
+            text='Ticks ahead',
+            size_hint=(2, 0.25),
+            pos_hint={'x': -5, 'y': 1},
+            halign='left'
+        )
+
+        self.ticks_ahead_slider = Slider(
+            min=100,
+            max=1000,
+            value=self.logic.settings['ticks_ahead'],
+            step=1,
+            orientation='horizontal',
+            pos_hint={'x': -3, 'y': 1},
+            size_hint=(3, 0.25)
+        )
+
+        self.timeratio_label = Label(
+            text='Timeratio',
+            size_hint=(2, 0.25),
+            pos_hint={'x': -5, 'y': 5.0/4},
+            halign='left'
+        )
+
+        self.timeratio_slider = Slider(
+            min=0,
+            max=2,
+            value=self.logic.tick_ratio,
+            step=.1,
+            orientation='horizontal',
+            pos_hint={'x': -3, 'y': 5.0/4},
+            size_hint=(3, 0.25)
+        )
 
         self.add_widget(self.menubutton)
         self.add_widget(self.pausebutton)
         self.add_widget(self.resetbutton)
+
+        self.add_widget(self.show_hide_button)
+
+        self.add_widget(self.ticks_ahead_label)
+        self.add_widget(self.ticks_ahead_slider)
+
+        self.add_widget(self.timeratio_label)
+        self.add_widget(self.timeratio_slider)
+
+        self.ticks_ahead_slider.bind(value=self.ticks_ahead_change)
+        self.timeratio_slider.bind(value=self.timeratio_change)
+
+        self.hide_labels = [
+             self.ticks_ahead_slider,
+             self.timeratio_slider,
+        ]
+
+        self.hide_sliders = [
+            self.timeratio_label,
+            self.ticks_ahead_label,
+        ]
 
     def goto_menu(self, instance):
         self.parent.manager.current = 'menu'
@@ -124,6 +178,56 @@ class MenuPanel(FloatLayout):
         else:
             self.logic.start_game()
         self.paused = value
+
+    def ticks_ahead_change(self, instance, value):
+        self.logic.settings['ticks_ahead'] = int(value)
+
+    def timeratio_change(self, instance, value):
+        self.logic.tick_ratio = value
+
+    def show_hide(self, value):
+        if self.visible:
+            scroll_label = Animation(
+                pos_hint={
+                    'x': -5
+                },
+                duration=0.5,
+                t='in_out_back'
+            )
+            scroll_slider = Animation(
+                pos_hint={
+                    'x': -3
+                },
+                duration=0.5,
+                t='in_out_back'
+            )
+
+            for item in self.hide_labels:
+                scroll_label.start(item)
+            for item in self.hide_sliders:
+                scroll_slider.start(item)
+            self.visible = False
+        else:
+            scroll_label = Animation(
+                pos_hint={
+                    'x': 2
+                },
+                duration=0.5,
+                t='in_out_back'
+            )
+            scroll_slider = Animation(
+                pos_hint={
+                    'x': 0
+                },
+                duration=0.5,
+                t='in_out_back'
+            )
+
+            for item in self.hide_labels:
+                scroll_label.start(item)
+            for item in self.hide_sliders:
+                scroll_slider.start(item)
+            self.visible = True
 
 
 class AddMenuPanel(FloatLayout):
@@ -158,15 +262,16 @@ class AddMenuPanel(FloatLayout):
 
     def build_interface(self):
 
-        self.show_hide_button = RealToggleButton(
-            './media/icons/up.png',
-            './media/icons/down.png',
-            self.show_hide,
-            pos_hint={'x': 0, 'y': 0},
+        self.multi_button = RealMenuToggleButton(
+            './media/icons/multipass.png',
+            './media/icons/multipass_pressed.png',
+            'multi',
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/up.png',
-            always_release=True
+            pos_hint={'x': 0, 'y': 0},
+            group='menu',
+            source='./media/icons/multipass.png',
+            allow_no_selection=True
         )
 
         self.add_sun_button = RealMenuToggleButton(
@@ -193,16 +298,15 @@ class AddMenuPanel(FloatLayout):
             allow_no_selection=True
         )
 
-        self.multi_button = RealMenuToggleButton(
-            './media/icons/multipass.png',
-            './media/icons/multipass_pressed.png',
-            'multi',
+        self.show_hide_button = RealToggleButton(
+            './media/icons/down.png',
+            './media/icons/up.png',
+            self.show_hide,
+            pos_hint={'x': 0.75, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            pos_hint={'x': 0.75, 'y': 0},
-            group='menu',
-            source='./media/icons/multipass.png',
-            allow_no_selection=True
+            source='./media/icons/down.png',
+            always_release=True
         )
 
         self.add_widget(self.add_planet_button)
@@ -216,14 +320,14 @@ class AddMenuPanel(FloatLayout):
             value=10,
             step=1,
             orientation='horizontal',
-            pos_hint={'x':  1, 'y': 0},
+            pos_hint={'x':  -1, 'y': 0},
             size_hint=(1, 1)
         )
 
         self.value_label = Label(
             text='Some value: 9999',
             size_hint=(1, 1),
-            pos_hint={'x': 2, 'y': 0},
+            pos_hint={'x': -2, 'y': 0},
             halign='left'
         )
 
@@ -267,7 +371,7 @@ class AddMenuPanel(FloatLayout):
         if self.visible:
             scrolldown = Animation(
                 pos_hint={
-                    'y': 1.05
+                    'y': -1.05
                 },
                 duration=0.5,
                 t='in_out_back'
@@ -317,14 +421,14 @@ class ModPanel(FloatLayout):
 
     def build_interface(self):
 
-        self.planet_fix_button = RealToggleButton(
-            './media/icons/fix.png',
-            './media/icons/fix_pressed.png',
-            self.logic.fix_selected,
+        self.show_hide_button = RealToggleButton(
+            './media/icons/up.png',
+            './media/icons/down.png',
+            self.show_hide,
             pos_hint={'x': 0, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/fix.png',
+            source='./media/icons/up.png',
             always_release=True
         )
 
@@ -383,14 +487,14 @@ class ModPanel(FloatLayout):
             always_release=True
         )
 
-        self.show_hide_button = RealToggleButton(
-            './media/icons/down.png',
-            './media/icons/up.png',
-            self.show_hide,
+        self.planet_fix_button = RealToggleButton(
+            './media/icons/fix.png',
+            './media/icons/fix_pressed.png',
+            self.logic.fix_selected,
             pos_hint={'x': 6.0 / 7, 'y': 0},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/down.png',
+            source='./media/icons/fix.png',
             always_release=True
         )
 
@@ -430,7 +534,7 @@ class ModPanel(FloatLayout):
             for item in self.hide_items:
                 scrolldown = Animation(
                     pos_hint={
-                        'y': -1
+                        'y': 1
                     },
                     duration=0.5,
                     t='in_out_back'

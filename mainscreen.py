@@ -187,7 +187,10 @@ class MainScreen(Screen):
             self.iconratio_x,
             size_hint=(None, None),
             size=(7 * self.iconsize, self.iconsize),
-            pos_hint={'x': 1 - 7 * self.iconratio_x, 'y': 0}
+            pos_hint={
+                'x': 0,
+                'y': 1 - self.iconratio_y
+            }
         )
 
         self.gamezone = mainscreen_ui.Gamezone(
@@ -206,7 +209,7 @@ class MainScreen(Screen):
             self.iconsize,
             self.iconratio_y,
             size_hint=(None, None),
-            size=(self.iconsize, 3.0 * (Window.height / 8)),
+            size=(self.iconsize, 4.0 * (Window.height / 8)),
             pos_hint={'x': 0, 'y': 0}
         )
 
@@ -218,17 +221,10 @@ class MainScreen(Screen):
             self.iconratio_y,
             size_hint=(None, None),
             size=(self.iconsize * 4, self.iconsize),
-            pos_hint={'x': 0, 'y': 7 * self.iconratio_y}
+            pos_hint={
+                'x': 1 - 4 * self.iconratio_x,
+                'y': 0
+            }
         )
 
         self.add_widget(self.add_menupanel)
-
-        self.slider_panel = mainscreen_ui.SliderPanel(
-            self.iconsize,
-            self.iconratio_y,
-            size_hint=(None, None),
-            size=(self.iconsize * 5, self.iconsize),
-            pos_hint={'x': 1-self.iconratio_x * 5, 'y': 0.5}
-        )
-
-        self.add_widget(self.slider_panel)

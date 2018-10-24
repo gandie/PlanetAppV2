@@ -589,6 +589,10 @@ class Logic(Screen):
         # selpannet index might differ from index in temp_keeper
         # see clone engine
         index = self.selplanet_index_temp
+
+        if not index:
+            return
+
         ticks = int(self.settings['ticks_ahead'])
 
         trajectory_points = tuple()
