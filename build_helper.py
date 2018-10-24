@@ -3,6 +3,8 @@ Helper module to simplify build process for android and windows builds.
 Bascially types shell commands to build / install stuff and clears directories
 afterwads.
 
+Very unsecure and untested. Use at ur own risk!
+
 THINGS TO DO:
 
 TASK ONE:

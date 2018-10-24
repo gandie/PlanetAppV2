@@ -1,3 +1,16 @@
+'''
+python rk4 gravity simulation.
+
+This modules Engine class provides a fully functional gravity simulation engine
+for the PocketCosmos App. Because its written in Python it is quite slow, but
+makes testing changes in the algorith much easier than testing the compiled
+C version (crk4engine).
+
+Kudos to Thanassis Tsiodras, who made this module (and the C-version) possible
+with this blog post:
+https://www.thanassis.space/gravity.html
+'''
+
 import itertools
 import math
 import time

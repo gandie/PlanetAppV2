@@ -30,6 +30,9 @@ contains buttons to control the game: menu, pause, reset
 AddMenuPanel shown on the top left of the mainscreen contains buttons
 to switch to different add-modes. if no mode is chosen, zoom is default
 
+ModPanel appears when a body is selected and provides buttons to alter the body's
+properties, e.g. fix its position or alter its mass.
+
 SliderPanel contains sliders to contol ticks_ahead and tick_ratio -- KILL THIS
 
 SoundPanel controlls sooundmanager
@@ -76,7 +79,7 @@ class MenuPanel(FloatLayout):
             './media/icons/pause.png',
             './media/icons/pause_pressed.png',
             self.pause_game,
-            pos_hint={'x': 0, 'y': 1.0/3},
+            pos_hint={'x': 0, 'y': 1.0/4},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/pause.png',
@@ -87,12 +90,26 @@ class MenuPanel(FloatLayout):
             './media/icons/reset.png',
             './media/icons/reset_pressed.png',
             self.logic.reset_planets,
-            pos_hint={'x': 0, 'y': 2.0/3},
+            pos_hint={'x': 0, 'y': 2.0/4},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/reset.png',
             always_release=True
         )
+
+        '''
+        self.show_hide_button = RealToggleButton(
+            './media/icons/timer_panel.png',
+            './media/icons/timer_panel.png',
+            self.show_hide,
+            pos_hint={'x': 0, 'y': 3.0/4},
+            size_hint=(None, None),
+            size=(self.iconsize, self.iconsize),
+            source='./media/icons/timer_panel.png',
+            always_release=True
+        )
+        '''
+
 
         self.add_widget(self.menubutton)
         self.add_widget(self.pausebutton)

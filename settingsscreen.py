@@ -18,7 +18,6 @@ also access kivy settings from here.
 '''
 
 
-# TODO: should be view part of mvc pattern (to be implemented)
 class SettingsScreen(Screen):
 
     logic = ObjectProperty(None)
@@ -61,10 +60,10 @@ class SettingsScreen(Screen):
             if key in self.setting_items:
                 self.logic.settings[key] = self.setting_items[key].value
         self.logic.apply_settings()
-        App.get_running_app().save_settings()
+        App.get_running_app().settings.save()
 
     def build_interface(self):
-        # TODO: check min / max of settings against defaults!
+
         self.mainlayout = FloatLayout()
 
         self.settingsview = ScrollView(

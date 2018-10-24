@@ -107,9 +107,11 @@ class MainScreen(Screen):
 
     def on_leave(self):
         self.logic.stop_game()
+        '''
         if self.logic.tutorial_mode:
             self.remove_widget(self.tutorial_label)
             self.logic.tutorial_mode = False
+        '''
 
     def allign_gamezone(self):
         # TODO: maybe check for pinned / heaviest body (if found) and align to

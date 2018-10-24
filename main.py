@@ -95,11 +95,8 @@ class PlanetApp(App):
         self.load_game()
 
     def on_stop(self):
-        self.save_settings()
-        self.save_game()
-
-    def save_settings(self):
         self.settings.save()
+        self.save_game()
 
     def load_game(self, slot='current'):
         save_name = 'save_{slot}.json'.format(slot=slot)

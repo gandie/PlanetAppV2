@@ -24,14 +24,12 @@ Main purpose of this mpdule is to avoid code duplication for game modes adding
 bodies to the simulation.
 '''
 
-# TODO: this may be an object, property is not needed!
-class GameMode(Screen):  # not actually a screen, using this a dummy class
 
-    logic = ObjectProperty(None)
+class GameMode(object):
 
     def __init__(self, gamezone, body='', draw_trajectory=False, sizeable=False,
                  slider_label='', **kwargs):
-        super(GameMode, self).__init__(**kwargs)
+
         self.gamezone = gamezone
         self.body = body
         self.logic = App.get_running_app().logic
@@ -43,17 +41,11 @@ class GameMode(Screen):  # not actually a screen, using this a dummy class
         self.sizeable = sizeable
         if self.sizeable:
             self.settings = kwargs.get('settings')
-            #self.slider_value = (self.settings['max'] + self.settings['min']) / 2
             self.slider_value = self.settings['min'] + self.settings['step']*5
 
         if self.body != '':
             # stuff for trajectory calculation
             min_mass_key = 'min_{}_mass'.format(self.body)
-            '''
-            if self.body == 'moon':
-                self.min_mass = 9
-            else:
-            '''
             self.min_mass = self.logic.settings[min_mass_key]
 
             density_key = '{}_density'.format(self.body)
