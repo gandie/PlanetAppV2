@@ -10,7 +10,7 @@ from random import randint
 import math
 
 # CUSTOM
-# from gamezone import Gamezone
+from mainscreen_ui import Gamezone
 
 '''
 Module for game add-mode controls.

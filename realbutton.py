@@ -74,11 +74,13 @@ class RealToggleButton(ButtonBehavior, Image):
 
 class RealMenuToggleButton(ToggleButtonBehavior, Image):
 
-    def __init__(self, realtexture, realtexture_pressed, keyword, **kwargs):
+    def __init__(self, realtexture, realtexture_pressed, keyword,
+                 default_mode='zoom', **kwargs):
         super(RealMenuToggleButton, self).__init__(**kwargs)
         self.realtexture = realtexture
         self.realtexture_pressed = realtexture_pressed
         self.keyword = keyword
+        self.default_mode = default_mode
 
     def on_state(self, widget, value):
         if self.parent is not None:
@@ -86,6 +88,6 @@ class RealMenuToggleButton(ToggleButtonBehavior, Image):
                 self.parent.cur_mode = self.keyword
                 self.source = self.realtexture_pressed
             elif value == 'normal':
-                self.parent.cur_mode = 'zoom'
+                self.parent.cur_mode = self.default_mode
                 self.source = self.realtexture
             self.reload()

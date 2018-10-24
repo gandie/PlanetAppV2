@@ -5,11 +5,9 @@ All widgets shown on mainscreen live here
 # KIVY
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.scrollview import ScrollView
-# from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.button import Button
 from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
-# from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.screenmanager import Screen
 from kivy.uix.slider import Slider
@@ -18,10 +16,8 @@ from kivy.uix.label import Label
 from kivy.properties import *
 from kivy.animation import Animation
 from kivy.app import App
-# from kivy.core.window import Window
 
 # CUSTOM
-from logic import Logic
 from realbutton import RealButton
 from realbutton import RealToggleButton
 from realbutton import RealMenuToggleButton
@@ -277,7 +273,7 @@ class AddMenuPanel(FloatLayout):
             self.visible = True
 
 
-class Seltoggles(FloatLayout):
+class ModPanel(FloatLayout):
 
     '''
     buttons shown on the right bottom when a planet is selected. needs to be
@@ -296,7 +292,7 @@ class Seltoggles(FloatLayout):
     visible = BooleanProperty(True)
 
     def __init__(self, iconsize, iconratio, **kwargs):
-        super(Seltoggles, self).__init__(**kwargs)
+        super(ModPanel, self).__init__(**kwargs)
         self.logic = App.get_running_app().logic
         self.iconsize = iconsize
         self.iconratio = iconratio
@@ -399,39 +395,18 @@ class Seltoggles(FloatLayout):
     def update(self, **kwargs):
         # update buttons depending in planet selected. kwargs contain
         # complete planet dictionary and fixview flag from logic
-        fixed = kwargs.get('fixed', False)
-        fixview = kwargs.get('fixview', False)
-        show_orbit = kwargs.get('show_orbit', False)
-        fixbutton = self.planet_fix_button
-        fixview_button = self.planet_fixview_button
-        show_orbit_button = self.show_orbit_button
-        if fixbutton:
-            if fixed:
-                fixbutton.pressed = True
-                fixbutton.source = fixbutton.realtexture_pressed
-                fixbutton.reload()
+        buttons_d = {
+            self.planet_fix_button:     kwargs.get('fixed', False),
+            self.planet_fixview_button: kwargs.get('fixview', False),
+            self.show_orbit_button:     kwargs.get('show_orbit', False)
+        }
+        for button, value in buttons_d.items():
+            button.pressed = value
+            if value:
+                button.source = button.realtexture_pressed
             else:
-                fixbutton.pressed = False
-                fixbutton.source = fixbutton.realtexture
-                fixbutton.reload()
-        if fixview_button:
-            if fixview:
-                fixview_button.pressed = True
-                fixview_button.source = fixview_button.realtexture_pressed
-                fixview_button.reload()
-            else:
-                fixview_button.pressed = False
-                fixview_button.source = fixview_button.realtexture
-                fixview_button.reload()
-        if show_orbit_button:
-            if show_orbit:
-                show_orbit_button.pressed = True
-                show_orbit_button.source = show_orbit_button.realtexture_pressed
-                show_orbit_button.reload()
-            else:
-                show_orbit_button.pressed = False
-                show_orbit_button.source = show_orbit_button.realtexture
-                show_orbit_button.reload()
+                button.source = button.realtexture
+            button.reload()
 
     def show_hide(self, instance):
         if self.visible:

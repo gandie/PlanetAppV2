@@ -4,7 +4,6 @@ from kivy.properties import *
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.app import App
-from kivy.uix.screenmanager import FadeTransition
 from kivy.uix.slider import Slider
 from kivy.uix.gridlayout import GridLayout
 

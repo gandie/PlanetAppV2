@@ -1,24 +1,16 @@
-# KIVY
-from kivy.properties import *
-from kivy.uix.screenmanager import Screen
-from kivy.core.window import Window
-
-
-# CUSTOM
-'''
-from menupanel import MenuPanel, AddMenuPanel, SliderPanel
-from gamezone import Gamezone
-from tutorial_label import Tutorial_Label
-from infobox import Infobox
-from seltoggles import Seltoggles
-'''
-import mainscreen_ui
-
 '''
 Screen shown when the game is played. Contains gamezone and control widgets.
 Divides touch events between control widgets and gamezone and hands them down
 accordingly.
 '''
+
+# KIVY
+from kivy.properties import *
+from kivy.uix.screenmanager import Screen
+from kivy.core.window import Window
+
+# CUSTOM
+import mainscreen_ui
 
 
 class MainScreen(Screen):
@@ -38,7 +30,7 @@ class MainScreen(Screen):
     infobox = ObjectProperty(None)
 
     # buttons for selected planet
-    seltoggles = ObjectProperty(None)
+    modpanel = ObjectProperty(None)
 
     # ticks ahead and time sliders
     slider_panel = ObjectProperty(None)
@@ -46,7 +38,7 @@ class MainScreen(Screen):
     # add touchable widgets to interface for touch-handling
     interface = ReferenceListProperty(
         menupanel, gamezone, tutorial_label, infobox,
-        seltoggles, add_menupanel, slider_panel
+        modpanel, add_menupanel, slider_panel
     )
 
     # LOGIC
@@ -93,15 +85,15 @@ class MainScreen(Screen):
                 self.remove_widget(self.tutorial_label)
         '''
 
-    def add_seltoggles(self):
+    def add_modpanel(self):
         '''called from logic when planet is selected'''
-        if self.seltoggles not in self.children:
-            self.add_widget(self.seltoggles)
+        if self.modpanel not in self.children:
+            self.add_widget(self.modpanel)
 
-    def remove_seltoggles(self):
+    def remove_modpanel(self):
         '''called from logic when planet is UNselected'''
-        if self.seltoggles in self.children:
-            self.remove_widget(self.seltoggles)
+        if self.modpanel in self.children:
+            self.remove_widget(self.modpanel)
 
     def add_infobox(self):
         '''called from logic when planet is selected -- DEACTIVATED'''
@@ -188,7 +180,7 @@ class MainScreen(Screen):
         )
         '''
 
-        self.seltoggles = mainscreen_ui.Seltoggles(
+        self.modpanel = mainscreen_ui.ModPanel(
             self.iconsize,
             self.iconratio_x,
             size_hint=(None, None),

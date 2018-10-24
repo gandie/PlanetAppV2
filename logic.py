@@ -39,9 +39,9 @@ class Logic(Screen):
     mainscreen = ObjectProperty(None)
 
     # MODI-FLAGS
-    tutorial_mode = BooleanProperty(None)
-    fixview_mode = BooleanProperty(None)
-    show_orbit_mode = BooleanProperty(None)
+    # tutorial_mode = BooleanProperty(None)
+    fixview_mode = BooleanProperty(False)
+    show_orbit_mode = BooleanProperty(False)
     cur_guimode = ObjectProperty(None)
 
     # SELECTED PLANET
@@ -431,19 +431,19 @@ class Logic(Screen):
     def on_selplanet(self, instance, value):
         if value is None:
             # self.mainscreen.remove_infobox()
-            self.mainscreen.remove_seltoggles()
+            self.mainscreen.remove_modpanel()
             self.selplanet_index = None
             # Clock.unschedule(self.update_infobox)
-            Clock.unschedule(self.update_seltoggles)
+            Clock.unschedule(self.update_modpanel)
             self.fixview_mode = False
             self.show_orbit_mode = False
             self.gamezone.canvas.remove_group('trajectory_selplanet')
         else:
             self.selplanet_index = self.get_planet_index(value)
             # self.mainscreen.add_infobox()
-            self.mainscreen.add_seltoggles()
+            self.mainscreen.add_modpanel()
             # Clock.schedule_interval(self.update_infobox, 1.0)
-            Clock.schedule_interval(self.update_seltoggles, 1.0 / 10.0)
+            Clock.schedule_interval(self.update_modpanel, 1.0 / 10.0)
 
     def calc_energy(self):
         # prototype to calculate if body orbits another
@@ -469,13 +469,13 @@ class Logic(Screen):
             planet_dict = self.planets[self.selplanet_index]
             self.mainscreen.infobox.update(**planet_dict)
 
-    def update_seltoggles(self, dt):
+    def update_modpanel(self, dt):
         if self.selplanet_index is not None:
             planet_dict = self.planets[self.selplanet_index]
             # add fixview attribute to dict to update fixedview (eye-icon)
             planet_dict['fixview'] = self.fixview_mode
             planet_dict['show_orbit'] = self.show_orbit_mode
-            self.mainscreen.seltoggles.update(**planet_dict)
+            self.mainscreen.modpanel.update(**planet_dict)
 
     def delete_selected(self, instance):
         index = self.selplanet_index
