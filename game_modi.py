@@ -93,8 +93,8 @@ class GameMode(object):
         trajectory = self.logic.calc_trajectory(temp_planet_d)
         trajectory_tuple = tuple()
         for point in trajectory:
-            point = self.gamezone.to_parent(point[0], point[1])
-            trajectory_tuple += point
+            t_point = self.gamezone.to_parent(*point)
+            trajectory_tuple += t_point
 
         points = (ud['firstpos'][0], ud['firstpos'][1])
         points += trajectory_tuple

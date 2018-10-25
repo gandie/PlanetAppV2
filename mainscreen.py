@@ -107,6 +107,11 @@ class MainScreen(Screen):
 
     def on_leave(self):
         self.logic.stop_game()
+        btn = self.menupanel.draw_traces_btn
+        btn.pressed = False
+        btn.source = btn.realtexture
+        btn.reload()
+
         '''
         if self.logic.tutorial_mode:
             self.remove_widget(self.tutorial_label)
@@ -209,7 +214,7 @@ class MainScreen(Screen):
             self.iconsize,
             self.iconratio_y,
             size_hint=(None, None),
-            size=(self.iconsize, 4.0 * (Window.height / 8)),
+            size=(self.iconsize, 5.0 * (Window.height / 8)),
             pos_hint={'x': 0, 'y': 0}
         )
 

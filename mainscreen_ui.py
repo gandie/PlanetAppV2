@@ -17,6 +17,8 @@ from kivy.properties import *
 from kivy.animation import Animation
 from kivy.app import App
 
+from kivy.clock import Clock
+
 # CUSTOM
 from realbutton import RealButton
 from realbutton import RealToggleButton
@@ -81,7 +83,7 @@ class MenuPanel(FloatLayout):
             './media/icons/pause.png',
             './media/icons/pause_pressed.png',
             self.pause_game,
-            pos_hint={'x': 0, 'y': 1.0/4},
+            pos_hint={'x': 0, 'y': 1.0/5},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/pause.png',
@@ -92,18 +94,29 @@ class MenuPanel(FloatLayout):
             './media/icons/reset.png',
             './media/icons/reset_pressed.png',
             self.logic.reset_planets,
-            pos_hint={'x': 0, 'y': 2.0/4},
+            pos_hint={'x': 0, 'y': 2.0/5},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/reset.png',
             always_release=True
         )
 
-        self.show_hide_button = RealToggleButton(
+        self.draw_traces_btn = RealToggleButton(
+            './media/icons/showorbit.png',
+            './media/icons/showorbit_pressed.png',
+            self.toggle_traces,
+            pos_hint={'x': 0, 'y': 3.0/5},
+            size_hint=(None, None),
+            size=(self.iconsize, self.iconsize),
+            source='./media/icons/showorbit.png',
+            always_release=True
+        )
+
+        self.show_hide_button = RealButton(
             './media/icons/timer_panel.png',
             './media/icons/timer_panel.png',
             self.show_hide,
-            pos_hint={'x': 0, 'y': 3.0/4},
+            pos_hint={'x': 0, 'y': 4.0/5},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/timer_panel.png',
@@ -112,7 +125,7 @@ class MenuPanel(FloatLayout):
 
         self.ticks_ahead_label = Label(
             text='Ticks ahead',
-            size_hint=(2, 0.25),
+            size_hint=(2, 0.2),
             pos_hint={'x': -5, 'y': 1},
             halign='left'
         )
@@ -124,13 +137,13 @@ class MenuPanel(FloatLayout):
             step=1,
             orientation='horizontal',
             pos_hint={'x': -3, 'y': 1},
-            size_hint=(3, 0.25)
+            size_hint=(3, 0.2)
         )
 
         self.timeratio_label = Label(
             text='Timeratio',
-            size_hint=(2, 0.25),
-            pos_hint={'x': -5, 'y': 5.0/4},
+            size_hint=(2, 0.2),
+            pos_hint={'x': -5, 'y': 6.0/5},
             halign='left'
         )
 
@@ -140,16 +153,16 @@ class MenuPanel(FloatLayout):
             value=self.logic.tick_ratio,
             step=.1,
             orientation='horizontal',
-            pos_hint={'x': -3, 'y': 5.0/4},
-            size_hint=(3, 0.25)
+            pos_hint={'x': -3, 'y': 6.0/5},
+            size_hint=(3, 0.2)
         )
 
         self.add_widget(self.menubutton)
         self.add_widget(self.pausebutton)
         self.add_widget(self.resetbutton)
 
+        self.add_widget(self.draw_traces_btn)
         self.add_widget(self.show_hide_button)
-
         self.add_widget(self.ticks_ahead_label)
         self.add_widget(self.ticks_ahead_slider)
 
@@ -184,6 +197,16 @@ class MenuPanel(FloatLayout):
 
     def timeratio_change(self, instance, value):
         self.logic.tick_ratio = value
+
+    def toggle_traces(self, value):
+        self.logic.lines = []
+        if not value:
+            Clock.unschedule(self.logic.draw_traces)
+            self.logic.gamezone.canvas.remove_group('nein')
+        else:
+            Clock.schedule_interval(self.logic.draw_traces, 1.0 / 10.0)
+
+        self.logic.settings['traces'] = value
 
     def show_hide(self, value):
         if self.visible:
@@ -320,7 +343,7 @@ class AddMenuPanel(FloatLayout):
             value=10,
             step=1,
             orientation='horizontal',
-            pos_hint={'x':  -1, 'y': 0},
+            pos_hint={'x': -1, 'y': 0},
             size_hint=(1, 1)
         )
 

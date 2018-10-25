@@ -214,6 +214,14 @@ class ConfigModel(object):
                 defaultvalue=True,
                 seqnum=70
             ),
+            'traces': ConfigType(
+                name='traces',
+                settings_type='bool',
+                label='Show traces',
+                defaultvalue=False,
+                show=False,
+                seqnum=71
+            ),
             'show_tutorial': ConfigType(
                 name='show_tutorial',
                 settings_type='bool',

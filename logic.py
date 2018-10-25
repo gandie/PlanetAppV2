@@ -210,41 +210,41 @@ class Logic(Screen):
         Clock.schedule_interval(self.collect_garbage, 1.0)
         Clock.schedule_interval(self.sound_manager.autoplay, 5.0)
 
-        '''
-        self.lines = []
-        Clock.schedule_interval(self.zirkus, 1.0 / 25.0)  # / 10.0)
-        '''
-
     def stop_game(self):
 
         # self.gamezone.canvas.clear()
-        self.gamezone.canvas.remove_group('nein')
         Clock.unschedule(self.update_game)
         Clock.unschedule(self.tick_engine)
         Clock.unschedule(self.clone_engine)
         Clock.unschedule(self.collect_garbage)
         Clock.unschedule(self.sound_manager.autoplay)
 
+        if self.settings['traces']:
+            Clock.unschedule(self.draw_traces)
+            self.gamezone.canvas.remove_group('nein')
+            self.lines = []
+            self.settings['traces'] = False
+
         self.sound_manager.stop()
 
-    def zirkus(self, dt):
+    def draw_traces(self, dt):
         for index, planet_d in self.planets.items():
             with self.gamezone.canvas:
-                self.lines.append(
-                    (Color(1, 1, 1),
+                self.lines.append((
+                    Color(1, 1, 1),
                     Line(
                         circle=(planet_d['position_x'], planet_d['position_y'], 1),
                         group='nein'
-                        ))
-                )
-            for color, line in self.lines:
-                if color.a > 0:
-                    color.a -= 0.01
-                else:
-                    self.gamezone.canvas.remove(line)
-                    self.gamezone.canvas.remove(color)
-                    self.lines.remove((color, line))
-                    print 'removing...'
+                    )
+                ))
+        for color, line in self.lines:
+            if color.a > 0:
+                color.a -= 0.01
+            else:
+                self.gamezone.canvas.remove(line)
+                self.gamezone.canvas.remove(color)
+                self.lines.remove((color, line))
+                print 'removing...'
 
     def register_gamezone(self, gamezone):
         self.gamezone = gamezone
@@ -310,6 +310,9 @@ class Logic(Screen):
     def reset_planets(self, instance):
         for index in self.planets.keys():
             self.delete_planet(index)
+
+        self.gamezone.canvas.remove_group('nein')
+        self.lines = []
 
     # USE THIS TO DELETE PLANETS!
     def delete_planet(self, index):
