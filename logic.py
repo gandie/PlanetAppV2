@@ -222,7 +222,7 @@ class Logic(Screen):
         if self.settings['traces']:
             Clock.unschedule(self.draw_traces)
             self.gamezone.canvas.remove_group('nein')
-            self.lines = []
+            self.lines = set()
             self.settings['traces'] = False
 
         self.sound_manager.stop()
@@ -230,21 +230,23 @@ class Logic(Screen):
     def draw_traces(self, dt):
         for index, planet_d in self.planets.items():
             with self.gamezone.canvas:
-                self.lines.append((
+                self.lines.add((
                     Color(1, 1, 1),
                     Line(
                         circle=(planet_d['position_x'], planet_d['position_y'], 1),
                         group='nein'
                     )
                 ))
+
         for color, line in self.lines:
-            if color.a > 0:
-                color.a -= 0.01
-            else:
-                self.gamezone.canvas.remove(line)
-                self.gamezone.canvas.remove(color)
-                self.lines.remove((color, line))
-                print 'removing...'
+            color.a -= 0.02
+
+        del_set = {line for line in self.lines if line[0].a < 0}
+        for color, line in del_set:
+            self.gamezone.canvas.remove(line)
+            self.gamezone.canvas.remove(color)
+
+        self.lines.difference_update(del_set)
 
     def register_gamezone(self, gamezone):
         self.gamezone = gamezone
@@ -312,7 +314,7 @@ class Logic(Screen):
             self.delete_planet(index)
 
         self.gamezone.canvas.remove_group('nein')
-        self.lines = []
+        self.lines = set()
 
     # USE THIS TO DELETE PLANETS!
     def delete_planet(self, index):
