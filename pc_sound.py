@@ -3,6 +3,7 @@ Sound handling module of PocketCosmos app.
 '''
 # KIVY
 from kivy.core.audio import SoundLoader
+from kivy.clock import Clock
 
 # BUILTIN
 import os
@@ -18,6 +19,8 @@ class SoundManager(object):
         self.settings = settings
         self.path = path
 
+        self.do_autoplay = True
+
         # default valid sound file endings
         if not endings:
             self.endings = ['ogg']
@@ -32,7 +35,9 @@ class SoundManager(object):
         for sound_file in sound_files:
             if not sound_file.split('.')[-1] in self.endings:
                 continue
-            sound = SoundLoader.load(os.path.join(self.path,sound_file))
+            sound = SoundLoader.load(
+                os.path.join(self.path, sound_file)
+            )
             self.sound_map[sound_file] = sound
 
         # will crash if no sound files were found
@@ -43,13 +48,15 @@ class SoundManager(object):
 
         self.curkey = random.choice(self.sound_map.keys())
         self.cursound = self.sound_map[self.curkey]
+        if hasattr(self, 'logic'):
+            self.logic.show_track(self.curkey)
 
     def autoplay(self, dt):
         '''called periodically from logic to check if next track has to be
         played'''
 
         # check if current track has finished, pick new track if so
-        if self.cursound.state == 'stop':
+        if self.cursound.state == 'stop' and self.do_autoplay:
             self.next()
             self.play()
 

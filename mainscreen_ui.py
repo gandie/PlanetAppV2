@@ -35,8 +35,6 @@ to switch to different add-modes. if no mode is chosen, zoom is default
 ModPanel appears when a body is selected and provides buttons to alter the body's
 properties, e.g. fix its position or alter its mass.
 
-SliderPanel contains sliders to contol ticks_ahead and tick_ratio -- KILL THIS
-
 SoundPanel controlls sooundmanager
 '''
 
@@ -596,67 +594,102 @@ class SoundPanel(FloatLayout):
             './media/icons/up.png',
             './media/icons/down.png',
             self.show_hide,
-            pos_hint={'x': 0, 'y': 0},
+            pos_hint={'x': 2.0/3, 'y': 1},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
             source='./media/icons/up.png',
             always_release=True
         )
+
+        self.add_widget(self.show_hide_button)
 
         self.next_button = RealButton(
             './media/icons/arrow.png',
             './media/icons/arrow_pressed.png',
             self.next,
-            pos_hint={'x': 0, 'y': 0},
+            pos_hint={'x': 1.0/3, 'y': 1},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/reset.png',
+            source='./media/icons/arrow.png',
             always_release=True
         )
 
+        self.add_widget(self.next_button)
+
         self.play_pause_button = RealToggleButton(
-            './media/icons/up.png',
-            './media/icons/down.png',
+            './media/icons/pause.png',
+            './media/icons/pause_pressed.png',
             self.play_pause,
-            pos_hint={'x': 0, 'y': 0},
+            pos_hint={'x': 0, 'y': 1},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/up.png',
+            source='./media/icons/pause.png',
             always_release=True
         )
+
+        self.add_widget(self.play_pause_button)
 
         self.track_label = Label(
             text='very good music',
             size_hint=(1, 1),
-            pos_hint={'x': 2, 'y': 0},
+            pos_hint={'x': 1, 'y': 0},
             halign='left'
         )
 
-        self.hide_items = []
+        self.add_widget(self.track_label)
+
+        self.scroll_buttons = [
+            self.next_button,
+            self.play_pause_button,
+            # self.track_label
+        ]
+
         self.visible = True
+
+    def show_track(self, dt):
+        show_anim = Animation(
+                pos_hint={
+                    'x': 0.0
+                },
+                duration=0.5,
+                t='in_out_back'
+        )
+        show_anim.start(self.track_label)
+        print('showing...')
+
+    def hide_track(self, dt):
+        show_anim = Animation(
+                pos_hint={
+                    'x': 1.0
+                },
+                duration=0.5,
+                t='in_out_back'
+        )
+        show_anim.start(self.track_label)
+        print('hiding...')
 
     def show_hide(self, instance):
         if self.visible:
-            scrolldown = Animation(
+            scrollup = Animation(
                 pos_hint={
-                    'y': 1.05
+                    'y': 2.0
                 },
                 duration=0.5,
                 t='in_out_back'
             )
-            for item in self.hide_items:
-                scrolldown.start(item)
+            for item in self.scroll_buttons:
+                scrollup.start(item)
             # scrolldown.start(self.seltoggles)
             self.visible = False
         else:
             scrolldown = Animation(
                 pos_hint={
-                    'y': 0
+                    'y': 1.0
                 },
                 duration=0.5,
                 t='in_out_back'
             )
-            for item in self.hide_items:
+            for item in self.scroll_buttons:
                 scrolldown.start(item)
             # scrolldown.start(self.seltoggles)
             self.visible = True
@@ -664,19 +697,16 @@ class SoundPanel(FloatLayout):
     def next(self, instance):
         self.soundmanager.stop()
         self.soundmanager.next()
-        if self.soundmanager.autoplay:
-            self.soundmanager.start()
+        if self.soundmanager.do_autoplay:
+            self.soundmanager.play()
 
     def play_pause(self, instance):
-        if self.soundmanager.autoplay:
-            self.soundmanager.autoplay = False
+        if self.soundmanager.do_autoplay:
+            self.soundmanager.do_autoplay = False
             self.soundmanager.stop()
         else:
-            self.soundmanager.autoplay = True
-            self.soundmanager.start()
-
-    def show_trackname(self):
-        pass
+            self.soundmanager.do_autoplay = True
+            self.soundmanager.play()
 
 
 class Gamezone(Scatter):

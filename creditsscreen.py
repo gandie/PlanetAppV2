@@ -78,6 +78,7 @@ class CreditsScreen(Screen):
             '',
             '## Devs ##',
             'gandie -- main developer -- lars@bergmann82.de',
+            'https://github.com/gandie'
             '',
             '## Artists ##',
             'dude -- layout, graphics, music',

@@ -19,7 +19,7 @@ source.include_exts = py,png,jpg,kv,atlas,pyx,h,c,wav,pex,ogg
 #source.exclude_exts = spec
 
 # (list) List of directory to exclude (let empty to not exclude anything)
-#source.exclude_dirs = tests, bin
+source.exclude_dirs = tests, bin, build
 
 # (list) List of exclusions using pattern matching
 #source.exclude_patterns = license,images/*/*.jpg
@@ -29,7 +29,7 @@ source.include_exts = py,png,jpg,kv,atlas,pyx,h,c,wav,pex,ogg
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 0.7.2
+version = 0.7.3
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy

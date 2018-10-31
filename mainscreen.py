@@ -32,13 +32,13 @@ class MainScreen(Screen):
     # buttons for selected planet
     modpanel = ObjectProperty(None)
 
-    # ticks ahead and time sliders
-    slider_panel = ObjectProperty(None)
+    # SoundManager controlls
+    sound_panel = ObjectProperty(None)
 
     # add touchable widgets to interface for touch-handling
     interface = ReferenceListProperty(
         menupanel, gamezone, tutorial_label, infobox,
-        modpanel, add_menupanel, slider_panel
+        modpanel, add_menupanel, sound_panel
     )
 
     # LOGIC
@@ -74,16 +74,6 @@ class MainScreen(Screen):
         # TODO: why is paused saved in menupanel? put to logic?
         if not self.menupanel.paused:
             self.logic.start_game()
-
-        # check tutorial setting
-        '''
-        if self.logic.settings['show_tutorial']:
-            if self.tutorial_label not in self.children:
-                self.add_widget(self.tutorial_label)
-        else:
-            if self.tutorial_label in self.children:
-                self.remove_widget(self.tutorial_label)
-        '''
 
     def add_modpanel(self):
         '''called from logic when planet is selected'''
@@ -172,21 +162,6 @@ class MainScreen(Screen):
 
     def build_interface(self):
 
-        '''
-        self.tutorial_label = Tutorial_Label(
-            self.iconsize,
-            self.iconratio_x,
-            size_hint=(None, None),
-            size=(8 * self.iconsize, self.iconsize),
-            pos_hint={'x': 1 - 8 * self.iconratio_x - 0.2, 'y': 0.875}
-        )
-
-        self.infobox = Infobox(
-            size_hint=(0.2, 0.2),
-            pos_hint={'x': 0.8, 'y': 0.8}
-        )
-        '''
-
         self.modpanel = mainscreen_ui.ModPanel(
             self.iconsize,
             self.iconratio_x,
@@ -233,3 +208,17 @@ class MainScreen(Screen):
         )
 
         self.add_widget(self.add_menupanel)
+
+        self.sound_panel = mainscreen_ui.SoundPanel(
+            self.iconsize,
+            self.iconratio_y,
+            self.logic.sound_manager,
+            size_hint=(None, None),
+            size=(self.iconsize * 3, self.iconsize),
+            pos_hint={
+                'x': 1 - 3 * self.iconratio_x,
+                'y': 1 - 2 * self.iconratio_y
+            }
+        )
+
+        self.add_widget(self.sound_panel)

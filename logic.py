@@ -50,12 +50,13 @@ class Logic(Screen):
     selplanet_index_temp = NumericProperty(None, allownone=True)
 
     # this is called when app is built!
-    def __init__(self, settings, sounds):
+    def __init__(self, settings, sound_manager):
 
         # set up dicts to be filled
         self.planets = {}
         self.settings = settings
-        self.sound_manager = sounds
+        self.sound_manager = sound_manager
+        self.sound_manager.logic = self
 
         self.engine_map = {
             'cplanet': CPlanetKeeper,
@@ -90,6 +91,13 @@ class Logic(Screen):
 
         # temporary keeper for trajectory calculation
         self.temp_keeper = self.engine_map[self.engine]()
+
+    def show_track(self, trackname):
+        '''pass trackname to sound widget'''
+        print('Sound next callback: %s' % trackname)
+        self.mainscreen.sound_panel.track_label.text = trackname
+        Clock.schedule_once(self.mainscreen.sound_panel.show_track, 0)
+        Clock.schedule_once(self.mainscreen.sound_panel.hide_track, 5)
 
     def apply_settings(self):
 

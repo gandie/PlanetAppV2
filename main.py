@@ -1,3 +1,7 @@
+from kivy.config import Config
+Config.set('graphics', 'maxfps', '30')
+Config.set('kivy', 'log_enable', '0')
+
 # KIVY
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager
@@ -44,9 +48,12 @@ class PlanetApp(App):
         self.calc_iconsize()
         self.settings = ConfigController('settings.json')
 
-        self.sounds = SoundManager(settings=self.settings)
+        self.sound_manager = SoundManager(settings=self.settings)
 
-        self.logic = Logic(settings=self.settings, sounds=self.sounds)
+        self.logic = Logic(
+            settings=self.settings,
+            sound_manager=self.sound_manager
+        )
 
         self.screenmanager = ScreenManager()
 
@@ -151,6 +158,10 @@ class PlanetApp(App):
         self.iconratio_x = float(iconsize) / window_width
         self.iconsize = iconsize
 
+    def build_config(self, config):
+        config.setdefaults('graphics', {
+            'maxfps': '30'
+        })
 
 if __name__ == '__main__':
     PlanetApp().run()
