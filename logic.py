@@ -95,7 +95,7 @@ class Logic(Screen):
     def show_track(self, trackname):
         '''pass trackname to sound widget'''
         # print('Sound next callback: %s' % trackname)
-        self.mainscreen.sound_panel.track_label.text = trackname
+        self.mainscreen.sound_panel.track_label.text = trackname.split('.')[0]
         Clock.schedule_once(self.mainscreen.sound_panel.show_track, 0)
         Clock.schedule_once(self.mainscreen.sound_panel.hide_track, 5)
 
