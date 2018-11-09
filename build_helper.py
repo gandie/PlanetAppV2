@@ -48,7 +48,13 @@ wine C:/Python27/python.exe -m PyInstaller main.spec
 # TODO:
 TASK FOUR:
 Get fresh copies of all png assets from raw images, scaled down to X
+Something like this:
+In [8]: for item in a:
+   ...:     print(item)
+   ...:     os.system("convert -resize 250x250 %s %s" % (item, item))
 
+# TODO:
+avoid using os.system, add some safety
 '''
 
 import shutil

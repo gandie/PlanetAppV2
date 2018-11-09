@@ -94,7 +94,7 @@ class Logic(Screen):
 
     def show_track(self, trackname):
         '''pass trackname to sound widget'''
-        print('Sound next callback: %s' % trackname)
+        # print('Sound next callback: %s' % trackname)
         self.mainscreen.sound_panel.track_label.text = trackname
         Clock.schedule_once(self.mainscreen.sound_panel.show_track, 0)
         Clock.schedule_once(self.mainscreen.sound_panel.hide_track, 5)
@@ -469,7 +469,7 @@ class Logic(Screen):
             r_vel_sqrd = r_vel_x ** 2 + r_vel_y ** 2
             gravity = (planet_dict['mass'] * comp_planet_dict['mass']) / dist
             energy = 0.5 * planet_dict['mass'] * (r_vel_sqrd)
-            print 'dist, grav > energy', dist, gravity > energy
+            # print 'dist, grav > energy', dist, gravity > energy
 
     def update_infobox(self, dt):
         if self.selplanet_index is not None:

@@ -82,7 +82,7 @@ class CreditsScreen(Screen):
             '',
             '## Artists ##',
             'dude -- layout, graphics, music',
-            'Peter Oswald -- music',
+            'rafikibeats -- music',
             '',
             '## Tester ##',
             'McStorm',

@@ -604,26 +604,26 @@ class SoundPanel(FloatLayout):
         self.add_widget(self.show_hide_button)
 
         self.next_button = RealButton(
-            './media/icons/arrow.png',
-            './media/icons/arrow_pressed.png',
+            './media/icons/next.png',
+            './media/icons/next_pressed.png',
             self.next,
             pos_hint={'x': 1.0/3, 'y': 1},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/arrow.png',
+            source='./media/icons/next.png',
             always_release=True
         )
 
         self.add_widget(self.next_button)
 
         self.play_pause_button = RealToggleButton(
-            './media/icons/pause.png',
-            './media/icons/pause_pressed.png',
+            './media/icons/stop.png',
+            './media/icons/play.png',
             self.play_pause,
             pos_hint={'x': 0, 'y': 1},
             size_hint=(None, None),
             size=(self.iconsize, self.iconsize),
-            source='./media/icons/pause.png',
+            source='./media/icons/stop.png',
             always_release=True
         )
 
@@ -655,7 +655,7 @@ class SoundPanel(FloatLayout):
                 t='in_out_back'
         )
         show_anim.start(self.track_label)
-        print('showing...')
+        # print('showing...')
 
     def hide_track(self, dt):
         show_anim = Animation(
@@ -666,7 +666,7 @@ class SoundPanel(FloatLayout):
                 t='in_out_back'
         )
         show_anim.start(self.track_label)
-        print('hiding...')
+        # print('hiding...')
 
     def show_hide(self, instance):
         if self.visible:

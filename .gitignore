@@ -3,6 +3,9 @@
 *.sh
 *.so
 *.json
+*.ini
+build/
 .buildozer
 bin
 docs
+.atomignore
