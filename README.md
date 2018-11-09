@@ -61,8 +61,13 @@ Windows build has been tested using pyinstaller installed into a virtualwine
 environment. `main.spec` can be altered and used with pyinstaller to build EXE-files.
 
 # Links
+
+## Tech
 * [Kivy Docs](https://kivy.org/doc/stable/)
 * [Buildozer Docs](https://buildozer.readthedocs.io/en/latest/)
 * [python-for-android](https://github.com/kivy/python-for-android)
 * [virtualwine](https://github.com/htgoebel/virtual-wine)
+
+## Artists
 * [rafikibeats music](https://soundcloud.com/rafikibeats)
+* [IKONE graphics](https://www.instagram.com/ikone.official/)
