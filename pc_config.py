@@ -269,7 +269,7 @@ class ConfigModel(object):
                 name='music_volume',
                 settings_type='number',
                 label='Music volume',
-                defaultvalue=0.0,
+                defaultvalue=0.5,
                 min_value=0.0,
                 max_value=1.0,
                 seqnum=30

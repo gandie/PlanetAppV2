@@ -411,6 +411,8 @@ class Logic(Screen):
         if self.selplanet_index is not None and self.show_orbit_mode:
             self.calc_trajectory_selplanet()
 
+        print(dt)
+
     def load_textures(self, path):
         texture_list = []
         for filename in listdir(path):
@@ -512,9 +514,13 @@ class Logic(Screen):
             self.keeper.set_planet_mass(index, newmass)
 
     def center_planet(self, index):
+        '''put center of view (gamezone) to planet coords'''
+
         pos_x = self.planets[index]['position_x']
         pos_y = self.planets[index]['position_y']
         newpos = self.gamezone.to_parent(pos_x, pos_y)
+
+        # calc center
         offset_x = newpos[0] - Window.width / 2
         offset_y = newpos[1] - Window.height / 2
         new_center = (self.gamezone.center[0] - offset_x,
@@ -555,6 +561,8 @@ class Logic(Screen):
             # do not forget to also fix bodies for trajectory calc.
             if planet_d['fixed']:
                 self.temp_keeper.fix_planet(temp_id)
+
+        print(dt)
 
     # calc trajectory of not-yet-existing body
     def calc_trajectory(self, planet_d):
