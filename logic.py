@@ -56,6 +56,7 @@ class Logic(Screen):
         self.sound_manager = sound_manager
         self.sound_manager.logic = self
 
+        ''' MOVED TO TAPE
         self.engine_map = {
             'cplanet': CPlanetKeeper,
             'crk4engine': CRk4Engine,
@@ -63,6 +64,7 @@ class Logic(Screen):
         }
 
         self.init_engines(self.settings['engine'])
+        '''
 
         self.tape = Tape(self, self.settings['engine'])
 
@@ -82,8 +84,11 @@ class Logic(Screen):
         # observe selplanet
         self.bind(selplanet=self.on_selplanet)
 
+        self.future_changed = False
+
     def init_engines(self, engine):
 
+        assert False, 'MOVED TO TAPE'
         assert engine in self.engine_map, 'Unknown engine!'
         self.engine = engine
         # initialize planetkeeper
@@ -101,8 +106,9 @@ class Logic(Screen):
 
     def apply_settings(self):
 
-        if self.engine != self.settings['engine']:
-            self.init_engines(self.settings['engine'])
+        if self.tape.engine_name != self.settings['engine']:
+            self.tape.init_engine(self.settings['engine'])
+
         self.planet_transitions = {
             'moon': {
                 'nextbody': 'planet',
@@ -212,18 +218,19 @@ class Logic(Screen):
 
     def start_game(self):
 
-        Clock.schedule_interval(self.update_game, 1.0 / 25.0)
-        Clock.schedule_interval(self.tick_engine, 1.0 / 25.0)
-        Clock.schedule_interval(self.clone_engine, 1.0 / 25.0)
+        Clock.schedule_interval(self.tape.update_game, 1.0 / 25.0)
+        # Clock.schedule_interval(self.tape.tick_engine, 1.0 / 25.0)
+        Clock.schedule_interval(self.tape.tick_clone, 1.0 / 25.0)
+
         Clock.schedule_interval(self.collect_garbage, 1.0)
         Clock.schedule_interval(self.sound_manager.autoplay, 5.0)
 
     def stop_game(self):
 
-        # self.gamezone.canvas.clear()
-        Clock.unschedule(self.update_game)
-        Clock.unschedule(self.tick_engine)
-        Clock.unschedule(self.clone_engine)
+        Clock.unschedule(self.tape.update_game)
+        # Clock.unschedule(self.tape.tick_engine)
+        Clock.unschedule(self.tape.tick_clone)
+
         Clock.unschedule(self.collect_garbage)
         Clock.unschedule(self.sound_manager.autoplay)
 
@@ -236,6 +243,8 @@ class Logic(Screen):
         self.sound_manager.stop()
 
     def draw_traces(self, dt):
+        print('reimplement me!')
+        '''
         for index, planet_d in self.planets.items():
             with self.gamezone.canvas:
                 self.lines.add((
@@ -255,6 +264,7 @@ class Logic(Screen):
             self.gamezone.canvas.remove(color)
 
         self.lines.difference_update(del_set)
+        '''
 
     def register_gamezone(self, gamezone):
         self.gamezone = gamezone
@@ -275,8 +285,8 @@ class Logic(Screen):
         newplanet_texture = texture_list[texture_index]
         newplanet.set_base_image(newplanet_texture)
 
-        # inform the keeper
-        newindex = self.keeper.create_planet(
+        # inform the engine
+        newindex = self.tape.engine.create_planet(
             pos_x=pos[0],
             pos_y=pos[1],
             vel_x=vel[0],
@@ -285,11 +295,11 @@ class Logic(Screen):
             density=density
         )
 
-        # if keeper says no, do nothing
+        # if engine says no, do nothing
         if newindex == -1:
             return
 
-        radius = self.keeper.get_planet_radius(newindex)
+        radius = self.tape.engine.get_planet_radius(newindex)
         planet_d = {
             'position_x': pos[0],
             'position_y': pos[1],
@@ -306,7 +316,7 @@ class Logic(Screen):
 
         # fix body in keeper if neccessary
         if fixed:
-            self.keeper.fix_planet(newindex)
+            self.tape.engine.fix_planet(newindex)
 
         # write dict into planets-dict
         self.planets[newindex] = planet_d
@@ -316,6 +326,8 @@ class Logic(Screen):
         newplanet.center = pos
 
         self.gamezone.add_widget(newplanet)
+
+        self.future_changed = True
 
     def reset_planets(self, instance):
         for index in self.planets.keys():
@@ -332,7 +344,7 @@ class Logic(Screen):
         self.gamezone.remove_widget(widget)
         if widget == self.selplanet:
             self.selplanet = None
-        self.keeper.delete_planet(index)
+        self.tape.engine.delete_planet(index)
         self.planets.pop(index)
 
     def delete_planet_widget(self, widget):
@@ -341,6 +353,8 @@ class Logic(Screen):
 
     # let the keeper do its work
     def tick_engine(self, dt):
+
+        assert False, 'MOVED TO TAPE'
         self.keeper.tick(self.tick_ratio)
 
     def collect_garbage(self, dt):
@@ -350,6 +364,7 @@ class Logic(Screen):
                 self.gamezone.remove_widget(widget)
 
     def update_game(self, dt):
+        assert False, 'MOVED TO TAPE'
         del_indexes = []
         for index in self.planets:
             if self.keeper.planet_exists(index):
@@ -496,23 +511,23 @@ class Logic(Screen):
         index = self.selplanet_index
         if index is not None:
             if self.planets[index]['fixed']:
-                self.keeper.unfix_planet(index)
+                self.tape.engine.unfix_planet(index)
                 self.planets[index]['fixed'] = False
             else:
-                self.keeper.fix_planet(index)
+                self.tape.engine.fix_planet(index)
                 self.planets[index]['fixed'] = True
 
     def addmass_selected(self, instance):
         index = self.selplanet_index
         if index is not None:
             newmass = self.planets[index]['mass'] * 1.1
-            self.keeper.set_planet_mass(index, newmass)
+            self.tape.engine.set_planet_mass(index, newmass)
 
     def submass_selected(self, instance):
         index = self.selplanet_index
         if index is not None:
             newmass = self.planets[index]['mass'] * 0.9
-            self.keeper.set_planet_mass(index, newmass)
+            self.tape.engine.set_planet_mass(index, newmass)
 
     def center_planet(self, index):
         '''put center of view (gamezone) to planet coords'''
@@ -538,7 +553,7 @@ class Logic(Screen):
             self.gamezone.canvas.remove_group('trajectory_selplanet')
 
     def clone_engine(self, dt):
-
+        assert False, 'MOVED TO TAPE'
         # reset temporary keeper
         if self.engine in ['cplanet', 'crk4engine']:
             for index in xrange(1000):
@@ -566,6 +581,7 @@ class Logic(Screen):
     # calc trajectory of not-yet-existing body
     def calc_trajectory(self, planet_d):
 
+        assert False, 'MOVED TAPE'
         ticks = int(self.settings['ticks_ahead'])
 
         # list of points for trajectory in keeper coord.-system
@@ -594,6 +610,8 @@ class Logic(Screen):
         return temp_list
 
     def calc_trajectory_selplanet(self):
+        '''UNUSED MUST BE REMIMPLEMENTED'''
+        assert False, ' Who calls me?'
         self.gamezone.canvas.remove_group('trajectory_selplanet')
 
         planet = self.planets.get(self.selplanet_index)

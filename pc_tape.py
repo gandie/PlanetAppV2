@@ -9,6 +9,7 @@ engine.
 # BUILTIN
 import time
 from collections import deque
+from random import randint
 
 # ENGINES
 from cplanet import CPlanetKeeper
@@ -48,9 +49,15 @@ class Tape(object):
         # initialize planetkeeper
         self.engine = self.engine_map[self.engine_name]()
 
+        self.clone_engine()
+
     # XXX: this must be called when future changes, e.g. planet is added
     def clone_engine(self):
         ''' create new temporary engine instance for trajectory calculations'''
+
+        # we have to memorize temporary against real indexes to find our body
+        # in future data.
+        self.index_map = {}
 
         # throw away old instance if we have one
         if hasattr(self, 'temp_engine'):
@@ -60,7 +67,7 @@ class Tape(object):
 
         # populate temp engine from status quo saved in planets dict of logic
         for index, planet_d in self.logic.planets.items():
-            temp_id = self.temp_engine.create_planet(
+            temp_index = self.temp_engine.create_planet(
                 pos_x=planet_d['position_x'],
                 pos_y=planet_d['position_y'],
                 vel_x=planet_d['velocity_x'],
@@ -69,9 +76,11 @@ class Tape(object):
                 density=planet_d['density']
             )
 
+            self.index_map[index] = temp_index
+
             # do not forget to also fix bodies for trajectory calc.
             if planet_d['fixed']:
-                self.temp_engine.fix_planet(temp_id)
+                self.temp_engine.fix_planet(temp_index)
 
     def fetch_data(self, engine):
         '''fetch data from an engine, filter non existing planets
@@ -94,18 +103,11 @@ class Tape(object):
             }
         return res
 
-    def tick_engine(self, dt):
-        '''tick main engine representing the present time'''
-        self.engine.tick(self.logic.tick_ratio)
-
-        data = self.fetch_data(self.engine)
-        self.cur_data = data
-        self.history_data.append(data)
-
     def tick_clone(self, dt):
         '''tick engine clone and put data to future stack'''
         # abort if future has changed. wait for update and fresh engine clone
         if self.logic.future_changed:
+            print('Future changed. Waiting')
             return
 
         # XXX: add smart(er) timing code here!
@@ -116,15 +118,23 @@ class Tape(object):
         else:
             ticks = diff
 
+        print('Doing %s ticks' % ticks)
         for _ in range(ticks):
             self.temp_engine.tick(self.logic.tick_ratio)
             self.future_data.append(self.fetch_data(self.temp_engine))
+
+        print('Buffer length: %s' % len(self.future_data))
 
     def update_game(self, dt):
         '''
         apply self.cur_data to logic.planets (l_planets) dict
         check if new engine has to be cloned and future stack has to be reset
         '''
+
+        self.engine.tick(self.logic.tick_ratio)
+
+        self.cur_data = self.fetch_data(self.engine)
+        self.history_data.append(self.cur_data)
 
         l_planets = self.logic.planets
 
@@ -133,6 +143,10 @@ class Tape(object):
         ]
 
         for index, planet_d in self.cur_data.items():
+
+            if index not in l_planets:
+                continue
+
             pos_x = planet_d['pos_x']
             pos_y = planet_d['pos_y']
             mass = planet_d['mass']
@@ -190,7 +204,8 @@ class Tape(object):
 
     def simple_trajectory(self, major_body, minor_body):
         '''Build and fill engine to calculate approximate trajectory of a minor
-        body dominated by major_body
+        body dominated by major_body. Called from trajectory_complex in
+        game mode AddBody.
         '''
         temp_engine = self.engine_map[self.engine_name]()
 
