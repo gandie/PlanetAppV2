@@ -203,6 +203,9 @@ class Tape(object):
             density=major_body['density']
         )
 
+        if major_body['fixed']:
+            temp_engine.fix_planet(major_index)
+
         minor_index = temp_engine.create_planet(
             pos_x=minor_body['position_x'],
             pos_y=minor_body['position_y'],
