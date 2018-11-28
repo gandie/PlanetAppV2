@@ -78,19 +78,28 @@ class GameMode(object):
 
         ud = touch.ud
 
+        curpos_local = self.gamezone.to_local(touch.pos[0], touch.pos[1])
+        mplanet_d = self.logic.find_major_body(curpos_local)
+
+        # fall back to simple if we got no major body, e.g. first body
+        if not mplanet_d:
+            self.trajectory_line(touch)
+            return
+
+        # prepare new temporary body dict
         velocity = self.calc_velocity(touch)
         mass = self.slider_value
-        temp_planet_d = {
+        tplanet_d = {
             'position_x': ud['firstpos_local'][0],
             'position_y': ud['firstpos_local'][1],
             'velocity_x': velocity.x,
             'velocity_y': velocity.y,
             'density': self.density,
-            # 'mass': self.min_mass,
-            'mass': mass
+            'mass': mass,
         }
 
-        trajectory = self.logic.calc_trajectory(temp_planet_d)
+        trajectory = self.logic.tape.simple_trajectory(mplanet_d, tplanet_d)
+
         trajectory_tuple = tuple()
         for point in trajectory:
             t_point = self.gamezone.to_parent(*point)

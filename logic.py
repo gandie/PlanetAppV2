@@ -4,13 +4,13 @@ from kivy.properties import *
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy.core.audio import SoundLoader
-
 from kivy.graphics import Line, Color
 
 
 # CUSTOM
 from planet import Planet
+from game_modi import AddBodyMode, AddBodyMode_Multi, ZoomMode, DelMode
+from pc_tape import Tape
 
 # ENGINES
 from cplanet import CPlanetKeeper
@@ -21,8 +21,6 @@ from crk4engine import CRk4Engine
 from random import choice, randint
 from os import listdir
 import math
-
-from game_modi import AddBodyMode, AddBodyMode_Multi, ZoomMode, DelMode
 
 
 class Logic(Screen):
@@ -65,6 +63,8 @@ class Logic(Screen):
         }
 
         self.init_engines(self.settings['engine'])
+
+        self.tape = Tape(self, self.settings['engine'])
 
         # time per time ratio
         self.tick_ratio = 1.0
@@ -343,9 +343,8 @@ class Logic(Screen):
     def tick_engine(self, dt):
         self.keeper.tick(self.tick_ratio)
 
-    # collect orphaned widgets
-    # TODO: collect bodies far away
     def collect_garbage(self, dt):
+        '''collect orphaned widgets'''
         for widget in self.gamezone.children:
             if self.get_planet_index(widget) is None:
                 self.gamezone.remove_widget(widget)
@@ -411,9 +410,8 @@ class Logic(Screen):
         if self.selplanet_index is not None and self.show_orbit_mode:
             self.calc_trajectory_selplanet()
 
-        print(dt)
-
     def load_textures(self, path):
+        # XXX: build textures+transitions module?
         texture_list = []
         for filename in listdir(path):
             if not filename.endswith('.png'):
@@ -422,12 +420,12 @@ class Logic(Screen):
         return texture_list
 
     def get_planet_index(self, widget):
-        P = self.planets
-        for index in P:
-            if P[index]['widget'] == widget:
+        for index in self.planets:
+            if self.planets[index]['widget'] == widget:
                 return index
 
     def select_planet(self, widget):
+        '''called from zoom mode'''
         if widget == self.selplanet:
             self.selplanet.unselect()
             self.selplanet = None
@@ -455,6 +453,7 @@ class Logic(Screen):
             Clock.schedule_interval(self.update_modpanel, 1.0 / 10.0)
 
     def calc_energy(self):
+        '''UNUSED'''
         # prototype to calculate if body orbits another
         planet_dict = self.planets[self.selplanet_index]
         for comp_index in self.planets:
@@ -474,11 +473,13 @@ class Logic(Screen):
             # print 'dist, grav > energy', dist, gravity > energy
 
     def update_infobox(self, dt):
+        '''UNUSED'''
         if self.selplanet_index is not None:
             planet_dict = self.planets[self.selplanet_index]
             self.mainscreen.infobox.update(**planet_dict)
 
     def update_modpanel(self, dt):
+        # XXX: really call this periodically?
         if self.selplanet_index is not None:
             planet_dict = self.planets[self.selplanet_index]
             # add fixview attribute to dict to update fixedview (eye-icon)
@@ -562,8 +563,6 @@ class Logic(Screen):
             if planet_d['fixed']:
                 self.temp_keeper.fix_planet(temp_id)
 
-        print(dt)
-
     # calc trajectory of not-yet-existing body
     def calc_trajectory(self, planet_d):
 
@@ -625,3 +624,29 @@ class Logic(Screen):
             trajectory_line = [
                 Line(points=trajectory_points,
                      width=1, dash_offset=1, group='trajectory_selplanet')]
+
+    def calc_distance(self, pos1, pos2):
+        '''helper function to calculate distance. may vanish in favour of more
+        performant solution like kivy vector library or even usage of c-powered
+        engine
+        '''
+        a = (pos1[0] - pos2[0]) ** 2
+        b = (pos1[1] - pos2[1]) ** 2
+        return (a + b) ** 0.5
+
+    def find_major_body(self, pos):
+        '''find body excercising most force relative to a given position
+        assuming body has mass 1
+
+        return index of body for further processing
+        may vanish in favour of more performant solution written in c
+        '''
+        major_force = {
+            index: planet_d['mass'] / (self.calc_distance(pos, (planet_d['position_x'], planet_d['position_y'])) ** 2)
+            for index, planet_d in self.planets.items()
+        }
+        if major_force:
+            major_index = max(major_force, key=major_force.get)
+            return self.planets[major_index]
+
+        return None
