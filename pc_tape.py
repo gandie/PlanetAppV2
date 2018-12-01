@@ -35,8 +35,19 @@ class Tape(object):
         }
 
         self.init_engine(engine_name)
-        self.history_data = deque(iterable=[], maxlen=1000)
-        self.future_data = deque(iterable=[], maxlen=1000)
+        self.init_tapes()
+
+        self.tick_time = self.logic.intervals['tick']
+
+    def init_tapes(self):
+        self.history_data = deque(
+            iterable=[],
+            maxlen=self.logic.settings['ticks_history']
+        )
+        self.future_data = deque(
+            iterable=[],
+            maxlen=self.logic.settings['ticks_ahead']
+        )
 
     def init_engine(self, engine_name):
         '''this is called once when app is built and on engine settings change
@@ -110,7 +121,6 @@ class Tape(object):
             print('Future changed. Waiting')
             return
 
-        # XXX: add smart(er) timing code here!
         cur_len = len(self.future_data)
         diff = self.logic.settings['ticks_ahead'] - cur_len
         if diff > TICKS_PER_TICK:
@@ -118,22 +128,31 @@ class Tape(object):
         else:
             ticks = diff
 
-        print('Doing %s ticks' % ticks)
-        for _ in range(ticks):
+        #print('Plan is doing %s ticks' % ticks)
+        timeleft = self.logic.intervals['tick'] * 0.8
+        time_took = 0
+
+        for ticksdone in range(ticks):
             self.temp_engine.tick(self.logic.tick_ratio)
             self.future_data.append(self.fetch_data(self.temp_engine))
+            time_took += self.tick_time
+            if ticksdone > 1 and time_took > timeleft:
+                #print('aborted after %s ticks' % (ticksdone + 1))
+                break
 
-        print('Buffer length: %s' % len(self.future_data))
+        # print('Buffer length: %s' % len(self.future_data))
 
     def update_game(self, dt):
         '''
+        tick engine and fetch data as self.cur_data
         apply self.cur_data to logic.planets (l_planets) dict
         check if new engine has to be cloned and future stack has to be reset
         '''
-
+        start = time.time()
         self.engine.tick(self.logic.tick_ratio)
-
         self.cur_data = self.fetch_data(self.engine)
+        self.tick_time = time.time() - start
+
         self.history_data.append(self.cur_data)
 
         l_planets = self.logic.planets
@@ -201,6 +220,8 @@ class Tape(object):
         # pop oldest value from future
         if len(self.future_data):
             self.future_data.popleft()
+
+        self.logic.check_modes()
 
     def simple_trajectory(self, major_body, minor_body):
         '''Build and fill engine to calculate approximate trajectory of a minor

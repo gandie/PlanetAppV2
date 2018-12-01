@@ -265,6 +265,15 @@ class ConfigModel(object):
                 max_value=1000,
                 seqnum=20
             ),
+            'ticks_history': ConfigType(
+                name='ticks_history',
+                settings_type='number',
+                label='Number of ticks stored in history',
+                defaultvalue=50,
+                min_value=10,
+                max_value=500,
+                seqnum=21
+            ),
             'music_volume': ConfigType(
                 name='music_volume',
                 settings_type='number',

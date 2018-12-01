@@ -96,17 +96,11 @@ class MainScreen(Screen):
             self.remove_widget(self.infobox)
 
     def on_leave(self):
-        self.logic.stop_game()
+        self.logic.stop_game(keep_traces=False)
         btn = self.menupanel.draw_traces_btn
         btn.pressed = False
         btn.source = btn.realtexture
         btn.reload()
-
-        '''
-        if self.logic.tutorial_mode:
-            self.remove_widget(self.tutorial_label)
-            self.logic.tutorial_mode = False
-        '''
 
     def allign_gamezone(self):
         # TODO: maybe check for pinned / heaviest body (if found) and align to

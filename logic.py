@@ -52,19 +52,16 @@ class Logic(Screen):
 
         # set up dicts to be filled
         self.planets = {}
+
+        self.intervals = {
+            'tick':       1 / 25.0,
+            'garbage':    1,
+            'next_track': 5,
+        }
+
         self.settings = settings
         self.sound_manager = sound_manager
         self.sound_manager.logic = self
-
-        ''' MOVED TO TAPE
-        self.engine_map = {
-            'cplanet': CPlanetKeeper,
-            'crk4engine': CRk4Engine,
-            'pythonrk4': Engine,
-        }
-
-        self.init_engines(self.settings['engine'])
-        '''
 
         self.tape = Tape(self, self.settings['engine'])
 
@@ -84,6 +81,7 @@ class Logic(Screen):
         # observe selplanet
         self.bind(selplanet=self.on_selplanet)
 
+        self.lines = dict()
         self.future_changed = False
 
     def init_engines(self, engine):
@@ -108,6 +106,8 @@ class Logic(Screen):
 
         if self.tape.engine_name != self.settings['engine']:
             self.tape.init_engine(self.settings['engine'])
+
+        self.tape.init_tapes()
 
         self.planet_transitions = {
             'moon': {
@@ -218,53 +218,58 @@ class Logic(Screen):
 
     def start_game(self):
 
-        Clock.schedule_interval(self.tape.update_game, 1.0 / 25.0)
-        # Clock.schedule_interval(self.tape.tick_engine, 1.0 / 25.0)
-        Clock.schedule_interval(self.tape.tick_clone, 1.0 / 25.0)
+        Clock.schedule_interval(self.tape.update_game, self.intervals['tick'])
+        Clock.schedule_interval(self.tape.tick_clone, self.intervals['tick'])
 
-        Clock.schedule_interval(self.collect_garbage, 1.0)
-        Clock.schedule_interval(self.sound_manager.autoplay, 5.0)
+        Clock.schedule_interval(self.collect_garbage, self.intervals['garbage'])
+        Clock.schedule_interval(self.sound_manager.autoplay, self.intervals['next_track'])
 
-    def stop_game(self):
+    def stop_game(self, keep_traces=True):
 
         Clock.unschedule(self.tape.update_game)
-        # Clock.unschedule(self.tape.tick_engine)
         Clock.unschedule(self.tape.tick_clone)
 
         Clock.unschedule(self.collect_garbage)
         Clock.unschedule(self.sound_manager.autoplay)
 
-        if self.settings['traces']:
+        if self.settings['traces'] and not keep_traces:
             Clock.unschedule(self.draw_traces)
-            self.gamezone.canvas.remove_group('nein')
-            self.lines = set()
+            self.clear_traces()
+            # self.gamezone.canvas.remove_group('nein')
+            self.lines = dict()
             self.settings['traces'] = False
 
         self.sound_manager.stop()
 
+    def clear_traces(self):
+        indexes = self.planets.keys()
+        for index in indexes:
+            self.gamezone.canvas.remove_group('planet_%s' % index)
+            if index in self.lines:
+                self.lines.pop(index)
+
     def draw_traces(self, dt):
-        print('reimplement me!')
-        '''
+        # self.gamezone.canvas.remove_group('nein')
         for index, planet_d in self.planets.items():
-            with self.gamezone.canvas:
-                self.lines.add((
-                    Color(1, 1, 1),
-                    Line(
-                        circle=(planet_d['position_x'], planet_d['position_y'], 1),
-                        group='nein'
+            history = [entry for entry in self.tape.history_data if index in entry]
+            body_hist = [entry[index] for entry in history]
+            # print(body_hist)
+            points = [(entry['pos_x'], entry['pos_y']) for entry in body_hist]
+            points_t = tuple()
+            for p in points:
+                points_t += p
+            if index in self.lines:
+                self.lines[index].points = points_t
+            else:
+                with self.gamezone.canvas:
+                    c = Color(1, 1, 1)
+                    self.lines[index] = Line(
+                        points=points_t,
+                        # dash_offset=1,
+                        group='planet_%s' % index,
+                        cap='none',
+                        joint='none'
                     )
-                ))
-
-        for color, line in self.lines:
-            color.a -= 0.02
-
-        del_set = {line for line in self.lines if line[0].a < 0}
-        for color, line in del_set:
-            self.gamezone.canvas.remove(line)
-            self.gamezone.canvas.remove(color)
-
-        self.lines.difference_update(del_set)
-        '''
 
     def register_gamezone(self, gamezone):
         self.gamezone = gamezone
@@ -333,8 +338,9 @@ class Logic(Screen):
         for index in self.planets.keys():
             self.delete_planet(index)
 
-        self.gamezone.canvas.remove_group('nein')
-        self.lines = set()
+        # self.gamezone.canvas.remove_group('nein')
+        self.clear_traces()
+        self.lines = dict()
 
     # USE THIS TO DELETE PLANETS!
     def delete_planet(self, index):
@@ -346,6 +352,9 @@ class Logic(Screen):
             self.selplanet = None
         self.tape.engine.delete_planet(index)
         self.planets.pop(index)
+        if index in self.lines:
+            self.lines.pop(index)
+            self.gamezone.canvas.remove_group('planet_%s' % index)
 
     def delete_planet_widget(self, widget):
         index = self.get_planet_index(widget)
@@ -424,6 +433,15 @@ class Logic(Screen):
 
         if self.selplanet_index is not None and self.show_orbit_mode:
             self.calc_trajectory_selplanet()
+
+    def check_modes(self):
+        if self.selplanet_index is not None and self.fixview_mode:
+            self.center_planet(self.selplanet_index)
+
+        '''
+        if self.selplanet_index is not None and self.show_orbit_mode:
+            self.calc_trajectory_selplanet()
+        '''
 
     def load_textures(self, path):
         # XXX: build textures+transitions module?

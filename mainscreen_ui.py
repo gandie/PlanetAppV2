@@ -197,12 +197,13 @@ class MenuPanel(FloatLayout):
         self.logic.tick_ratio = value
 
     def toggle_traces(self, value):
-        self.logic.lines = set()
+        self.logic.lines = dict()
         if not value:
             Clock.unschedule(self.logic.draw_traces)
-            self.logic.gamezone.canvas.remove_group('nein')
+            # self.logic.gamezone.canvas.remove_group('nein')
+            self.logic.clear_traces()
         else:
-            Clock.schedule_interval(self.logic.draw_traces, 0.5)
+            Clock.schedule_interval(self.logic.draw_traces, self.logic.intervals['tick'])
 
         self.logic.settings['traces'] = value
 
