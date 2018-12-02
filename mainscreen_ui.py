@@ -191,7 +191,8 @@ class MenuPanel(FloatLayout):
         self.paused = value
 
     def ticks_ahead_change(self, instance, value):
-        self.logic.settings['ticks_ahead'] = int(value)
+        # self.logic.settings['ticks_ahead'] = int(value)
+        pass
 
     def timeratio_change(self, instance, value):
         self.logic.tick_ratio = value

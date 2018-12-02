@@ -84,17 +84,6 @@ class Logic(Screen):
         self.lines = dict()
         self.future_changed = False
 
-    def init_engines(self, engine):
-
-        assert False, 'MOVED TO TAPE'
-        assert engine in self.engine_map, 'Unknown engine!'
-        self.engine = engine
-        # initialize planetkeeper
-        self.keeper = self.engine_map[self.engine]()
-
-        # temporary keeper for trajectory calculation
-        self.temp_keeper = self.engine_map[self.engine]()
-
     def show_track(self, trackname):
         '''pass trackname to sound widget'''
         # print('Sound next callback: %s' % trackname)
@@ -107,6 +96,8 @@ class Logic(Screen):
         if self.tape.engine_name != self.settings['engine']:
             self.tape.init_engine(self.settings['engine'])
 
+        # changing setting also changes the future ^^
+        self.future_changed = True
         self.tape.init_tapes()
 
         self.planet_transitions = {
@@ -242,6 +233,7 @@ class Logic(Screen):
         self.sound_manager.stop()
 
     def clear_traces(self):
+        '''called from stop_game and reset_planets'''
         indexes = self.planets.keys()
         for index in indexes:
             self.gamezone.canvas.remove_group('planet_%s' % index)
@@ -249,11 +241,14 @@ class Logic(Screen):
                 self.lines.pop(index)
 
     def draw_traces(self, dt):
-        # self.gamezone.canvas.remove_group('nein')
+        '''fetch and filter history_data from tape and draw line for each
+        body. only create new line object if planet index is not found
+        in self.lines dict storing one line per planet. deleted planets
+        lines will be removed during delete_planet call using the index-unique
+        canvas group.'''
         for index, planet_d in self.planets.items():
             history = [entry for entry in self.tape.history_data if index in entry]
             body_hist = [entry[index] for entry in history]
-            # print(body_hist)
             points = [(entry['pos_x'], entry['pos_y']) for entry in body_hist]
             points_t = tuple()
             for p in points:
@@ -265,8 +260,7 @@ class Logic(Screen):
                     c = Color(1, 1, 1)
                     self.lines[index] = Line(
                         points=points_t,
-                        # dash_offset=1,
-                        group='planet_%s' % index,
+                        group='planet_%s' % index,  # mark line for planet
                         cap='none',
                         joint='none'
                     )
@@ -360,88 +354,19 @@ class Logic(Screen):
         index = self.get_planet_index(widget)
         self.delete_planet(index)
 
-    # let the keeper do its work
-    def tick_engine(self, dt):
-
-        assert False, 'MOVED TO TAPE'
-        self.keeper.tick(self.tick_ratio)
-
     def collect_garbage(self, dt):
         '''collect orphaned widgets'''
         for widget in self.gamezone.children:
             if self.get_planet_index(widget) is None:
                 self.gamezone.remove_widget(widget)
 
-    def update_game(self, dt):
-        assert False, 'MOVED TO TAPE'
-        del_indexes = []
-        for index in self.planets:
-            if self.keeper.planet_exists(index):
-                # fetch data from keeper
-                pos_x = self.keeper.get_planet_pos_x(index)
-                pos_y = self.keeper.get_planet_pos_y(index)
-                mass = self.keeper.get_planet_mass(index)
-                radius = self.keeper.get_planet_radius(index)
-                vel_x = self.keeper.get_planet_vel_x(index)
-                vel_y = self.keeper.get_planet_vel_y(index)
-
-                # cleanup garbage
-                if pos_x > self.gamezone.size[0] or pos_x < 0:
-                    del_indexes.append(index)
-                    continue
-                if pos_y > self.gamezone.size[1] or pos_y < 0:
-                    del_indexes.append(index)
-                    continue
-
-                # update physics data
-                self.planets[index]['position_x'] = pos_x
-                self.planets[index]['position_y'] = pos_y
-                self.planets[index]['velocity_x'] = vel_x
-                self.planets[index]['velocity_y'] = vel_y
-                self.planets[index]['mass'] = mass
-                self.planets[index]['radius'] = radius
-
-                # update planet widget
-                self.planets[index]['widget'].center_x = pos_x
-                self.planets[index]['widget'].center_y = pos_y
-                self.planets[index]['widget'].size = (radius * 2, radius * 2)
-
-                transition = self.planet_transitions.get(self.planets[index]['body'])
-                if transition:
-                    if self.planets[index]['mass'] > transition['mass']:
-                        self.planets[index]['body'] = transition['nextbody']
-                        self.planets[index]['density'] = transition['density']
-                        self.keeper.set_planet_density(index, transition['density'])
-                        texture_index = randint(0, len(transition['textures']) - 1)
-                        newplanet_texture = transition['textures'][texture_index]
-                        self.planets[index]['widget'].set_base_image(newplanet_texture)
-                        self.planets[index]['texture_index'] = texture_index
-            else:
-                # collect planets to be deleted
-                del_indexes.append(index)
-
-        for index in del_indexes:
-            self.delete_planet(index)
-
-        '''
-        if self.selplanet_index is not None:
-            self.calc_energy()
-        '''
-
-        if self.selplanet_index is not None and self.fixview_mode:
-            self.center_planet(self.selplanet_index)
-
-        if self.selplanet_index is not None and self.show_orbit_mode:
-            self.calc_trajectory_selplanet()
-
     def check_modes(self):
+        '''called from tape update'''
         if self.selplanet_index is not None and self.fixview_mode:
             self.center_planet(self.selplanet_index)
 
-        '''
         if self.selplanet_index is not None and self.show_orbit_mode:
-            self.calc_trajectory_selplanet()
-        '''
+            self.draw_trajectory_selplanet()
 
     def load_textures(self, path):
         # XXX: build textures+transitions module?
@@ -469,6 +394,8 @@ class Logic(Screen):
             self.selplanet.select()
 
     def on_selplanet(self, instance, value):
+        # XXX: check if selplanet is altered from different place then method
+        # select_planet above
         if value is None:
             # self.mainscreen.remove_infobox()
             self.mainscreen.remove_modpanel()
@@ -570,96 +497,28 @@ class Logic(Screen):
         if not value:
             self.gamezone.canvas.remove_group('trajectory_selplanet')
 
-    def clone_engine(self, dt):
-        assert False, 'MOVED TO TAPE'
-        # reset temporary keeper
-        if self.engine in ['cplanet', 'crk4engine']:
-            for index in xrange(1000):
-                self.temp_keeper.delete_planet(index)
-        else:
-            self.temp_keeper.planets = {}
+    def draw_trajectory_selplanet(self):
+        '''fetch and filter data from future tape and draw a line from it'''
 
-        # populate temp engine
-        for index in self.planets:
-            planet_d = self.planets[index]
-            temp_id = self.temp_keeper.create_planet(
-                pos_x=planet_d['position_x'],
-                pos_y=planet_d['position_y'],
-                vel_x=planet_d['velocity_x'],
-                vel_y=planet_d['velocity_y'],
-                mass=planet_d['mass'],
-                density=planet_d['density']
-            )
-            if index == self.selplanet_index:
-                self.selplanet_index_temp = temp_id
-            # do not forget to also fix bodies for trajectory calc.
-            if planet_d['fixed']:
-                self.temp_keeper.fix_planet(temp_id)
-
-    # calc trajectory of not-yet-existing body
-    def calc_trajectory(self, planet_d):
-
-        assert False, 'MOVED TAPE'
-        ticks = int(self.settings['ticks_ahead'])
-
-        # list of points for trajectory in keeper coord.-system
-        temp_list = []
-        # return temp_list
-        # create temporary body in temp keeper
-        temp_index = self.temp_keeper.create_planet(
-            pos_x=planet_d['position_x'],
-            pos_y=planet_d['position_y'],
-            vel_x=planet_d['velocity_x'],
-            vel_y=planet_d['velocity_y'],
-            mass=planet_d['mass'],
-            density=planet_d['density']
-        )
-
-        # look into the future using the temp keeper
-        for _ in xrange(ticks):
-            self.temp_keeper.tick(self.tick_ratio)
-            if self.temp_keeper.planet_exists(temp_index):
-                # fetch data from keeper, track position
-                pos_x = self.temp_keeper.get_planet_pos_x(temp_index)
-                pos_y = self.temp_keeper.get_planet_pos_y(temp_index)
-                pos = (pos_x, pos_y)
-                temp_list.append(pos)
-
-        return temp_list
-
-    def calc_trajectory_selplanet(self):
-        '''UNUSED MUST BE REMIMPLEMENTED'''
-        assert False, ' Who calls me?'
         self.gamezone.canvas.remove_group('trajectory_selplanet')
+        temp_index = self.tape.index_map[self.selplanet_index]
 
-        planet = self.planets.get(self.selplanet_index)
-        if planet is None:
-            return
+        future = [
+            entry for entry in self.tape.future_data if temp_index in entry
+        ]
 
-        # selpannet index might differ from index in temp_keeper
-        # see clone engine
-        index = self.selplanet_index_temp
-
-        if not index:
-            return
-
-        ticks = int(self.settings['ticks_ahead'])
-
-        trajectory_points = tuple()
-        # look into the future using the temp keeper
-        for _ in xrange(ticks):
-            self.temp_keeper.tick(self.tick_ratio)
-            if self.temp_keeper.planet_exists(index):
-                # fetch data from keeper, track position
-                pos_x = self.temp_keeper.get_planet_pos_x(index)
-                pos_y = self.temp_keeper.get_planet_pos_y(index)
-                pos = (pos_x, pos_y)
-                trajectory_points += pos
+        body_fut = [entry[temp_index] for entry in future]
+        points = [(entry['pos_x'], entry['pos_y']) for entry in body_fut]
+        points_t = tuple()
+        for p in points:
+            points_t += p
 
         with self.gamezone.canvas:
             trajectory_line = [
-                Line(points=trajectory_points,
-                     width=1, dash_offset=1, group='trajectory_selplanet')]
+                Line(points=points_t,
+                     width=1,
+                     group='trajectory_selplanet')
+            ]
 
     def calc_distance(self, pos1, pos2):
         '''helper function to calculate distance. may vanish in favour of more

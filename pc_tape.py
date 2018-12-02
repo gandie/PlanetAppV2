@@ -3,7 +3,8 @@ module to handle communication between app and engine
 
 goal is create an api for the app to fetch current, past and future planet
 position data. this is done by using several instances of the current used
-engine.
+engine. data is saved into deque object read by logic or directly in this
+module.
 '''
 
 # BUILTIN
@@ -40,6 +41,7 @@ class Tape(object):
         self.tick_time = self.logic.intervals['tick']
 
     def init_tapes(self):
+        '''called on initialization and on apply_settings from logic'''
         self.history_data = deque(
             iterable=[],
             maxlen=self.logic.settings['ticks_history']
@@ -62,7 +64,6 @@ class Tape(object):
 
         self.clone_engine()
 
-    # XXX: this must be called when future changes, e.g. planet is added
     def clone_engine(self):
         ''' create new temporary engine instance for trajectory calculations'''
 
@@ -132,7 +133,7 @@ class Tape(object):
         timeleft = self.logic.intervals['tick'] * 0.8
         time_took = 0
 
-        for ticksdone in range(ticks):
+        for ticksdone in range(int(ticks)):
             self.temp_engine.tick(self.logic.tick_ratio)
             self.future_data.append(self.fetch_data(self.temp_engine))
             time_took += self.tick_time
@@ -221,6 +222,7 @@ class Tape(object):
         if len(self.future_data):
             self.future_data.popleft()
 
+        # call logic to check for modes like center_planet and show_orbit
         self.logic.check_modes()
 
     def simple_trajectory(self, major_body, minor_body):
