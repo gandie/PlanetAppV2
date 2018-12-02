@@ -14,7 +14,7 @@ from slot import SettingsSlot
 
 '''
 screen to alter settings. basically a scrollview containing settings slots.
-also access kivy settings from here.
+also access kivy settings from here via button.
 '''
 
 
@@ -41,21 +41,13 @@ class SettingsScreen(Screen):
         self.build_interface()
 
     def on_enter(self):
-        '''
-        get settings from logic
-        '''
-        # logic_settings = self.logic.settings
-        # for key in logic_settings.keys():
+        '''get settings from logic'''
         for key in self.logic.settings:
             if key in self.setting_items:
                 self.setting_items[key].value = self.logic.settings[key]
 
     def on_leave(self):
-        '''
-        write setting to logic and save to file
-        '''
-        # logic_settings = self.logic.settings
-        # for key in logic_settings.keys():
+        '''write setting to logic and save to file'''
         for key in self.logic.settings:
             if key in self.setting_items:
                 self.logic.settings[key] = self.setting_items[key].value

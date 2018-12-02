@@ -34,7 +34,7 @@ import time
 main module of application. entry point when application is run. build-method
 is run first, on_start and on_stop fire when app is actually started or closed.
 
-also contains load/save mechanism for settings and savegames.
+also contains load/save mechanism for savegames.
 '''
 
 
@@ -95,7 +95,7 @@ class PlanetApp(App):
             name='credits'
         )
 
-        # XXX: order adding here reflects which screen is shown first!
+        # order adding here reflects which screen is shown first!
         self.screenmanager.add_widget(self.menuscreen)
         self.screenmanager.add_widget(self.mainscreen)
         self.screenmanager.add_widget(self.settingsscreen)
@@ -107,8 +107,6 @@ class PlanetApp(App):
         return self.screenmanager
 
     def on_start(self):
-        # self.load_settings()
-        # self.logic.load_transitions()
         self.load_game()
 
     def on_stop(self):
@@ -168,6 +166,7 @@ class PlanetApp(App):
         config.setdefaults('graphics', {
             'maxfps': '30'
         })
+
 
 if __name__ == '__main__':
     PlanetApp().run()

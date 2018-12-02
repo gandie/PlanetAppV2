@@ -14,8 +14,8 @@ from kivy.uix.button import Button
 from realbutton import RealToggleButton, RealButton
 
 '''
-Slot = widget to show savegame-slot
-SettingsSlot = widget to show settings item
+Slot = widget to show savegame-slot, used in savegamescreen
+SettingsSlot = widget to show settings item, used in SettingsScreen
 '''
 
 

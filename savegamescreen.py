@@ -65,6 +65,7 @@ class SavegameScreen(Screen):
                       "y": 0.25}
         )
 
+        # XXX: magic number! number of savegame slots!
         for i in range(1, 6):
             self.buttonlayout.add_widget(Slot(i, self.switchto_main))
 

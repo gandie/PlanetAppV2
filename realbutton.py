@@ -6,10 +6,15 @@ from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.clock import Clock
 
 '''
-custom button mechanics due to problems with texture scaling in kivy buttons
+custom button mechanics due to problems with texture scaling in kivy buttons.
+Uses Image and ButtonBehavior mixin class, problem with normal kivy button was
+that textures of cicular buttons had been strangely transformed into
+non-circular which looked awful.
 '''
 
 
+# XXX: clear usage of source for images against realtexture to avoid mentioning
+# the same texture twice in constructor
 class RealButton(ButtonBehavior, Image):
 
     def __init__(self, realtexture, realtexture_pressed, function, **kwargs):
