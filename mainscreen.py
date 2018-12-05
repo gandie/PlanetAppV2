@@ -96,7 +96,7 @@ class MainScreen(Screen):
             self.remove_widget(self.infobox)
 
     def on_leave(self):
-        self.logic.stop_game(keep_traces=False)
+        self.logic.stop_game(keep_traces=False, keep_sound=False)
         btn = self.menupanel.draw_traces_btn
         btn.pressed = False
         btn.source = btn.realtexture

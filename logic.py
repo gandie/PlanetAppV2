@@ -215,7 +215,7 @@ class Logic(Screen):
         Clock.schedule_interval(self.collect_garbage, self.intervals['garbage'])
         Clock.schedule_interval(self.sound_manager.autoplay, self.intervals['next_track'])
 
-    def stop_game(self, keep_traces=True):
+    def stop_game(self, keep_traces=True, keep_sound=True):
 
         Clock.unschedule(self.tape.update_game)
         Clock.unschedule(self.tape.tick_clone)
@@ -230,7 +230,8 @@ class Logic(Screen):
             self.lines = dict()
             self.settings['traces'] = False
 
-        self.sound_manager.stop()
+        if not keep_sound:
+            self.sound_manager.stop()
 
     def clear_traces(self):
         '''called from stop_game and reset_planets'''

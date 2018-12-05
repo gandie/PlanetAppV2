@@ -144,7 +144,7 @@ class PlanetApp(App):
             save_name = 'save_{}.json'.format(i)
             save_exists = os.path.exists(save_name)
             if save_exists:
-                time_raw = os.path.getmtime('save_{}.json'.format(i))
+                time_raw = os.path.getmtime(save_name)
                 time_save = time.ctime(time_raw)
                 save_mtimes[i] = str(time_save)
             else:
