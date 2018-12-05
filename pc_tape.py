@@ -118,9 +118,16 @@ class Tape(object):
     def tick_clone(self, dt):
         '''tick engine clone and put data to future stack'''
         # abort if future has changed. wait for update and fresh engine clone
+
+        # invalidate future data and clone new engine if future changed
         if self.logic.future_changed:
-            print('Future changed. Waiting')
-            return
+            self.future_data.clear()
+            self.clone_engine()
+            self.logic.future_changed = False
+
+        # pop oldest value from future
+        if len(self.future_data):
+            self.future_data.popleft()
 
         cur_len = len(self.future_data)
         diff = self.logic.settings['ticks_ahead'] - cur_len
@@ -211,16 +218,6 @@ class Tape(object):
 
         for index in del_indexes:
             self.logic.delete_planet(index)
-
-        # invalidate future data and clone new engine if future changed
-        if self.logic.future_changed:
-            self.future_data.clear()
-            self.clone_engine()
-            self.logic.future_changed = False
-
-        # pop oldest value from future
-        if len(self.future_data):
-            self.future_data.popleft()
 
         # call logic to check for modes like center_planet and show_orbit
         self.logic.check_modes()

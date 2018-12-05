@@ -146,7 +146,7 @@ class MenuPanel(FloatLayout):
         )
 
         self.timeratio_slider = Slider(
-            min=0,
+            min=0.1,
             max=2,
             value=self.logic.tick_ratio,
             step=.1,
@@ -176,8 +176,8 @@ class MenuPanel(FloatLayout):
         ]
 
         self.hide_sliders = [
-            self.timeratio_label,
             self.ticks_ahead_label,
+            self.timeratio_label,
         ]
 
     def goto_menu(self, instance):
@@ -191,11 +191,12 @@ class MenuPanel(FloatLayout):
         self.paused = value
 
     def ticks_ahead_change(self, instance, value):
-        # self.logic.settings['ticks_ahead'] = int(value)
-        pass
+        self.logic.settings['ticks_ahead'] = int(value)
+        self.logic.future_changed = True
 
     def timeratio_change(self, instance, value):
         self.logic.tick_ratio = value
+        self.logic.future_changed = True
 
     def toggle_traces(self, value):
         self.logic.lines = dict()
