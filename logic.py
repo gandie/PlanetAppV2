@@ -350,6 +350,9 @@ class Logic(Screen):
         if index in self.lines:
             self.lines.pop(index)
             self.gamezone.canvas.remove_group('planet_%s' % index)
+        for entry in self.tape.history_data:
+            if index in entry:
+                entry.pop(index)
 
     def delete_planet_widget(self, widget):
         index = self.get_planet_index(widget)
