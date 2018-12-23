@@ -136,7 +136,6 @@ class Tape(object):
         else:
             ticks = diff
 
-        #print('Plan is doing %s ticks' % ticks)
         timeleft = self.logic.intervals['tick'] * 0.8
         time_took = 0
 
@@ -145,7 +144,6 @@ class Tape(object):
             self.future_data.append(self.fetch_data(self.temp_engine))
             time_took += self.tick_time
             if ticksdone > 1 and time_took > timeleft:
-                #print('aborted after %s ticks' % (ticksdone + 1))
                 break
 
         # print('Buffer length: %s' % len(self.future_data))

@@ -17,7 +17,6 @@ simple screen to show some credits using a scrollview
 
 class CreditsScreen(Screen):
 
-
     logic = ObjectProperty(None)
     mainlayout = ObjectProperty(None)
 
@@ -97,6 +96,5 @@ class CreditsScreen(Screen):
             'many many more people from FLAFLA',
             '',
             '## Thanks to ##',
-            'My roommates for enduring my endless hours of talk about this project',
             'Everyone else i forgtot to mention'
         ]

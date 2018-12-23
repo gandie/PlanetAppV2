@@ -3,8 +3,10 @@ from kivy.config import Config
 Config.set('graphics', 'maxfps', '30')
 Config.set('kivy', 'log_enable', '0')
 
-# resize window when using windows to beautify layout
+# resize window when using windows to beautify layout...
 if platform.system() == 'Windows':
+    # ...and set window icon. ATTENTION! only do this on windows! android app
+    # crashed with this option set
     Config.set('kivy', 'window_icon', 'media/pocketcosmos.ico')
     Config.set('graphics', 'width', '1280')
     Config.set('graphics', 'height', '720')

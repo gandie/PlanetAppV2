@@ -1,16 +1,8 @@
-* TODO [#A] RK4-Engine: dynamisch, wie engine_rk4.py
-* TODO [#A] BuildHelper: Wine Windows Build
 * TODO [#B] Sound
 ** DONE [#A] Musik
 *** Play/pause checken
 ** TODO [#B] Effekte
 
-* TODO [#A] Icons
-** DONE Besseres Icon?
-** DONE ShowOrbit Icon
-** DONE Show/Hide Toggle
-** Info Icon
-** DONE Gewicht Plus/Minus
 * TODO [#B] Planeten-Texturen
 ** DONE [#A] Texturen für HD-Screens
 ** TODO [#B] Noch eine Textur um Glow abzubilden
@@ -25,6 +17,14 @@
 *** Auswertung der Distanz --> Orbits
 *** Zählen von Kollisionen
 ** TODO [#B] Auswertung der Trajekorie TUTORIAL
+* DONE Icons
+** DONE Besseres Icon?
+** DONE ShowOrbit Icon
+** DONE Show/Hide Toggle
+** Info Icon
+** DONE Gewicht Plus/Minus
+* DONE BuildHelper: Wine Windows Build
+* DONE RK4-Engine: dynamisch, wie engine_rk4.py
 * DONE Online Saves
 ** TODO [#B] Screen für Up-/Download
 ** TODO [#C] Preview? Description? Daten für Savegame?

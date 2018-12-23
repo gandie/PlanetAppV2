@@ -30,9 +30,7 @@ Unzip the windows release to a place you trust. Then Navigate into the `main`
 folder and start `main.exe`.
 
 Expect missing `missing *.dll` errors on startup, these are caused by the sound
-module and must be investigated in future releases. Currenty all windows releases
-work with debug console activated, so expect one window showing the app and another
-one showing a terminal showing strange errors.
+module and must be investigated in future releases.
 
 ## Android
 
