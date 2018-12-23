@@ -2,6 +2,7 @@ import platform
 from kivy.config import Config
 Config.set('graphics', 'maxfps', '30')
 Config.set('kivy', 'log_enable', '0')
+Config.set('kivy', 'window_icon', 'media/pocketcosmos.ico')
 
 # resize window when using windows to beautify layout
 if platform.system() == 'Windows':
@@ -51,6 +52,7 @@ class PlanetApp(App):
     logic = ObjectProperty(None)
 
     def build(self):
+        self.title = 'PocketCosmos'
         self.calc_iconsize()
         self.settings = ConfigController('settings.json')
 
