@@ -130,9 +130,9 @@ class MenuPanel(FloatLayout):
 
         self.ticks_ahead_slider = Slider(
             min=100,
-            max=1000,
+            max=500,
             value=self.logic.settings['ticks_ahead'],
-            step=1,
+            step=10,
             orientation='horizontal',
             pos_hint={'x': -3, 'y': 1},
             size_hint=(3, 0.2)
