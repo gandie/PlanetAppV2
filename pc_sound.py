@@ -15,7 +15,6 @@ def no_sound_d(func):
     sound support is unavailable on current system'''
     def inner(instance, *args):
         if instance.no_sound:
-            print('I have no sound support for you today.')
             return
         func(instance, *args)
 
@@ -61,7 +60,6 @@ class SoundManager(object):
                 # this happens on OX X due to my incapability (and will) to
                 # compile audio libs on apple devices
                 self.no_sound = True
-                print('I have no sound support for you today.')
                 break
 
         # will crash if no sound files were found
