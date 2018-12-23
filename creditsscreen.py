@@ -11,7 +11,7 @@ from kivy.uix.scrollview import ScrollView
 from realbutton import RealButton
 
 '''
-simple screen to show some credits
+simple screen to show some credits using a scrollview
 '''
 
 

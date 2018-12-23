@@ -14,14 +14,35 @@ Requirements:
 * buildozer (to build for android)
 * pyinstaller (to build for windows)
 
-See [Releases](https://github.com/gandie/PlanetAppV2/releases) for prebuilt versions.
 
 Currently using versions:
 * Cython version 0.25.1
 * Kivy version 1.10.0
 * Buildozer version 0.34
 
-# Installation / Packaging
+# Installation
+
+See [Releases](https://github.com/gandie/PlanetAppV2/releases) for prebuilt versions.
+
+## Windows
+
+Unzip the windows release to a place you trust. Then Navigate into the `main`
+folder and start `main.exe`.
+
+Expect missing `missing *.dll` errors on startup, these are caused by the sound
+module and must be investigated in future releases. Currenty all windows releases
+work with debug console activated, so expect one window showing the app and another
+one showing a terminal showing strange errors.
+
+## Android
+
+Download the android release (apk) to your device. Then make sure you allow the
+installation of untrusted software (and disallow it after installation!).
+
+Use a file explorer app of your choice, navigate to your downloads folders and
+install the app by executing the apk file.
+
+# Packaging / Building
 
 PocketCosmos can be built into an android app using buildozer (apk) and into
 a windows EXE-file using pyinstaller.

@@ -129,10 +129,22 @@ class PlanetApp(App):
 
     def save_game(self, slot='current'):
         # make deepcopy to avoid deleting widget ref from actual logic.planets
-        planets_d = copy.deepcopy(self.logic.planets)
+        #planets_d = copy.deepcopy(self.logic.planets)
+
+        planets_d = {
+            index: {
+                key: value
+                for key, value in item.items()
+                if key != 'widget'
+            }
+            for index, item in self.logic.planets.items()
+        }
         # delete widget reference, it's not needed in savegames
+
+        '''
         for index in planets_d:
             planets_d[index].pop('widget')
+        '''
 
         json_d = json.dumps(planets_d)
         with open('save_{}.json'.format(slot), 'w') as save_file:

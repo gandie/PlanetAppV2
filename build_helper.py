@@ -154,7 +154,10 @@ def parse_spec():
     with open('buildozer.spec', 'r') as specfile:
         lines = specfile.readlines()
     key_lines = dict(
-        (key, line.split(' = ')[1].strip()) for line in lines for key in keys if key in line and not line.startswith('#')
+        (key, line.split(' = ')[1].strip())
+        for line in lines
+        for key in keys
+        if key in line and not line.startswith('#')
     )
     return key_lines
 

@@ -465,18 +465,21 @@ class Logic(Screen):
             else:
                 self.tape.engine.fix_planet(index)
                 self.planets[index]['fixed'] = True
+            self.future_changed = True
 
     def addmass_selected(self, instance):
         index = self.selplanet_index
         if index is not None:
             newmass = self.planets[index]['mass'] * 1.1
             self.tape.engine.set_planet_mass(index, newmass)
+            self.future_changed = True
 
     def submass_selected(self, instance):
         index = self.selplanet_index
         if index is not None:
             newmass = self.planets[index]['mass'] * 0.9
             self.tape.engine.set_planet_mass(index, newmass)
+            self.future_changed = True
 
     def center_planet(self, index):
         '''put center of view (gamezone) to planet coords'''
