@@ -203,6 +203,9 @@ class MainScreen(Screen):
 
         self.add_widget(self.add_menupanel)
 
+        if self.logic.sound_manager.no_sound:
+            return
+
         self.sound_panel = mainscreen_ui.SoundPanel(
             self.iconsize,
             self.iconratio_y,

@@ -3,7 +3,6 @@ Sound handling module of PocketCosmos app.
 '''
 # KIVY
 from kivy.core.audio import SoundLoader
-from kivy.clock import Clock
 
 # BUILTIN
 import os
@@ -55,6 +54,9 @@ class SoundManager(object):
                 sound = SoundLoader.load(
                     os.path.join(self.path, sound_file)
                 )
+                if not sound:
+                    self.no_sound = True
+                    break
                 self.sound_map[sound_file] = sound
             except:  # well, forgot the Exceptions name. but...who cares?!
                 # this happens on OX X due to my incapability (and will) to
