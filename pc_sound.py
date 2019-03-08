@@ -67,16 +67,16 @@ class SoundManager(object):
         # will crash if no sound files were found
         self.next()
 
-    @no_sound_d
+    #@no_sound_d
     def next(self):
         '''pick next track from sound_map'''
 
-        self.curkey = random.choice(self.sound_map.keys())
+        self.curkey = random.choice(list(self.sound_map.keys()))
         self.cursound = self.sound_map[self.curkey]
         if hasattr(self, 'logic'):
             self.logic.show_track(self.curkey)
 
-    @no_sound_d
+    #@no_sound_d
     def autoplay(self, dt):
         '''called periodically from logic to check if next track has to be
         played'''
@@ -86,14 +86,14 @@ class SoundManager(object):
             self.next()
             self.play()
 
-    @no_sound_d
+    #@no_sound_d
     def play(self):
         '''called from mainscreen sound widget or logic module'''
         if self.cursound.state == 'stop':
             self.cursound.volume = self.settings['music_volume']
             self.cursound.play()
 
-    @no_sound_d
+    #@no_sound_d
     def stop(self):
         '''called from mainscreen sound widget or logic module'''
         if self.cursound.state == 'play':

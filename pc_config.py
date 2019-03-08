@@ -286,7 +286,7 @@ class ConfigModel(object):
         }
 
     def __iter__(self):
-        return self.config.iterkeys()
+        return iter(self.config.keys())
 
     def __getitem__(self, key):
         return self.config[key]
@@ -316,7 +316,7 @@ class ConfigController(object):
         self.model[key] = value
 
     def __iter__(self):
-        return self.model.config.iterkeys()
+        return iter(self.model.config.keys())
 
     def load(self):
         try:

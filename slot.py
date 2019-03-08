@@ -85,8 +85,8 @@ class SettingsSlot(GridLayout):
     value = ObjectProperty(None)
 
     def __init__(self, **kwargs):
-        super(SettingsSlot, self).__init__(**kwargs)
-
+        # super(SettingsSlot, self).__init__(**kwargs)
+        GridLayout.__init__(self)
         self.setting_value = kwargs.get('setting_value')
         self.setting_min = kwargs.get('setting_min')
         self.setting_max = kwargs.get('setting_max')

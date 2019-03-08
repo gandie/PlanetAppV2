@@ -6,6 +6,6 @@ class CplanetRecipe(IncludedFilesBehaviour, CythonRecipe):
     url = ''
     name = 'cplanet'
     src_filename = 'src'
-    depends = [('python2')]
+    depends = [('python3')]
 
 recipe = CplanetRecipe()

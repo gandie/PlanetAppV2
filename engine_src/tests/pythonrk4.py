@@ -18,8 +18,8 @@ class CPlanetTests(unittest.TestCase):
         '''
         simple load test to measure engine improvements
         '''
-        for _ in xrange(100):
-            for index in xrange(1000):
+        for _ in range(100):
+            for index in range(1000):
                 newindex = self.keeper.create_planet(
                     pos_x=index,
                     pos_y=index,

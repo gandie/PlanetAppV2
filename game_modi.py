@@ -130,8 +130,8 @@ class GameMode(object):
         '''
         radius = int(R)
         yielded = []
-        for radius_step in xrange(1, radius + 1):
-            for angle_index in xrange(2**(radius_step + 1)):
+        for radius_step in range(1, radius + 1):
+            for angle_index in range(2**(radius_step + 1)):
                 angle = angle_index * math.pi / (2 ** radius_step)
                 x = int(math.cos(angle) * radius_step)
                 y = int(math.sin(angle) * radius_step)

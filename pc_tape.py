@@ -251,7 +251,7 @@ class Tape(object):
         ticks = int(self.logic.settings['ticks_ahead'])
         temp_list = []
 
-        for _ in xrange(ticks):
+        for _ in range(ticks):
             temp_engine.tick(self.logic.tick_ratio)
             if temp_engine.planet_exists(minor_index):
                 # fetch data from keeper, track position

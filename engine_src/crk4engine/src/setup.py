@@ -19,7 +19,7 @@ try:
 except ImportError:
     USE_CYTHON = False
 
-print "USE_CYTHON =", USE_CYTHON
+print("USE_CYTHON =", USE_CYTHON)
 
 # If no Cython, we assume a 'crect.c' compiled with: 'cython crect.pyx'
 ext = '.pyx' if USE_CYTHON else '.c'
