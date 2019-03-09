@@ -91,9 +91,89 @@ Windows build has been tested using pyinstaller installed into a virtualwine
 environment. `main.spec` can be altered and used with pyinstaller to build EXE-files.
 
 Make sure your wine environment has following components installed:
-+ Python (2.7 / 3.X)
-* Kivy
++ Python (2.7 / 3.4.4)
 + MinGW
+
+### virtualwine + Python3.4 setup
+
+First set up your new wine environment and activate it:
+
+```bash
+cd path/where/ur/wines/live
+vwine-setup python3wine
+. python3wine/bin/activate.fish
+```
+
+All commands mentioned from here must run inside the `(python3wine)` environment.
+Now install Python3.4:
+
+```bash
+cd path/where/u/keep/python34
+wine msiexec -i python-3.4.4.msi
+```
+
+Install MinGW C / C++ compiler which is needed to build engines:
+
+```bash
+cd path/where/u/keep/MinGW
+wine mingw-get-setup.exe
+```
+
+If you experience any trouble with MinGW usage, try step mentioned [here](https://stackoverflow.com/questions/24683305/python-cant-install-packages-typeerror-unorderable-types-nonetype-str)
+
+Editing `PATH` variable in wine is explained [here](https://wiki.winehq.org/Wine_User%27s_Guide#Setting_Windows.2FDOS_environment_variables)
+
+It may be useful to add `C:\Python34\` and `C:\Python34\scripts\` to `PATH` as well
+for easier `python.exe` and `pip.exe` invocation.
+
+Now start installing python packages:
+
+```bash
+cd path/where/ur/wines/live/python3wine/drive_c/Python34/ # ..or your add "C:\Python34\" to PATH
+wine python.exe -m pip install cython
+wine python.exe -m pip install kivy==1.10.0
+wine python.exe -m pip install pyInstaller
+wine python.exe -m pip install docutils pygments kivy.deps.sdl2 kivy.deps.glew
+```
+
+Now go to a place familiar (i recommend the `drive_c` folder) and get a fresh
+PocketCosmos checkout:
+
+```bash
+cd path/where/ur/wines/live/python3wine/drive_c/
+git clone https://github.com/gandie/PlanetAppV2
+```
+
+Install engines, start with `cplanet`:
+
+```bash
+cd place/to/your/PlanetAppV2/engine_src/cplanet/src/
+wine C:/Python34/python.exe setup.py build --compiler=mingw32
+wine C:/Python34/python.exe setup.py install
+```
+
+... and same procedure to install `crk4engine`:
+
+```bash
+cd place/to/your/PlanetAppV2/engine_src/crk4engine/src/
+wine C:/Python34/python.exe setup.py build --compiler=mingw32
+wine C:/Python34/python.exe setup.py install
+```
+
+Now we have everything we need, we can build the EXE file:
+
+```bash
+cd place/to/your/PlanetAppV2/
+wine C:/Python34/python.exe -m PyInstaller main.spec
+```
+
+You can find the `main.exe` file in the `dist/main/` directory bundled with all
+file assets needed. Test call:
+
+```bash
+cd place/to/your/PlanetAppV2/dist/main
+wine main.exe
+```
 
 # Links
 
