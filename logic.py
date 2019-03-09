@@ -506,12 +506,17 @@ class Logic(Screen):
         self.fixview_mode = value
 
     def show_orbit_selected(self, value):
+        # invalidate future stack when orbit is shown
+        if value:
+            self.future_changed = True
         self.show_orbit_mode = value
-        if not value:
-            self.gamezone.canvas.remove_group('trajectory_selplanet')
+        self.gamezone.canvas.remove_group('trajectory_selplanet')
 
     def draw_trajectory_selplanet(self):
         '''fetch and filter data from future tape and draw a line from it'''
+
+        if self.future_changed:
+            return
 
         self.gamezone.canvas.remove_group('trajectory_selplanet')
         temp_index = self.tape.index_map[self.selplanet_index]

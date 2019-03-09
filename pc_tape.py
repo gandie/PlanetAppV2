@@ -44,11 +44,11 @@ class Tape(object):
         '''called on initialization and on apply_settings from logic'''
         self.history_data = deque(
             iterable=[],
-            maxlen=self.logic.settings['ticks_history']
+            maxlen=int(self.logic.settings['ticks_history'])
         )
         self.future_data = deque(
             iterable=[],
-            maxlen=self.logic.settings['ticks_ahead']
+            maxlen=int(self.logic.settings['ticks_ahead'])
         )
 
     def init_engine(self, engine_name):

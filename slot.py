@@ -7,6 +7,8 @@ from kivy.app import App
 from kivy.uix.slider import Slider
 from kivy.uix.gridlayout import GridLayout
 
+from kivy.uix.layout import Layout
+
 from kivy.uix.spinner import Spinner
 from kivy.uix.button import Button
 
@@ -85,7 +87,8 @@ class SettingsSlot(GridLayout):
     value = ObjectProperty(None)
 
     def __init__(self, **kwargs):
-        # super(SettingsSlot, self).__init__(**kwargs)
+        # XXX: strange super() behaviour here!
+        # super().__init__()
         GridLayout.__init__(self)
         self.setting_value = kwargs.get('setting_value')
         self.setting_min = kwargs.get('setting_min')
@@ -93,6 +96,7 @@ class SettingsSlot(GridLayout):
         self.setting_type = kwargs.get('setting_type')
         self.label_text = kwargs.get('label_text')
         self.items = kwargs.get('items', [])
+        self.size_hint = kwargs.get('size_hint', (1, None))
         self.rows = 1
 
         self.build_interface()
