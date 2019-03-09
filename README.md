@@ -14,11 +14,18 @@ Requirements:
 * buildozer (to build for android)
 * pyinstaller (to build for windows)
 
-
-Currently using versions:
+Currently using versions (Python2):
 * Cython version 0.25.1
 * Kivy version 1.10.0
 * Buildozer version 0.34
+* python-for-android version > 0.6.0 (`a036f4442b6a232d0c3a96c0b9d223e1b8cfe1d4`)
+* wine version 1.6.2
+
+Currently using versions (Python3):
+* Cython version 0.29.6
+* Kivy version 1.10.0
+* Buildozer version 0.39
+* python-for-android version > 0.7.0 (`25e5acce19cf53119f0be94f2a8c0cebcfe78353`)
 
 # Installation
 
@@ -74,10 +81,19 @@ optional arguments:
 `buildozer.spec` is part of this repository and must be slightly altered to work
 on your system. See comments for more detail.
 
+Make sure to copy both engines from `engine_src` directory to your
+python-for-android `recipes` folder and add `cplanet,crk4engine` to buildozer
+requirements.
+
 ## PyInstaller (EXE)
 
 Windows build has been tested using pyinstaller installed into a virtualwine
 environment. `main.spec` can be altered and used with pyinstaller to build EXE-files.
+
+Make sure your wine environment has following components installed:
++ Python (2.7 / 3.X)
+* Kivy
++ MinGW
 
 # Links
 
@@ -85,6 +101,7 @@ environment. `main.spec` can be altered and used with pyinstaller to build EXE-f
 * [Kivy Docs](https://kivy.org/doc/stable/)
 * [Buildozer Docs](https://buildozer.readthedocs.io/en/latest/)
 * [python-for-android](https://github.com/kivy/python-for-android)
+* [MinGW](http://www.mingw.org/wiki/Getting_Started)
 * [virtualwine](https://github.com/htgoebel/virtual-wine)
 
 ## Artists
