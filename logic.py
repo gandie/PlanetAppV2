@@ -330,7 +330,13 @@ class Logic(Screen):
         self.future_changed = True
 
     def reset_planets(self, instance):
-        for index in self.planets.keys():
+        '''
+        called from reset button in MainScreen
+        delete all planets and reset traces
+        '''
+
+        del_keys = list(self.planets.keys())
+        for index in del_keys:
             self.delete_planet(index)
 
         # self.gamezone.canvas.remove_group('nein')
