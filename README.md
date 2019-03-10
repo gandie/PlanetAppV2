@@ -13,6 +13,12 @@ Intended to run on mobile devices with touch screen.
 + [Installation](#Installation)
   + [Windows](#Windows)
   + [Android](#Android)
++ [Packaging / Building](#packaging--building)
+  + [Buildozer (APK)](#buildozer-apk)
+  + [PyInstaller (EXE)](#pyinstaller-exe)
++ [Links](#links)
+  + [Tech](#tech)
+  + [Artists](#artists)
 
 # Installation
 
@@ -35,6 +41,8 @@ Use a file explorer app of your choice, navigate to your downloads folders and
 install the app by executing the apk file.
 
 # Packaging / Building
+
+Buildings has been tested using Ubuntu 16.04 LTS and Ubuntu 18.04 LTS.
 
 Requirements:
 * Python 2.7* / 3.X
@@ -66,7 +74,10 @@ buildozer.
 To build EXE files these engines must be installed into the python environment
 calling PyInstaller.
 
-*NEEDS REWORK:*
+Check [Kivy Installation Docs](https://kivy.org/doc/stable/installation/installation.html) for details on kivy installation and dependencies.
+
+*build_helper.py NEEDS REWORK:*
+
 Some of the tasks neccessary to build PocketCosmos have been automated in
 the `build_helper.py` script. Alter its global variables depending on your
 build environment. The docstring may be helpful to reproduce these steps or
@@ -88,8 +99,6 @@ optional arguments:
 
 `buildozer.spec` is part of this repository and must be slightly altered to work
 on your system. See comments for more detail.
-
-### Buildozer + Python3 setup
 
 Following guide shows how to build an environment to create APK files using python3,
 buildozer and python-for-android toolchain.
@@ -164,8 +173,6 @@ Make sure your wine environment has following components installed:
 + Python 3.4.4
 + Kivy + Dependencies
 + MinGW
-
-### virtualwine + Python3.4 setup
 
 First set up your new wine environment and activate it:
 
