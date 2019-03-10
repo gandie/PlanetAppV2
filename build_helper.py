@@ -38,7 +38,7 @@ TASK FIVE:
 Build Windows exe files and structure arround it usinng a virtualwine containing
 Python27, Kivy and pyInstaller in a windows-like environment.
 Zip new dist/main folder into a file named "PocketCosmos-<VERSION>_win.zip".
-Fetch version from buildoer.spec
+Fetch version from buildozer.spec
 
 wine C:/Python27/python.exe setup.py build --compiler=mingw32
 wine C:/Python27/python.exe setup.py install -f
@@ -69,6 +69,7 @@ WINE_BIN = HOME + '/Dev/KivyBuild/bin'
 WINE_PLANETAPPV2_SRC = HOME + '/Dev/KivyBuild/drive_c/PlanetAppV2'
 
 PATH = os.getenv('PATH')
+p4a_DIR = '.buildozer/android/platform/python-for-android/'
 
 
 def winebuild():
@@ -301,13 +302,12 @@ if __name__ == '__main__':
     )
 
     args_d = parser.parse_args().__dict__  # i want a dict, not a namespace
-    spec_data = parse_spec()
 
     if args_d['build']:
         build_engines()
         cleanup_engine_src()
     if args_d['p4a']:
-        copy_engines(spec_data['p4a.source_dir'])
+        copy_engines(p4a_DIR)
     if args_d['clear']:
         clear_build()
     if args_d['winebuild']:

@@ -7,7 +7,7 @@ class CRk4EngineRecipe(IncludedFilesBehaviour, CythonRecipe):
     url = ''
     name = 'crk4engine'
     src_filename = 'src'
-    depends = [('python2')]
+    depends = [('python3')]
 
 
 recipe = CRk4EngineRecipe()

@@ -44,11 +44,11 @@ class Tape(object):
         '''called on initialization and on apply_settings from logic'''
         self.history_data = deque(
             iterable=[],
-            maxlen=self.logic.settings['ticks_history']
+            maxlen=int(self.logic.settings['ticks_history'])
         )
         self.future_data = deque(
             iterable=[],
-            maxlen=self.logic.settings['ticks_ahead']
+            maxlen=int(self.logic.settings['ticks_ahead'])
         )
 
     def init_engine(self, engine_name):
@@ -117,7 +117,6 @@ class Tape(object):
 
     def tick_clone(self, dt):
         '''tick engine clone and put data to future stack'''
-        # abort if future has changed. wait for update and fresh engine clone
 
         # invalidate future data and clone new engine if future changed
         if self.logic.future_changed:
@@ -129,6 +128,7 @@ class Tape(object):
         if len(self.future_data):
             self.future_data.popleft()
 
+        # calculate how many new ticks to create
         cur_len = len(self.future_data)
         diff = self.logic.settings['ticks_ahead'] - cur_len
         if diff > TICKS_PER_TICK:
@@ -136,17 +136,18 @@ class Tape(object):
         else:
             ticks = diff
 
+        # estimate time left for tick calculations
         timeleft = self.logic.intervals['tick'] * 0.8
         time_took = 0
 
+        # now do ticks and save data to tape
         for ticksdone in range(int(ticks)):
             self.temp_engine.tick(self.logic.tick_ratio)
             self.future_data.append(self.fetch_data(self.temp_engine))
             time_took += self.tick_time
+            # ...abort if no time is left (...and two ticks were made)
             if ticksdone > 1 and time_took > timeleft:
                 break
-
-        # print('Buffer length: %s' % len(self.future_data))
 
     def update_game(self, dt):
         '''
@@ -251,7 +252,7 @@ class Tape(object):
         ticks = int(self.logic.settings['ticks_ahead'])
         temp_list = []
 
-        for _ in xrange(ticks):
+        for _ in range(ticks):
             temp_engine.tick(self.logic.tick_ratio)
             if temp_engine.planet_exists(minor_index):
                 # fetch data from keeper, track position

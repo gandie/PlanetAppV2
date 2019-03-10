@@ -330,7 +330,13 @@ class Logic(Screen):
         self.future_changed = True
 
     def reset_planets(self, instance):
-        for index in self.planets.keys():
+        '''
+        called from reset button in MainScreen
+        delete all planets and reset traces
+        '''
+
+        del_keys = list(self.planets.keys())
+        for index in del_keys:
             self.delete_planet(index)
 
         # self.gamezone.canvas.remove_group('nein')
@@ -500,12 +506,17 @@ class Logic(Screen):
         self.fixview_mode = value
 
     def show_orbit_selected(self, value):
+        # invalidate future stack when orbit is shown
+        if value:
+            self.future_changed = True
         self.show_orbit_mode = value
-        if not value:
-            self.gamezone.canvas.remove_group('trajectory_selplanet')
+        self.gamezone.canvas.remove_group('trajectory_selplanet')
 
     def draw_trajectory_selplanet(self):
         '''fetch and filter data from future tape and draw a line from it'''
+
+        if self.future_changed:
+            return
 
         self.gamezone.canvas.remove_group('trajectory_selplanet')
         temp_index = self.tape.index_map[self.selplanet_index]

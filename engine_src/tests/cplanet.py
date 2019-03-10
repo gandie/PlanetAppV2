@@ -34,7 +34,7 @@ class CPlanetTests(unittest.TestCase):
         '''
         check for body limit of 1000
         '''
-        for index in xrange(1000):
+        for index in range(1000):
             pos = (index, index)
             vel = (index, index)
             mass = index
@@ -62,8 +62,8 @@ class CPlanetTests(unittest.TestCase):
         '''
         simple load test to measure engine improvements
         '''
-        for _ in xrange(100):
-            for index in xrange(1000):
+        for _ in range(100):
+            for index in range(1000):
                 newindex = self.keeper.create_planet(
                     pos_x=index,
                     pos_y=index,
@@ -80,27 +80,27 @@ class CPlanetTests(unittest.TestCase):
     def test_calc_third_root(self):
         number = 8
         result = self.keeper.calc_third_root(number)
-        print 'HOLY THIRD GRAIL of', number, result
+        print('HOLY THIRD GRAIL of', number, result)
         number = 125
         result = self.keeper.calc_third_root(number)
-        print 'HOLY THIRD GRAIL of', number, result
+        print('HOLY THIRD GRAIL of', number, result)
         number = 1000
         result = self.keeper.calc_third_root(number)
-        print 'HOLY THIRD GRAIL of', number, result
+        print('HOLY THIRD GRAIL of', number, result)
         number = 8000
         result = self.keeper.calc_third_root(number)
-        print 'HOLY THIRD GRAIL of', number, result
+        print('HOLY THIRD GRAIL of', number, result)
 
     def test_calc_root(self):
         number = 4
         result = self.keeper.calc_root(number)
-        print 'HOLY SECOND GRAIL of', number, result
+        print('HOLY SECOND GRAIL of', number, result)
         number = 100
         result = self.keeper.calc_root(number)
-        print 'HOLY SECOND GRAIL of', number, result
+        print('HOLY SECOND GRAIL of', number, result)
         number = 10000
         result = self.keeper.calc_root(number)
-        print 'HOLY SECOND GRAIL of', number, result
+        print('HOLY SECOND GRAIL of', number, result)
 
     def test_force_calculation(self):
         dist = 600
@@ -121,7 +121,7 @@ class CPlanetTests(unittest.TestCase):
             density=1
         )
         force = self.keeper.calc_force(index1, index2, dist)
-        print 'Force between', index1, index2, force
+        print('Force between', index1, index2, force)
 
         dist = 600
         index1 = self.keeper.create_planet(
@@ -141,9 +141,7 @@ class CPlanetTests(unittest.TestCase):
             density=1
         )
         force = self.keeper.calc_force(index1, index2, dist)
-        print 'Force between', index1, index2, force
-
-
+        print('Force between', index1, index2, force)
 
 
 if __name__ == '__main__':
