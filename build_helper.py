@@ -38,7 +38,7 @@ TASK FIVE:
 Build Windows exe files and structure arround it usinng a virtualwine containing
 Python27, Kivy and pyInstaller in a windows-like environment.
 Zip new dist/main folder into a file named "PocketCosmos-<VERSION>_win.zip".
-Fetch version from buildoer.spec
+Fetch version from buildozer.spec
 
 wine C:/Python27/python.exe setup.py build --compiler=mingw32
 wine C:/Python27/python.exe setup.py install -f
