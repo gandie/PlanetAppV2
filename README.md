@@ -8,6 +8,12 @@ Windows, Linux, Android
 
 Intended to run on mobile devices with touch screen.
 
+# Table of content
+
++ [Installation](#Installation)
+  + [Windows](#Windows)
+  + [Android](#Android)
+
 # Installation
 
 See [Releases](https://github.com/gandie/PlanetAppV2/releases) for prebuilt versions.
@@ -126,19 +132,19 @@ python-for-android `pythonforandroid/recipes` folder:
 ```bash
 cd place/u/trust
 git clone https://github.com/kivy/python-for-android
-cp -r path/to/your/PlanetAppV2/engine_src/* palce/u/trust/python-for-android/pythonforandroid/recipes
+cp -r path/to/your/PlanetAppV2/engine_src/* place/u/trust/python-for-android/pythonforandroid/recipes
 ```
 
 Now set `p4a.source_dir = place/u/trust/python-for-android` in your `buildozer.spec` file.
 
-Another approach would be to use the `p4a.local_recipes = path/to/your/PlanetAppV2/engine_src/` setting
+Another even simpler approach would be to use the `p4a.local_recipes = path/to/your/PlanetAppV2/engine_src/` setting
 if you want buildozer to clone python-for-android for you.
 
 Buildozer should now be able to install all requirements from `requirements = python3,kivy,cplanet,crk4engine`
 into the APKs Python environment.
 
 Start buildozer run, verbose mode is strongly recommended. Expect first run to take
-some time due to lots of downloads being made:
+some time due to lots of downloads and builds for ARM environment being made:
 
 ```bash
 cd path/to/your/PlanetAppV2/
@@ -184,7 +190,7 @@ cd path/where/u/keep/MinGW
 wine mingw-get-setup.exe
 ```
 
-If you experience any trouble with MinGW usage, try step mentioned [here](https://stackoverflow.com/questions/24683305/python-cant-install-packages-typeerror-unorderable-types-nonetype-str)
+If you experience any trouble with MinGW usage, try steps mentioned [here](https://stackoverflow.com/questions/24683305/python-cant-install-packages-typeerror-unorderable-types-nonetype-str)
 
 Editing `PATH` variable in wine is explained [here](https://wiki.winehq.org/Wine_User%27s_Guide#Setting_Windows.2FDOS_environment_variables)
 
