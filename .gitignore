@@ -9,3 +9,5 @@ build/
 bin
 docs
 .atomignore
+__pycache__
+venv3*

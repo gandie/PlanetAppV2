@@ -2,8 +2,7 @@ import unittest
 import sys
 import time
 
-sys.path.append('../../')
-from engine_rk4 import Engine
+from pyrk4engine import Engine
 
 
 class CPlanetTests(unittest.TestCase):

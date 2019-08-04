@@ -12,29 +12,37 @@ https://www.thanassis.space/gravity.html
 '''
 
 import itertools
-import math
-import time
 
 
-class State(object):
+cdef class State:
 
-    def __init__(self, pos_x, pos_y, vel_x=0, vel_y=0):
+    cdef public double pos_x, pos_y, vel_x, vel_y
+
+    def __cinit__(self, double pos_x, double pos_y, double vel_x, double vel_y):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.vel_x = vel_x
         self.vel_y = vel_y
 
 
-class Derivative(object):
+cdef class Derivative:
 
-    def __init__(self, dx, dy, dvx, dvy):
+    cdef public double dx, dy, dvx, dvy
+
+    def __cinit__(self, double dx, double dy, double dvx, double dvy):
         self.dx = dx
         self.dy = dy
         self.dvx = dvx
         self.dvy = dvy
 
 
-class Planet(object):
+cdef class Planet:
+
+    cdef public object engine
+    cdef public double pos_x, pos_y, density, mass, vel_x, vel_y
+    cdef public bint fixed
+    cdef public object state
+    cdef public double radius
 
     def __init__(self, engine, pos_x, pos_y, density, mass, vel_x=0, vel_y=0, fixed=False):
 
@@ -52,16 +60,23 @@ class Planet(object):
         self.fixed = fixed
         self.calc_radius()
 
-    def calc_radius(self):
-        self.radius = math.sqrt((3 * self.mass) / (4 * 3.1427 * self.density))
+    cdef void _calc_radius(self):
+        self.radius = ((3 * self.mass) / (4 * 3.1427 * self.density)) ** 0.5
 
-    def calc_acceleration(self, state, unused_curtime):
-        ax = 0.0
-        ay = 0.0
+    def calc_radius(self):
+        self._calc_radius()
+
+    cdef (double, double) calc_acceleration(self, object state, double unused_curtime):
+
+        cdef double ax = 0.0
+        cdef double ay = 0.0
+        cdef double dist, delta_x, delta_y, force
+        cdef object other_planet
+
         for other_planet in self.engine.planets.values():
-            if other_planet == self:
+            if not other_planet or other_planet == self:
                 continue
-            dist, delta_x, delta_y = self.calc_distance(state, other_planet)
+            dist, delta_x, delta_y = self._calc_distance(state, other_planet)
             if dist == 0:
                 dist = 0.00001
             force = 0.1 * self.calc_force(other_planet, dist)
@@ -69,19 +84,31 @@ class Planet(object):
             ay += (force * delta_y / dist) / self.mass
         return ax, ay
 
-    def calc_distance(self, state, planet2):
+    def calc_distance(self, object state, object planet2):
+        return self._calc_distance(state, planet2)
+
+    cdef (double, double, double) _calc_distance(self, object state, object planet2):
+
+        cdef double delta_x, delta_y, dist
+
         delta_x = planet2.state.pos_x - state.pos_x
         delta_y = planet2.state.pos_y - state.pos_y
-        dist = math.sqrt(delta_x ** 2 + delta_y ** 2)
+        dist = (delta_x ** 2 + delta_y ** 2) ** 0.5
         return dist, delta_x, delta_y
 
-    def calc_force(self, planet2, dist):
+    cdef double calc_force(self, object planet2, double dist):
+
+        cdef double force
+
         if dist == 0:
             dist = 0.001
         force = (self.mass * planet2.mass) / (dist ** 2)
         return force
 
-    def initialDerivative(self, state, curtime):
+    cdef object initialDerivative(self, object state, double curtime):
+
+        cdef double ax, ay
+
         ax, ay = self.calc_acceleration(state, curtime)
         return Derivative(
             dx=state.vel_x,
@@ -90,17 +117,16 @@ class Planet(object):
             dvy=ay
         )
 
-    def nextDerivative(self, initialState, derivative, curtime, dt):
+    cdef object nextDerivative(self, object initialState, object derivative, double curtime, double dt):
+
+        cdef double ax, ay
+
         nextState = State(
-            pos_x=0.0,
-            pos_y=0.0,
-            vel_x=0.0,
-            vel_y=0.0
+            pos_x=initialState.pos_x + derivative.dx * dt,
+            pos_y=initialState.pos_y + derivative.dy * dt,
+            vel_x=initialState.vel_x + derivative.dvx * dt,
+            vel_y=initialState.vel_y + derivative.dvy * dt
         )
-        nextState.pos_x = initialState.pos_x + derivative.dx * dt
-        nextState.pos_y = initialState.pos_y + derivative.dy * dt
-        nextState.vel_x = initialState.vel_x + derivative.dvx * dt
-        nextState.vel_y = initialState.vel_y + derivative.dvy * dt
         ax, ay = self.calc_acceleration(nextState, curtime+dt)
         return Derivative(
             dx=nextState.vel_x,
@@ -109,7 +135,15 @@ class Planet(object):
             dvy=ay
         )
 
-    def update(self, curtime, delta_time):
+    def update(self, double curtime, double delta_time):
+        self._update(curtime, delta_time)
+
+    cdef void _update(self, double curtime, double delta_time):
+
+        cdef double delta_x_dt, delta_y_dt, delta_vx_dt, delta_vy_dt
+        cdef double error_x, error_y, error_norm, MAGIC_ERROR
+        cdef object initial_D, second_D, third_D, fourth_D
+
         if self.fixed:
             return
 
@@ -155,7 +189,10 @@ class Planet(object):
         self.state.vel_y += delta_vy_dt * delta_time
 
 
-class Engine(object):
+cdef class Engine:
+
+    cdef public int cur_index, curtime, timerate
+    cdef public dict planets
 
     def __init__(self):
         self.cur_index = 0
@@ -245,10 +282,13 @@ class Engine(object):
             planet.calc_radius()
     # GETTER / SETTER END
 
-    def check_collision(self, planet1, planet2):
+    cdef object check_collision(self, object planet1, object planet2):
+
+        cdef double dist, delta_x, delta_y, impulse_x, impulse_y
+
         dist, delta_x, delta_y = planet1.calc_distance(planet1.state, planet2)
         if not (dist < (planet1.radius + planet2.radius)):
-            return False
+            return None
         impulse_x = planet1.state.vel_x * planet1.mass + planet2.state.vel_x * planet2.mass
         impulse_y = planet1.state.vel_y * planet1.mass + planet2.state.vel_y * planet2.mass
         if planet1.mass <= planet2.mass:
@@ -262,9 +302,12 @@ class Engine(object):
         update_planet.calc_radius()
         return del_planet
 
-    def tick(self, timerate):
+    def tick(self, int timerate):
 
-        del_indexes = []
+        cdef int index1, index2, index
+        cdef list del_indexes = []
+
+        #del_indexes = []
         self.curtime += timerate
 
         for planet in self.planets.values():
