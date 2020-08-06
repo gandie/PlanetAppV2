@@ -171,7 +171,7 @@ def clear_build(auto=False):
         uinput = ''
         while not (uinput == 'y' or uinput == 'n'):
             print('This may be helpful if requirements in buildozer.spec have changed')
-            uinput = raw_input('THIS WILL FORCE REBUILDING THE APP! Sure? (y/n) ')
+            uinput = input('THIS WILL FORCE REBUILDING THE APP! Sure? (y/n) ')
         if uinput == 'n':
             return
         print('Your choice...')
@@ -208,8 +208,11 @@ def build_engines(tests=True):
         call = 'cd %s;python setup.py build' % engine_path
         print('Building engine...: %s' % call)
         os.system(call)
-        new_build_path = build_path + '/lib.linux-x86_64-2.7/%s.so' % engine
+        suffix = '.cpython-36m-x86_64-linux-gnu'
+        engine_filename = engine + suffix
+        new_build_path = build_path + '/lib.linux-x86_64-3.6/%s.so' % engine_filename
 
+        print(new_build_path)
         if tests:
             print('NEW ENGINE, copying to tests folder...: %s' % new_build_path)
             shutil.copy(new_build_path, tests_folder)
@@ -220,7 +223,7 @@ def build_engines(tests=True):
         question = 'Copy new engine to root folder? (y/n) :'
         uinput = ''
         while not (uinput == 'y' or uinput == 'n'):
-            uinput = raw_input(question)
+            uinput = input(question)
         if uinput == 'n':
             print('ABORTED. NOT copying...')
             return
