@@ -208,7 +208,7 @@ android.arch = armeabi-v7a
 #p4a.source_dir =
 
 # (str) The directory in which python-for-android should look for your own build recipes (if any)
-#p4a.local_recipes =
+p4a.local_recipes = %(source.dir)s/engine_src/
 
 # (str) Filename to the hook for p4a
 #p4a.hook =
